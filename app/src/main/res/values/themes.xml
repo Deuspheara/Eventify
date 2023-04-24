@@ -11,8 +11,9 @@
         <item name="android:statusBarColor">@color/red</item>
     </style>
 
-  <!-- Base application theme. -->
-    <style name="Base.Theme.Eventify" parent="Theme.Material3.DayNight.NoActionBar">
-
+    <!-- Splash screen theme. -->
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/orange</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 </resources>
