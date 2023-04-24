@@ -1,0 +1,30 @@
+buildscript {
+    ext {
+        minSdkVersion = 23
+        targetSdkVersion = 33
+        compileSdkVersion = 33
+        okHttpLibVersion = "4.9.3"
+        retrofitLibVersion = "2.9.0"
+        hiltLibVersion = "2.44"
+        coroutinesVersion = "1.6.3"
+        roomVersion = "2.5.0"
+        nav_version = "2.5.3"
+        paging_version = "3.1.1"
+        coilVersion = "2.2.2"
+        lifecycleVersion = "2.6.1"
+    }
+    dependencies {
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltLibVersion"
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.0.0' apply false
+    id 'com.android.library' version '8.0.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
