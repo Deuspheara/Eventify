@@ -2,6 +2,7 @@ package fr.event.eventify.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,29 +14,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataSourceModule {
+abstract class DataSourceModule {
 
-    @Provides
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance()
-    }
 
-    @Provides
-    fun provideFireStore(): FirebaseFirestore {
-        return FirebaseFirestore.getInstance()
-    }
+    @Binds
+    abstract fun bindAuthRemoteDataSource(
+        impl: AuthRemoteDataSourceImpl
+    ): AuthRemoteDataSource
 
-    @Provides
-    fun provideAuthRemoteDataSource(
-        @DispatcherModule.DispatcherIO ioContext: CoroutineDispatcher,
-        firebaseAuth: FirebaseAuth,
-        firebaseFirestore: FirebaseFirestore
-    ): AuthRemoteDataSource {
-        return AuthRemoteDataSourceImpl(
-            ioContext = ioContext,
-            firebaseAuth = firebaseAuth,
-            firebaseFirestore = firebaseFirestore
-        )
-    }
 
 }

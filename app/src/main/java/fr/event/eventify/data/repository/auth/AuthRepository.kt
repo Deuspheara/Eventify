@@ -8,6 +8,7 @@ import fr.event.eventify.data.datasource.auth.remote.AuthRemoteDataSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 

@@ -4,7 +4,9 @@ import android.util.Log
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.remote.RemoteUser
 import fr.event.eventify.data.repository.auth.AuthRepository
+import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -19,7 +21,7 @@ class CreateFirestoreUserUseCase @Inject constructor(
 
     suspend operator fun invoke(
         remoteUser: RemoteUser
-    ) {
+    ) : Flow<Resource<RemoteUser>> {
         return withContext(ioDispatcher) {
             try {
                 authRepository.createFirestoreUser(remoteUser)

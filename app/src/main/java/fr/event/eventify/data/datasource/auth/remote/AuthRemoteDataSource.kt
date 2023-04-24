@@ -45,31 +45,35 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun createFirebaseUserWithEmail(email: String, password: String): Flow<Resource<FirebaseUser>> = flow {
-        withContext(ioContext){
             emit(
                 Resource.Loading()
             )
             try {
                 val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-                if(result.user == null){
-                    Log.e(TAG, "Error while creating new user with email: $email and password $password, error: Firebase returned a null user")
+                if (result.user == null) {
+                    Log.e(
+                        TAG,
+                        "Error while creating new user with email: $email and password $password, error: Firebase returned a null user"
+                    )
                     emit(
                         Resource.Error(message = "Firebase return a null user", data = null)
                     )
                 } else {
                     emit(
-                        Resource.Success(data= result.user!!)
+                        Resource.Success(data = result.user!!)
                     )
                 }
-            } catch (e: Exception){
-                Log.e(TAG, "Error while creating new user with email: $email and password $password, error: $e")
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error while creating new user with email: $email and password $password, error: $e"
+                )
                 emit(
                     Resource.Error(message = "Error while creating new user")
                 )
-                throw e
             }
         }
-    }
+
 
     override suspend fun createFirestoreUser(remoteUser : RemoteUser) : Flow<Resource<RemoteUser>> = callbackFlow {
         trySend(
@@ -97,6 +101,4 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             throw e
         }
     }
-
-
 }
