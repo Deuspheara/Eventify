@@ -7,7 +7,7 @@
     tools:context=".ConnexionFragment">
 
     <Button
-        android:id="@+id/bt_google_connect"
+        android:id="@+id/bt_google_connect2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -16,7 +16,7 @@
         android:text="Se connecter avec google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_password" />
+        app:layout_constraintTop_toBottomOf="@+id/tf_password2" />
 
     <Button
         android:id="@+id/bt_connex"
@@ -28,10 +28,10 @@
         android:text="Se connecter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bt_google_connect" />
+        app:layout_constraintTop_toBottomOf="@+id/bt_google_connect2" />
 
     <EditText
-        android:id="@+id/tf_password"
+        android:id="@+id/tf_password2"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
@@ -42,24 +42,26 @@
         android:inputType="text|textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tf_email" />
+        app:layout_constraintTop_toBottomOf="@+id/tf_email2"
+        android:autofillHints="" />
 
     <EditText
-        android:id="@+id/tf_email"
+        android:id="@+id/tf_email2"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="128dp"
         android:layout_marginEnd="16dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="Email"
         android:inputType="text|textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_title2" />
 
     <ImageButton
-        android:id="@+id/bt_return"
+        android:id="@+id/bt_return2"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
@@ -72,17 +74,17 @@
         app:tint="@color/red" />
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tv_title2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="Sign-up"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/bt_return"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_return2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bt_return" />
+        app:layout_constraintTop_toTopOf="@+id/bt_return2" />
 
     <TextView
         android:id="@+id/tv_mdp_oublie"
