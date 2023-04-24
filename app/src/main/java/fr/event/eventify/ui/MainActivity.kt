@@ -22,12 +22,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //create firebase user
-        var email = "test@test.fr"
-        var password = "testtest"
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.registerFragment -> {
+                    navController.navigate(R.id.registerFragment)
+                    true
+                }
+                R.id.connexionFragment -> {
+                    navController.navigate(R.id.connexionFragment)
+                    true
+                }
+                else -> false
+            }
+        }
         setContentView(binding.root)
     }
 
