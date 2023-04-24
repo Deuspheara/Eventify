@@ -10,4 +10,9 @@
         android:name="fr.event.eventify.ui.register.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/connexionFragment"
+        android:name="fr.event.eventify.ui.connexion.ConnexionFragment"
+        android:label="fragment_connexion"
+        tools:layout="@layout/fragment_connexion" />
 </navigation>

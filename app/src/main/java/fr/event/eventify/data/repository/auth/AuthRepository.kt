@@ -27,6 +27,14 @@ interface AuthRepository {
      * @return a [Flow] of [Boolean]
      */
     suspend fun createFirestoreUser(remoteUser : RemoteUser) : Flow<Resource<RemoteUser>>
+
+    /**
+     * Sign in with email and password
+     * @param email used to provide the User email
+     * @param password used to provide the password
+     * @return a [Flow] of [FirebaseUser]
+     */
+    suspend fun signInWithEmail(email: String, password: String): Flow<Resource<FirebaseUser>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -55,6 +63,20 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.createFirestoreUser(remoteUser)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while creating new user in firestore, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun signInWithEmail(
+        email: String,
+        password: String
+    ): Flow<Resource<FirebaseUser>> {
+        return withContext(ioDispatcher) {
+            try {
+                authRemoteDataSource.signInWithEmail(email, password)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while signing in with email: $email and password $password, error: ${e.message}")
                 throw e
             }
         }

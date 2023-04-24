@@ -32,6 +32,15 @@ interface AuthRemoteDataSource {
      * @return a [Flow] of [Boolean]
      */
     suspend fun createFirestoreUser(remoteUser : RemoteUser) : Flow<Resource<RemoteUser>>
+
+    /**
+     * Sign in with email and password
+     * @param email used to provide the User email
+     * @param password used to provide the password
+     * @return a [Flow] of [FirebaseUser]
+     */
+    suspend fun signInWithEmail(email: String, password: String): Flow<Resource<FirebaseUser>>
+
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
@@ -74,7 +83,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             }
         }
 
-
     override suspend fun createFirestoreUser(remoteUser : RemoteUser) : Flow<Resource<RemoteUser>> = callbackFlow {
         trySend(
             Resource.Loading()
@@ -99,6 +107,41 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 Resource.Error(message = "Error while storing user in collection User")
             )
             throw e
+        }
+    }
+
+    override suspend fun signInWithEmail(
+        email: String,
+        password: String
+    ): Flow<Resource<FirebaseUser>> {
+return flow {
+            emit(
+                Resource.Loading()
+            )
+            try {
+                val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+                if (result.user == null) {
+                    Log.e(
+                        TAG,
+                        "Error while signing in with email: $email and password $password, error: Firebase returned a null user"
+                    )
+                    emit(
+                        Resource.Error(message = "Firebase return a null user", data = null)
+                    )
+                } else {
+                    emit(
+                        Resource.Success(data = result.user!!)
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error while signing in with email: $email and password $password, error: $e"
+                )
+                emit(
+                    Resource.Error(message = "Error while signing in")
+                )
+            }
         }
     }
 }

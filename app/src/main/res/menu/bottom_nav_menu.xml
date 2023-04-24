@@ -3,4 +3,7 @@
     <item
         android:id="@+id/registerFragment"
         android:title="register" />
+    <item
+        android:id="@+id/connexionFragment"
+        android:title="connexion" />
 </menu>

@@ -1,36 +1,24 @@
-package fr.event.eventify
+package fr.event.eventify.ui.connexion
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import fr.event.eventify.R
+import fr.event.eventify.databinding.FragmentConnexionBinding
 
 
 class ConnexionFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
-    }
+    private lateinit var binding: FragmentConnexionBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_connexion, container, false)
+        binding = FragmentConnexionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ConnexionFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
-    }
 }
