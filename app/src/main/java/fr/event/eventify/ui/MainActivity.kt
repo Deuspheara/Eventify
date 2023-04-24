@@ -6,7 +6,6 @@ import fr.event.eventify.R
 import fr.event.eventify.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    `
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
