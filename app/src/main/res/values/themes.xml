@@ -3,16 +3,27 @@
     <style name="Theme.Eventify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Font family. -->
         <item name="android:fontFamily">@font/inter</item>
-        <!-- Primary brand color. -->
+        <!-- Primary color. -->
         <item name="colorPrimary">@color/red</item>
-        <!-- Background color. -->
         <item name="android:windowBackground">@color/light_grey</item>
-        <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/red</item>
     </style>
 
-  <!-- Base application theme. -->
-    <style name="Base.Theme.Eventify" parent="Theme.Material3.DayNight.NoActionBar">
-
+    <!-- Splash screen theme. -->
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/orange</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
+
+    <style name="Button.Red" parent="Theme.Eventify">
+        <item name="cornerRadius">16dp</item>
+        <item name="backgroundTint">@color/red</item>
+        <item name="android:capitalize">sentences</item>
+    </style>
+
+    <style name="Textfield.White" parent="Theme.Eventify">
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingHorizontal">12dp</item>
+    </style>
+
 </resources>

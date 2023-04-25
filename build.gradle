@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        minSdkVersion = 23
+        minSdkVersion = 28
         targetSdkVersion = 33
         compileSdkVersion = 33
         okHttpLibVersion = "4.9.3"
