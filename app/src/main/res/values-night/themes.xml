@@ -6,6 +6,8 @@
         <!-- Primary color. -->
         <item name="colorPrimary">@color/red</item>
         <item name="android:statusBarColor">@color/red</item>
+
+        <item name="android:searchViewStyle">@style/Search_bar</item>
     </style>
 
     <style name="Button.Red" parent="Theme.Eventify">
@@ -20,7 +22,7 @@
         <item name="android:textColorHint">@color/hint_default</item>
     </style>
 
-    <style name="Search_bar">
+    <style name="Search_bar" parent="Theme.Eventify">
         <item name="android:background">@drawable/rounded_corners_focus</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:searchHintIcon">@android:color/transparent</item>
