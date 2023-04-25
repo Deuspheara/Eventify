@@ -2,15 +2,13 @@ package fr.event.eventify.data.repository.auth
 
 import android.util.Log
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import fr.event.eventify.core.coroutine.DispatcherModule
-import fr.event.eventify.core.models.remote.RemoteUser
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.data.datasource.auth.remote.AuthRemoteDataSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
