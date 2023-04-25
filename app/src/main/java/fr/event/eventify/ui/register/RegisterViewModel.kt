@@ -17,7 +17,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.event.eventify.R
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.remote.RemoteUser
 import fr.event.eventify.domain.auth.CreateFirebaseUserWithEmailUseCase
+import fr.event.eventify.domain.auth.CreateFirestoreUserUseCase
 import fr.event.eventify.domain.auth.SignInWithGoogleUseCase
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,10 +36,17 @@ data class AuthState(
     val isLoading: Boolean = false
 )
 
+data class RemoteState(
+    val data: RemoteUser? = null,
+    val error: String = "",
+    val isLoading: Boolean = false
+)
+
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val createFirebaseUserWithEmailUseCase: CreateFirebaseUserWithEmailUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+    private val createFirestoreUserUseCase: CreateFirestoreUserUseCase,
     @DispatcherModule.DispatcherIO private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private companion object {
@@ -47,28 +56,46 @@ class RegisterViewModel @Inject constructor(
     private val _user = MutableStateFlow(AuthState())
     val user: StateFlow<AuthState> = _user
 
+    private val _remoteUser = MutableStateFlow(RemoteState())
+    val remoteUser: StateFlow<RemoteState> = _remoteUser
 
+
+    /**
+     * Register a new user
+     * @param email the email of the user
+     * @param password the password of the user
+     */
     fun register(email: String, password: String) {
         viewModelScope.launch(ioDispatcher) {
-            createFirebaseUserWithEmailUseCase(email, password).collect {
-                when (it) {
-                    is Resource.Loading -> {
-                        _user.value = AuthState(isLoading = true)
-                    }
+            try {
+                createFirebaseUserWithEmailUseCase(email, password).collect {
+                    when (it) {
+                        is Resource.Loading -> {
+                            _user.value = AuthState(isLoading = true)
+                        }
 
-                    is Resource.Success -> {
-                        _user.value = AuthState(data = it.data)
-                    }
+                        is Resource.Success -> {
+                            _user.value = AuthState(data = it.data)
+                        }
 
-                    is Resource.Error -> {
-                        _user.value = AuthState(error = it.message ?: "Unknown error")
+                        is Resource.Error -> {
+                            _user.value = AuthState(error = it.message ?: "Unknown error")
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while creating new user, error: ${e.message}")
+                _user.value = AuthState(error = "Error while creating new user")
             }
+
         }
     }
 
 
+    /**
+     * Sign in with google
+     * @param idToken the idToken of the google account
+     */
     fun loginWithGoogle(idToken : String) {
         try {
 
@@ -92,6 +119,31 @@ class RegisterViewModel @Inject constructor(
             // Google Sign In failed, update UI appropriately
             Log.w(TAG, "Google sign in failed", e)
             _user.value = AuthState(error = "Google sign in failed")
+        }
+    }
+
+    fun registerOnFireStore(remoteUser: RemoteUser) {
+        Log.d(TAG, "registerOnFireStore: $remoteUser")
+        viewModelScope.launch(ioDispatcher) {
+            try {
+                createFirestoreUserUseCase(remoteUser).collect {
+                    when(it) {
+                        is Resource.Loading -> {
+                            _remoteUser.value = RemoteState(isLoading = true)
+                        }
+                        is Resource.Success -> {
+                            _remoteUser.value = RemoteState(data = it.data)
+                        }
+                        is Resource.Error -> {
+                            _remoteUser.value = RemoteState(error = it.message ?: "Unknown error")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Register on firestore failed", e)
+                _remoteUser.value = RemoteState(error = "Register on firestore failed")
+            }
+
         }
     }
 
