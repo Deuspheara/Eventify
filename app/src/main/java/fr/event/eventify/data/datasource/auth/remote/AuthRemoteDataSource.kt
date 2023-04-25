@@ -1,8 +1,18 @@
 package fr.event.eventify.data.datasource.auth.remote
 
+import android.app.Activity
+import android.app.Application
 import android.util.Log
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.remote.RemoteUser
@@ -41,9 +51,16 @@ interface AuthRemoteDataSource {
      */
     suspend fun signInWithEmail(email: String, password: String): Flow<Resource<FirebaseUser>>
 
+    /**
+     * Sign in with Google
+     * @return a [Flow] of [FirebaseUser]
+     */
+    suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>>
+
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
+    private val application: Application,
     @DispatcherModule.DispatcherIO private val ioContext : CoroutineDispatcher,
     private val firebaseAuth: FirebaseAuth,
     private val firebaseFirestore: FirebaseFirestore
@@ -144,4 +161,20 @@ return flow {
             }
         }
     }
+
+    override suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>> = flow {
+        emit(Resource.Loading())
+        try {
+            val authResult = firebaseAuth.signInWithCredential(credential).await()
+
+            emit(Resource.Success(authResult.user!!))
+        } catch (e: ApiException) {
+            Log.e(TAG, "Error while signing in with Google: $e")
+            emit(Resource.Error(message = "Error while signing in with Google"))
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while authenticating with Firebase: $e")
+            emit(Resource.Error(message = "Error while authenticating with Firebase"))
+        }
+    }
+
 }

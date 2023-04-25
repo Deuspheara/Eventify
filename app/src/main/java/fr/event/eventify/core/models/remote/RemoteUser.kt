@@ -12,6 +12,10 @@ data class RemoteUser(
     @SerializedName("displayName")
     val displayName : String,
 
+    /** Pseudo of this user */
+    @SerializedName("pseudo")
+    val pseudo : String,
+
     /** Email of this user */
     @SerializedName("email")
     val email : String,

@@ -1,13 +1,21 @@
 package fr.event.eventify.ui.connexion
 
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.findNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentConnexionBinding
@@ -21,9 +29,23 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ConnexionFragment : Fragment() {
 
+    private val TAG = "ConnexionFragment"
+
     private lateinit var binding: FragmentConnexionBinding
     private val viewModel: ConnexionViewModel by viewModels()
-
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val googleSignInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    viewModel.loginWithGoogle(account?.idToken!!)
+                } catch (e: ApiException) {
+                    Log.w(TAG, "Google sign-in failed", e)
+                }
+            }
+        }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +56,23 @@ class ConnexionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.btCreateAccount.setOnClickListener {
+            val action = ConnexionFragmentDirections.actionConnexionFragmentToRegisterFragment()
+            view.findNavController().navigate(action)
+        }
+
+        //google sign in
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+
+        binding.btGoogleConnect2.setOnClickListener {
+            val signInIntent = googleSignInClient.signInIntent
+            googleSignInLauncher.launch(signInIntent)
+        }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             binding.apply {

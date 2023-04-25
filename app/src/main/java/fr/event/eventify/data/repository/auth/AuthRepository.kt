@@ -1,6 +1,8 @@
 package fr.event.eventify.data.repository.auth
 
 import android.util.Log
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.remote.RemoteUser
@@ -35,6 +37,13 @@ interface AuthRepository {
      * @return a [Flow] of [FirebaseUser]
      */
     suspend fun signInWithEmail(email: String, password: String): Flow<Resource<FirebaseUser>>
+
+    /**
+     * Sign in with Google
+     * @param idToken used to provide the User idToken
+     * @return a [Flow] of [FirebaseUser]
+     */
+    suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -77,6 +86,17 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.signInWithEmail(email, password)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while signing in with email: $email and password $password, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>> {
+        return withContext(ioDispatcher) {
+            try {
+                authRemoteDataSource.signInWithGoogle(credential)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while signing in with google, error: ${e.message}")
                 throw e
             }
         }

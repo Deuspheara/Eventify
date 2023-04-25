@@ -14,5 +14,9 @@
         android:id="@+id/connexionFragment"
         android:name="fr.event.eventify.ui.connexion.ConnexionFragment"
         android:label="fragment_connexion"
-        tools:layout="@layout/fragment_connexion" />
+        tools:layout="@layout/fragment_connexion" >
+        <action
+            android:id="@+id/action_connexionFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+    </fragment>
 </navigation>
