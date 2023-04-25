@@ -54,7 +54,8 @@
                 android:text="Se connecter avec google"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                android:drawableEnd="@drawable/ic_google"/>
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img_profile"
@@ -68,10 +69,8 @@
                 android:src="@drawable/profile"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-
+                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
                 app:layout_constraintTop_toBottomOf="@+id/bt_google_connect" />
-            <!--app:shapeAppearanceOverlay="@style/roundedImageViewRounded"-->
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_name"
