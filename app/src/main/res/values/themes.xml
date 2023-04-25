@@ -18,9 +18,15 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <style name="Button.Red" parent="Theme.Eventify">
+    <style name="Button.red" parent="Theme.Eventify">
         <item name="cornerRadius">16dp</item>
-        <item name="backgroundTint">@color/red</item>
+        <item name="android:backgroundTint">@color/red</item>
+        <item name="android:capitalize">sentences</item>
+    </style>
+
+    <style name="Button.white" parent="Theme.Eventify">
+        <item name="cornerRadius">16dp</item>
+        <item name="android:backgroundTint">@color/white</item>
         <item name="android:capitalize">sentences</item>
     </style>
 
@@ -39,7 +45,6 @@
     </style>
 
     <style name="roundedImageViewRounded">
-        <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
