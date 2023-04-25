@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
+                R.id.homeFragment -> {
+                    navController.navigate(R.id.homeFragment)
+                    true
+                }
                 R.id.registerFragment -> {
                     navController.navigate(R.id.registerFragment)
                     true
