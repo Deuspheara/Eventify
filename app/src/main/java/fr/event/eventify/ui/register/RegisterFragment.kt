@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
+import fr.event.eventify.core.models.remote.RemoteUser
 import fr.event.eventify.databinding.FragmentRegisterBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -68,6 +69,48 @@ class RegisterFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.user.collectLatest { state ->
+                state.isLoading.let {
+                    //Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                }
+                state.error.let {
+                    //Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                }
+                state.data?.let {
+                    Log.d(TAG, "onCreateView: ${it.uid}")
+                    viewModel.registerOnFireStore(
+                        RemoteUser(
+                            uuid = it.uid,
+                            displayName = binding.tfName.text.toString(),
+                            pseudo = "",
+                            email = it.email.toString(),
+                            phoneNumber = binding.tfPhoneNumber.text.toString(),
+                            photoUrl = "",
+                            providerID = it.providerId,
+                            isEmailVerified = it.isEmailVerified
+                        )
+                    )
+                    Toast.makeText(context, "Success user created", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            viewModel.remoteUser.collectLatest { state ->
+                state.isLoading.let {
+                    Log.d(TAG, "remoteUser: Loading")
+                    Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                }
+                state.error.let {
+                    Log.d(TAG, "remoteUser: Error")
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                }
+                state.data?.let {
+                    Log.d(TAG, "remoteUser: Success")
+                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         //google sign in
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -85,19 +128,7 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-            viewModel.user.collectLatest { state ->
-                state.isLoading.let {
-                    //Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
-                }
-                state.error.let {
-                    //Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-                }
-                state.data?.let {
-                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+
     }
 
     private fun verifyEmail(email: String): Boolean {

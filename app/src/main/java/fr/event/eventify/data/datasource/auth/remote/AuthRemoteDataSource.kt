@@ -18,6 +18,7 @@ import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.remote.RemoteUser
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
@@ -100,32 +101,31 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             }
         }
 
-    override suspend fun createFirestoreUser(remoteUser : RemoteUser) : Flow<Resource<RemoteUser>> = callbackFlow {
-        trySend(
-            Resource.Loading()
-        )
-        try{
-            val result = firebaseFirestore.collection("User")
+    override suspend fun createFirestoreUser(remoteUser: RemoteUser): Flow<Resource<RemoteUser>> = callbackFlow {
+        trySend(Resource.Loading())
+        Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
+        try {
+
+                Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
+            firebaseFirestore.collection("User")
                 .document(remoteUser.uuid)
                 .set(remoteUser)
                 .addOnSuccessListener {
-                    trySend(
-                        Resource.Success(data = remoteUser)
-                    )
+                    trySend(Resource.Success(data = remoteUser))
                 }
                 .addOnFailureListener {
-                    trySend(
-                        Resource.Error(message = "Error while storing user in collection User")
-                    )
+                    trySend(Resource.Error(message = "Error while storing user in collection User"))
                 }
-        } catch (e: Exception){
+                .await()
+        } catch (e: Exception) {
             Log.e(TAG, "Error while storing user in collection User, in document ${remoteUser.uuid}, error: $e")
-            trySend(
-                Resource.Error(message = "Error while storing user in collection User")
-            )
+
+                trySend(Resource.Error(message = "Error while storing user in collection User"))
             throw e
         }
+        awaitClose()
     }
+
 
     override suspend fun signInWithEmail(
         email: String,
@@ -166,14 +166,15 @@ return flow {
         emit(Resource.Loading())
         try {
             val authResult = firebaseAuth.signInWithCredential(credential).await()
-
             emit(Resource.Success(authResult.user!!))
         } catch (e: ApiException) {
             Log.e(TAG, "Error while signing in with Google: $e")
             emit(Resource.Error(message = "Error while signing in with Google"))
+            throw e
         } catch (e: Exception) {
             Log.e(TAG, "Error while authenticating with Firebase: $e")
             emit(Resource.Error(message = "Error while authenticating with Firebase"))
+            throw e
         }
     }
 
