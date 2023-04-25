@@ -13,6 +13,7 @@
     <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">@color/orange</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="Button.Red" parent="Theme.Eventify">
@@ -24,7 +25,20 @@
     <style name="Textfield_red_stroke">
         <item name="android:background">@drawable/edit_text_selector</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHintInverse">@color/hint_default</item>
+        <item name="android:textColorHint">@color/hint_default</item>
+    </style>
+
+    <style name="Search_bar">
+        <item name="android:background">@drawable/rounded_corners_focus</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:searchHintIcon">@android:color/transparent</item>
+        <item name="android:searchIcon">@drawable/search</item>
+        <item name="android:queryBackground">@null</item>
+    </style>
+
+    <style name="roundedImageViewRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 
 </resources>
