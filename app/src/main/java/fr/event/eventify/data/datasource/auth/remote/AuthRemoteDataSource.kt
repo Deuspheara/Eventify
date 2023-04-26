@@ -124,7 +124,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         awaitClose()
     }.flowOn(ioContext)
 
-
     override suspend fun signInWithEmail(
         email: String,
         password: String
@@ -157,7 +156,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 )
             }
         }
-
 
     override suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>> = flow {
         emit(Resource.Loading())
