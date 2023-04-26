@@ -12,7 +12,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/white_circle"
+        android:background="@drawable/circle_background"
         android:contentDescription="return button"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
 
     <Button
         android:id="@+id/bt_google_connect2"
-        style="@style/Button.White"
+        style="@style/Button_White"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -108,7 +108,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bt_google_connect2"
-        style="@style/Button.Red"/>
+        style="@style/Button_Red"/>
 
     <TextView
         android:id="@+id/tv_mdp_oublie"
@@ -136,5 +136,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_mdp_oublie"
-        style="@style/Button.Red"/>
+        style="@style/Button_Red"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
