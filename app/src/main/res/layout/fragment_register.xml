@@ -45,7 +45,7 @@
 
             <Button
                 android:id="@+id/bt_google_connect"
-                style="@style/Button.Red"
+                style="@style/Button.White"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
