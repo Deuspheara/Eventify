@@ -25,7 +25,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/white_circle"
+                android:background="@drawable/circle_background"
                 android:contentDescription="return button"
                 android:src="@drawable/arrow_back"
                 app:layout_constraintStart_toStartOf="parent"
@@ -42,6 +42,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/bt_create_event_return" />
 
+            <ImageView
+                android:id="@+id/img_create_event"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/calendar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_new_event" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_name_event"
                 android:layout_width="match_parent"
@@ -53,7 +67,8 @@
                 app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title_new_event">
+                app:layout_constraintTop_toBottomOf="@+id/img_create_event">
+
 
                 <EditText
                     android:id="@+id/tf_name_event"
@@ -67,6 +82,24 @@
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Spinner
+                android:id="@+id/sp_category"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+
+                android:spinnerMode="dropdown"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_name_event"
+                />
+<!--            android:background="@drawable/blue_outline"-->
+<!--            android:popupBackground="@drawable/blue_outline_white_background"-->
+<!--            tools:listitem="@layout/item_category"-->
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_location_event"
                 android:layout_width="match_parent"
@@ -78,7 +111,7 @@
                 app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_name_event">
+                app:layout_constraintTop_toBottomOf="@+id/sp_category">
 
                 <EditText
                     android:id="@+id/tf_location_event"
@@ -186,7 +219,7 @@
                     android:id="@+id/tf_description_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="300dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:ems="10"
@@ -196,11 +229,11 @@
 
             <Button
                 android:id="@+id/bt_create_event"
-                style="@style/Button.Red"
+                style="@style/Button_Red"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="32dp"
                 android:text="Créer l'événement"
