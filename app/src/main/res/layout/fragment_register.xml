@@ -20,16 +20,109 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageButton
+                android:id="@+id/bt_return"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/circle_background"
+                android:contentDescription="return button"
+                android:src="@drawable/arrow_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign-up"
+                android:text="Inscription"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="@+id/bt_return"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/bt_return" />
+
+            <Button
+                android:id="@+id/bt_google_connect"
+                style="@style/Button_White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginEnd="16dp"
+                android:text="Se connecter avec google"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                android:drawableEnd="@drawable/ic_google"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_profile"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="64dp"
+                android:clickable="true"
+                android:contentDescription="image profil"
+                android:focusable="auto"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+                app:layout_constraintTop_toBottomOf="@+id/bt_google_connect" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxBackgroundMode="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_profile">
+
+                <EditText
+                    android:id="@+id/tf_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/edit_text_selector"
+                    android:ems="10"
+
+                    android:hint="Nom"
+                    android:inputType="text"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxBackgroundMode="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_name">
+
+                <EditText
+                    android:id="@+id/tf_phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/edit_text_selector"
+                    android:ems="10"
+
+                    android:hint="Numéro de téléphone"
+                    android:inputType="phone"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_email"
@@ -58,7 +151,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_password"
+                android:id="@+id/input_layout_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -70,6 +163,32 @@
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_email">
 
                 <EditText
+                    android:id="@+id/tf_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/edit_text_selector"
+                    android:ems="10"
+
+                    android:hint="Nom d'utilisateur"
+                    android:inputType="text"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxBackgroundMode="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_username">
+
+                <EditText
                     android:id="@+id/tf_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,7 +197,7 @@
                     android:background="@drawable/edit_text_selector"
                     android:ems="10"
 
-                    android:hint="Password"
+                    android:hint="Mot de passe"
                     android:inputType="text|textPassword"
                     android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -104,36 +223,22 @@
                     android:background="@drawable/edit_text_selector"
                     android:ems="10"
 
-                    android:hint="Confirm password"
+                    android:hint="Confirmer le mot de passe"
                     android:inputType="text|textPassword"
                     android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/bt_google_connect"
-                style="@style/Button_Red"
+            <TextView
+                android:id="@+id/tv_terms"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:text="Se connecter avec google"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_photo_url" />
-
-            <TextView
-                android:id="@+id/tv_terms"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="64dp"
-                android:layout_marginEnd="16dp"
-                android:text="By continuing you agree to our term and conditions."
+                android:text="En continuant, vous acceptez nos termes et conditions d'utilisation."
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bt_google_connect" />
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_conf_pwd" />
 
             <Button
                 android:id="@+id/bt_register"
@@ -144,101 +249,11 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="32dp"
-                android:text="Register"
+                android:text="S'inscrire"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_terms" />
-
-            <ImageButton
-                android:id="@+id/bt_return"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/circle_background"
-                android:contentDescription="return button"
-                android:src="@drawable/arrow_back"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="64dp"
-                android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title">
-
-                <EditText
-                    android:id="@+id/tf_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
-                    android:ems="10"
-
-                    android:hint="Name"
-                    android:inputType="text"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_photo_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_conf_pwd">
-
-                <EditText
-                    android:id="@+id/tf_photo_url"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
-                    android:ems="10"
-
-                    android:hint="Photo url"
-                    android:inputType="text|textUri"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_name">
-
-                <EditText
-                    android:id="@+id/tf_phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
-                    android:ems="10"
-
-                    android:hint="Phone number"
-                    android:inputType="phone"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
