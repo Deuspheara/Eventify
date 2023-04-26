@@ -4,7 +4,7 @@
     <item>
         <shape>
             <solid
-                android:color="@color/white"/>
+                android:color="@color/input_background"/>
             <corners
                 android:radius="16dp"/>
         </shape>

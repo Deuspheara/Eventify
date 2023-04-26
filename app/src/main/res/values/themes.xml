@@ -5,7 +5,7 @@
         <item name="android:fontFamily">@font/inter</item>
         <!-- Primary color. -->
         <item name="colorPrimary">@color/red</item>
-        <item name="android:windowBackground">@color/light_grey</item>
+        <item name="android:windowBackground">@color/app_background</item>
         <item name="android:statusBarColor">@color/red</item>
 
         <item name="android:searchViewStyle">@style/Search_bar</item>
@@ -18,7 +18,8 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <style name="Button.Red" parent="Theme.Eventify">
+    <!-- Buttons theme. -->
+    <style name="Button_Red" parent="Theme.Eventify">
         <item name="cornerRadius">16dp</item>
         <item name="android:backgroundTint">@color/red</item>
         <item name="android:capitalize">sentences</item>
@@ -26,7 +27,7 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
-    <style name="Button.White" parent="Theme.Eventify">
+    <style name="Button_White" parent="Theme.Eventify">
         <item name="cornerRadius">16dp</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:capitalize">sentences</item>
@@ -34,7 +35,8 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
-    <style name="Textfield_red_stroke">
+    <!-- Input theme. -->
+    <style name="Textfield_red_stroke" parent="Widget.AppCompat.EditText">
         <item name="android:background">@drawable/edit_text_selector</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/hint_default</item>

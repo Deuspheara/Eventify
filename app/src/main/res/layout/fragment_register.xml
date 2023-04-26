@@ -111,6 +111,7 @@
 
             <Button
                 android:id="@+id/bt_google_connect"
+                style="@style/Button_Red"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -118,9 +119,9 @@
                 android:layout_marginEnd="16dp"
                 android:text="Se connecter avec google"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_photo_url"
-                style="@style/Button.Red"/>
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_photo_url" />
 
             <TextView
                 android:id="@+id/tv_terms"
@@ -136,6 +137,7 @@
 
             <Button
                 android:id="@+id/bt_register"
+                style="@style/Button_Red"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -146,8 +148,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_terms"
-                style="@style/Button.Red"/>
+                app:layout_constraintTop_toBottomOf="@+id/tv_terms" />
 
             <ImageButton
                 android:id="@+id/bt_return"
@@ -155,7 +156,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/white_circle"
+                android:background="@drawable/circle_background"
                 android:contentDescription="return button"
                 android:src="@drawable/arrow_back"
                 app:layout_constraintStart_toStartOf="parent"

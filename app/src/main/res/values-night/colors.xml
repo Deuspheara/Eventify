@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="app_background">#1E1E1E</color>
     <color name="black">#FF000000</color>
     <color name="hint_default">#808080</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="red">#E93347</color>
     <color name="orange">#FD5800</color>
     <color name="light_grey">#F0F0F0</color>
+    <color name="text_default">#FFFFFF</color>
+    <color name="input_background">#3C3C3C</color>
 </resources>
