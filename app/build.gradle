@@ -105,4 +105,6 @@ dependencies {
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     androidTestImplementation "androidx.room:room-testing:$roomVersion"
+
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 }

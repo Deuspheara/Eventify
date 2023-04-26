@@ -2,6 +2,8 @@ package fr.event.eventify.ui.register
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
@@ -20,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
 import fr.event.eventify.core.models.remote.RemoteUser
 import fr.event.eventify.databinding.FragmentRegisterBinding
+import fr.event.eventify.utils.ImageDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -45,11 +50,23 @@ class RegisterFragment : Fragment() {
             }
         }
 
+    private lateinit var startForProfileImageResult: ActivityResultLauncher<Intent>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentRegisterBinding.inflate(inflater, container, false)
+
+        startForProfileImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { fileUri ->
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, fileUri)
+                    val bitmap = ImageDecoder.decodeBitmap(source)
+                    binding.imgProfile.setImageBitmap(bitmap)
+                }
+            }
+        }
 
         binding.btRegister.setOnClickListener {
 
@@ -121,6 +138,10 @@ class RegisterFragment : Fragment() {
         binding.btGoogleConnect.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             googleSignInLauncher.launch(signInIntent)
+        }
+
+        binding.imgProfile.setOnClickListener{
+            ImageDialog.takePicture(startForProfileImageResult, this.requireActivity())
         }
 
         return binding.root
