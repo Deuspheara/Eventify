@@ -2,6 +2,7 @@ package fr.event.eventify.data.repository.auth
 
 import android.util.Log
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.auth.remote.RemoteUser
@@ -42,6 +43,13 @@ interface AuthRepository {
      * @return a [Flow] of [FirebaseUser]
      */
     suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>>
+
+    /**
+     * Check if user is connected
+     * @return a [Flow] of [Boolean]
+     * @see [FirebaseAuth.getCurrentUser]
+     */
+    suspend fun isUserConnected(): Flow<Boolean>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -95,6 +103,17 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.signInWithGoogle(credential)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while signing in with google, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun isUserConnected(): Flow<Boolean> {
+        return withContext(ioDispatcher) {
+            try {
+                authRemoteDataSource.isUserConnected()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while checking if user is connected, error: ${e.message}")
                 throw e
             }
         }

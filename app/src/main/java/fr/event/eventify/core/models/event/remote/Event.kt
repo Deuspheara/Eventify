@@ -1,6 +1,7 @@
 package fr.event.eventify.core.models.event.remote
 
 import com.google.gson.annotations.SerializedName
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 
 data class Event(
 
@@ -30,6 +31,9 @@ data class Event(
 
     @SerializedName("nbTickets")
     val nbTickets: Int?,
+
+    @SerializedName("participants")
+    val participants: List<String>?,
 
     @SerializedName("category")
     val categoryEvent: CategoryEvent?,
