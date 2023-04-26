@@ -2,8 +2,8 @@ package fr.event.eventify.core.models.event.remote
 
 import com.google.firebase.firestore.ServerTimestamp
 import com.google.gson.annotations.SerializedName
-import com.google.type.Date
 import fr.event.eventify.core.models.auth.remote.RemoteUser
+import java.util.Date
 
 data class Event(
 

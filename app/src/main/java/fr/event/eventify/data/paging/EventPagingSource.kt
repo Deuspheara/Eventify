@@ -23,10 +23,8 @@ import javax.inject.Inject
  * @see PagingSource
  */
 class EventPagingSource @Inject constructor(
-    private val getEvents: suspend(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?) -> Flow<Resource<List<Event>>>,
-    @DispatcherModule.DispatcherIO private val dispatcher: CoroutineDispatcher,
-    private val orderBy: FilterEvent?,
-    private val category: CategoryEvent?
+    private val getEvents: suspend(page: Int, limit: Int) -> Flow<Resource<List<Event>>>,
+    @DispatcherModule.DispatcherIO private val dispatcher: CoroutineDispatcher
 ) : PagingSource<Int, Event>() {
 
     private companion object {
@@ -45,7 +43,7 @@ class EventPagingSource @Inject constructor(
         return withContext(dispatcher){
             try {
                 val pageNumber = params.key ?: INITIAL_PAGE_NUMBER
-                val response = getEvents(pageNumber, PAGE_SIZE, orderBy, category).first()
+                val response = getEvents(pageNumber, PAGE_SIZE).first()
                 if (response is Resource.Success) {
                     LoadResult.Page(
                         data = response.data ?: emptyList(),

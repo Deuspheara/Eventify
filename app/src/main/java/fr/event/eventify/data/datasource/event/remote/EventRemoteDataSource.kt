@@ -2,6 +2,7 @@ package fr.event.eventify.data.datasource.event.remote
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.paging.PagingSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.core.OrderBy
@@ -9,6 +10,7 @@ import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
+import fr.event.eventify.data.paging.EventPagingSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +35,8 @@ interface EventRemoteDataSource {
      * @return a [Flow] of [Resource]
      */
     suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Flow<Resource<List<Event>>>
+
+    fun createCharacterPagingSource(orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<Int, Event>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -92,5 +96,17 @@ class EventRemoteDataSourceImpl @Inject constructor(
             throw e
         }
     }.flowOn(ioContext)
+
+    override fun createCharacterPagingSource(
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
+    ): PagingSource<Int, Event> {
+        return EventPagingSource(
+            getEvents = { page, limit, ->
+                getEvents(page, limit, orderBy, category)
+            },
+            dispatcher = ioContext,
+        )
+    }
 
 }

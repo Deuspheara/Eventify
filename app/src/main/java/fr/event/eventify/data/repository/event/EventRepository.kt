@@ -1,8 +1,13 @@
 package fr.event.eventify.data.repository.event
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
+import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.data.datasource.event.remote.EventRemoteDataSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,7 +25,10 @@ interface EventRepository {
      */
     suspend fun createEvent(event: Event): Flow<Resource<Event>>
 
-
+    suspend fun getEventPaginated(
+        orderBy: FilterEvent,
+        category: CategoryEvent
+    ): Flow<PagingData<Event>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -32,6 +40,12 @@ class EventRepositoryImpl @Inject constructor(
         private const val TAG = "EventRepository"
     }
 
+    /**
+     * Create a new event
+     * @param event the [Event] to create
+     * @return a [Flow] of [Resource]
+     * @see [EventRemoteDataSource.createEvent]
+     */
     override suspend fun createEvent(event: Event): Flow<Resource<Event>> {
        return withContext(ioDispatcher) {
            try {
@@ -41,6 +55,38 @@ class EventRepositoryImpl @Inject constructor(
                 throw e
            }
        }
+    }
+
+    /**
+     * Get all events paginated
+     * @param page the page to get
+     * @param limit the limit of events to get
+     * @return a [Flow] of [Resource]
+     * @see [EventRemoteDataSource.getEvents]
+     */
+    override suspend fun getEventPaginated(
+        orderBy: FilterEvent,
+        category: CategoryEvent
+    ): Flow<PagingData<Event>> {
+        return withContext(ioDispatcher) {
+            try {
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 20,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = {
+                        EventRemoteDataSource.createCharacterPagingSource(
+                            orderBy,
+                            category
+                        )
+                    }
+                ).flow
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while creating event with $orderBy and $category", e)
+                throw e
+            }
+        }
     }
 
 

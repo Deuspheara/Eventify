@@ -2,19 +2,20 @@ package fr.event.eventify.ui.home
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import dagger.hilt.android.AndroidEntryPoint
-import fr.event.eventify.R
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.FragmentHomeBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.Calendar
 
 
 @AndroidEntryPoint
@@ -53,15 +54,18 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             Log.d("HomeFragment", "onCreateView: $isConnect")
-            if(isConnect){
+            //if(isConnect){
                 Log.d("HomeFragment", "createEvent, isConnect: $isConnect")
+                val calendar: Calendar = Calendar.getInstance()
+                calendar.set(2023, Calendar.APRIL, 26, 15, 30, 0)
+                val specificDate: Date = calendar.time
                 viewModel.createEvent(
                     event= Event(
                         id = "test",
                         name = "test",
                         author = "test",
                         description = "test",
-                        date = "01/01/2021",
+                        date = specificDate,
                         location = Event.LocationEvent(
                             id = "test",
                             name = "test",
@@ -82,7 +86,7 @@ class HomeFragment : Fragment() {
                         )
                     )
                 )
-            }
+           // }
 
 
             viewModel.event.collectLatest { state ->
