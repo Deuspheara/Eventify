@@ -111,13 +111,14 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun getEventsPaginated(
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ) {
         _eventPaginated.value = EventPaginatedState(isLoading = true)
         try {
             viewModelScope.launch {
-                getEventsPaginatedUseCase(orderBy, category)
+                getEventsPaginatedUseCase(name, orderBy, category)
                     .cachedIn(viewModelScope)
                     .collect {
                     Log.d("HomeViewModel", "Got events: $it")

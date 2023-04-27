@@ -1,13 +1,12 @@
 package fr.event.eventify.data.datasource.event.remote
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.paging.PagingSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.core.OrderBy
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
@@ -20,8 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import org.w3c.dom.Document
 import javax.inject.Inject
 
 interface EventRemoteDataSource {
@@ -40,11 +37,12 @@ interface EventRemoteDataSource {
      */
     suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
 
-    fun createCharacterPagingSource(orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<DocumentSnapshot, Event>
+    fun createCharacterPagingSource( name: String?, orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<DocumentSnapshot, Event>
 
     suspend fun getEventsQuerySnapshot(
         lastSnapshot: DocumentSnapshot?,
         limit: Int,
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): QuerySnapshot
@@ -118,12 +116,13 @@ class EventRemoteDataSourceImpl @Inject constructor(
 
 
     override fun createCharacterPagingSource(
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): PagingSource<DocumentSnapshot, Event> {
         return EventPagingSource(
             getEvents = { lastSnapshot, limit, ->
-                getEventsQuerySnapshot(lastSnapshot, limit, orderBy, category)
+                getEventsQuerySnapshot(lastSnapshot, limit, name, orderBy, category)
             },
             dispatcher = ioContext
         )
@@ -132,22 +131,25 @@ class EventRemoteDataSourceImpl @Inject constructor(
     override suspend fun getEventsQuerySnapshot(
         lastSnapshot: DocumentSnapshot?,
         limit: Int,
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): QuerySnapshot {
-        val user = firebaseAuth.currentUser
-        if (user == null) {
-            throw IllegalStateException("User not connected")
-        }
+        val user = firebaseAuth.currentUser ?: throw IllegalStateException("User not connected")
 
-        val events = firebaseFirestore.collection("Events")
+        val query = firebaseFirestore.collection("Events")
             .orderBy(orderBy?.stringValue ?: FilterEvent.NAME.stringValue)
             .startAfter(lastSnapshot)
             .limit(limit.toLong())
-            .get()
-            .await()
 
-        return events
+        if (!name.isNullOrEmpty()) {
+            Log.d(TAG, "getEventsQuerySnapshot: $name")
+            return query.whereEqualTo("name", name).get().await()
+        }
+
+        Log.d(TAG, "getEventsQuerySnapshot: $category")
+        return query.get().await()
     }
+
 
 }
