@@ -1,4 +1,4 @@
-package fr.event.eventify.core.models.remote
+package fr.event.eventify.core.models.auth.remote
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,32 +1,21 @@
 package fr.event.eventify.ui.register
 
-import android.app.Activity
-import android.content.Intent
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.ActivityResultRegistry
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.event.eventify.R
 import fr.event.eventify.core.coroutine.DispatcherModule
-import fr.event.eventify.core.models.remote.RemoteUser
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.domain.auth.CreateFirebaseUserWithEmailUseCase
 import fr.event.eventify.domain.auth.CreateFirestoreUserUseCase
 import fr.event.eventify.domain.auth.SignInWithGoogleUseCase
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

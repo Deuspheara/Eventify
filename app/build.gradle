@@ -100,9 +100,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx:21.3.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.5.0'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
-
+    implementation 'com.google.firebase:firebase-storage-ktx'
     //room
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     androidTestImplementation "androidx.room:room-testing:$roomVersion"
+
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 }
