@@ -219,12 +219,12 @@
                     android:id="@+id/tf_description_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:ems="10"
                     android:hint="Description"
-                    android:inputType="text" />
+                    android:inputType="text|textMultiLine" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
