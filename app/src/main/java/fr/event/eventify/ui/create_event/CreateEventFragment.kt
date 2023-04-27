@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -18,6 +19,7 @@ import fr.event.eventify.R
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import dagger.hilt.android.AndroidEntryPoint
+import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.databinding.FragmentCreateEventBinding
 import fr.event.eventify.utils.ImageDialog
 import kotlinx.coroutines.flow.collectLatest
@@ -27,14 +29,12 @@ import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
-class CreateEventFragment : Fragment() {
-
 class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
     private lateinit var binding: FragmentCreateEventBinding
     private val viewModel: CreateEventViewModel by viewModels()
     private var cal = Calendar.getInstance()
-
+    private val categoryEvents = CategoryEvent.values().toList()
     private lateinit var startForEventImageResult: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,51 +54,73 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.imgCreateEvent.setOnClickListener{
-            ImageDialog.takePicture(startForEventImageResult, this.requireActivity(),640,0.5f,16f,9f)
+        binding.imgCreateEvent.setOnClickListener {
+            ImageDialog.takePicture(
+                startForEventImageResult,
+                this.requireActivity(),
+                640,
+                0.5f,
+                16f,
+                9f
+            )
         }
 
-        startForEventImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { fileUri ->
-                    val source = ImageDecoder.createSource(requireContext().contentResolver, fileUri)
-                    val bitmap = ImageDecoder.decodeBitmap(source)
-                    Log.d("CreateEventFragment", "Image selected")
-                    viewLifecycleOwner.lifecycle.coroutineScope.launch{
-                        viewModel.upload.collectLatest { state ->
-                            if (state.error?.isNotEmpty() == true) {
-                                state.error.let {
-                                    Log.e("CreateEventFragment", "Error while uploading image $it")
+        startForEventImageResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    result.data?.data?.let { fileUri ->
+                        val source =
+                            ImageDecoder.createSource(requireContext().contentResolver, fileUri)
+                        val bitmap = ImageDecoder.decodeBitmap(source)
+                        Log.d("CreateEventFragment", "Image selected")
+                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                            viewModel.upload.collectLatest { state ->
+                                if (state.error?.isNotEmpty() == true) {
+                                    state.error.let {
+                                        Log.e(
+                                            "CreateEventFragment",
+                                            "Error while uploading image $it"
+                                        )
+                                    }
+                                }
+                                state.isLoading.let {
+
+                                }
+                                state.data?.let {
+                                    Log.d("CreateEventFragment", "Image uploaded: $it")
                                 }
                             }
-                            state.isLoading.let {
-
-                            }
-                            state.data?.let {
-                                Log.d("CreateEventFragment", "Image uploaded: $it")
-                            }
                         }
+
+                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                            viewModel.uploadPhoto(bitmap)
+                        }
+
+
+                        binding.imgCreateEvent.setImageBitmap(bitmap)
                     }
-
-                    viewLifecycleOwner.lifecycle.coroutineScope.launch{
-                        viewModel.uploadPhoto(bitmap)
-                    }
-
-
-                    binding.imgCreateEvent.setImageBitmap(bitmap)
                 }
             }
+
+        binding.tfDateEvent.setOnClickListener {
+            DatePickerDialog(
+                this.requireContext(), R.style.datepicker, this, cal.get(Calendar.YEAR), cal.get(
+                    Calendar.MONTH
+                ), cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
         }
 
-        binding.tfDateEvent.setOnClickListener{
-            DatePickerDialog(this.requireContext(), R.style.datepicker, this, cal.get(Calendar.YEAR), cal.get(
-                Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
-        }
-
+        val adapter = CategorySpinnerAdapter(this.requireContext())
+        binding.spCategory.adapter = adapter
     }
 
     private fun updateDateInView() {
-        binding.tfDateEvent.setText(SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(cal.time))
+        binding.tfDateEvent.setText(
+            SimpleDateFormat(
+                "dd MMM yyyy",
+                Locale.getDefault()
+            ).format(cal.time)
+        )
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
@@ -107,6 +129,4 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         updateDateInView()
     }
-
-
 }

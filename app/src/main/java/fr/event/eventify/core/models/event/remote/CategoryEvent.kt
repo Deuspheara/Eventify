@@ -1,23 +1,25 @@
 package fr.event.eventify.core.models.event.remote
 
-enum class CategoryEvent {
+import fr.event.eventify.R
+
+enum class CategoryEvent(val categoryName: String, val icon: Int) {
     /** Concert */
-    CONCERT,
+    CONCERT("Concert", R.drawable.empty_star),
 
     /** Festival */
-    FESTIVAL,
+    FESTIVAL("Festival", R.drawable.arrow_back),
 
     /** Sport */
-    SPORT,
+    SPORT("Sports", R.drawable.pingouin),
 
     /** Theater */
-    THEATER,
+    THEATER("Theater", R.drawable.calendar),
 
     /** Exhibition */
-    EXHIBITION,
+    EXHIBITION("Exhibition", R.drawable.eventify),
 
     /** Other */
-    OTHER;
+    OTHER("Others", R.drawable.parameter);
 
     companion object {
         /**
@@ -48,7 +50,7 @@ enum class CategoryEvent {
                 SPORT -> "Sport"
                 THEATER -> "Theater"
                 EXHIBITION -> "Exhibition"
-                else -> "Other"
+                else -> "Others"
             }
         }
     }
