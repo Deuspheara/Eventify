@@ -85,8 +85,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
-
+            android:background="@drawable/rounded_corners"
             android:paddingHorizontal="4dp"
+            android:textColorHint="@color/input_text"
             android:paddingVertical="2dp"
             android:text="15.00€"
             android:textColor="@color/text_default"

@@ -60,6 +60,7 @@
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corners"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
@@ -72,8 +73,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Montant TTC"
+            android:layout_marginTop="8dp"
+            android:text="Montant TTC :"
+            android:textColor="@color/input_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -84,7 +86,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Total"
+            android:text="Total :"
+            android:textColor="@color/input_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -93,9 +96,10 @@
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="TextView"
+            android:textColor="@color/input_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -107,6 +111,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:text="TextView"
+            android:textColor="@color/input_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
@@ -149,13 +154,19 @@
 
         <TextView
             android:id="@+id/tv_ticket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_corners"
+            android:gravity="center"
             android:text="1"
+            android:textColor="@color/input_text"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bt_plus"
+            app:layout_constraintStart_toEndOf="@+id/bt_minus"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <ImageButton
@@ -167,7 +178,7 @@
             android:src="@drawable/plus"
             app:layout_constraintBottom_toBottomOf="@+id/tv_ticket"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_ticket"
+            app:layout_constraintStart_toEndOf="@+id/bt_minus"
             app:layout_constraintTop_toTopOf="@+id/tv_ticket" />
 
         <ImageButton
@@ -178,7 +189,7 @@
             android:contentDescription="return button"
             android:src="@drawable/minus"
             app:layout_constraintBottom_toBottomOf="@+id/tv_ticket"
-            app:layout_constraintEnd_toStartOf="@+id/tv_ticket"
+            app:layout_constraintEnd_toStartOf="@+id/bt_plus"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_ticket" />
     </androidx.constraintlayout.widget.ConstraintLayout>

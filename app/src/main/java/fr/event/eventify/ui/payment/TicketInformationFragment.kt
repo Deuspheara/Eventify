@@ -40,6 +40,10 @@ class TicketInformationFragment : Fragment() {
             }
         }
 
+        binding.btReturn.setOnClickListener {
+            activity?.finish()
+        }
+
         binding.buttonNext.setOnClickListener {
             findNavController().navigate(R.id.action_ticketInformationFragment_to_participantFragment, bundleOf("PARTICIPANT" to numberOfTicket))
         }
