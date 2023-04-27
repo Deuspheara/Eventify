@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.register.RegisterFragment">
-
+    tools:context=".ui.createevent.CreateEventFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,7 +20,7 @@
             android:orientation="vertical">
 
             <ImageButton
-                android:id="@+id/bt_return"
+                android:id="@+id/bt_create_event_return"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="16dp"
@@ -33,228 +32,215 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/tv_title_new_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Inscription"
+                android:text="Nouvel événement"
                 android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="@+id/bt_return"
+                app:layout_constraintBottom_toBottomOf="@+id/bt_create_event_return"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/bt_return" />
+                app:layout_constraintTop_toTopOf="@+id/bt_create_event_return" />
 
-            <Button
-                android:id="@+id/bt_google_connect"
-                style="@style/Button_White"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/img_create_event"
+                android:layout_width="350dp"
+                android:layout_height="200dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="64dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:drawableEnd="@drawable/ic_google"
-                android:text="Se connecter avec google"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/img_profile"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="64dp"
                 android:clickable="true"
-                android:contentDescription="image profile"
-                android:padding="2dp"
-                android:src="@drawable/profile"
+                android:contentDescription="event picture"
+                android:focusable="true"
+                android:src="@drawable/calendar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bt_google_connect"
-                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                app:strokeColor="@color/red"
-                app:strokeWidth="2dp" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_new_event" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_name"
+                android:id="@+id/input_layout_name_event"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_profile">
+                app:layout_constraintTop_toBottomOf="@+id/img_create_event">
+
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_name"
+                    android:id="@+id/tf_name_event"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
-                    android:hint="Nom"
-                    android:inputType="text"
-                    android:textColor="@color/black" />
+                    android:hint="Nom de l'événement"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <Spinner
+                android:id="@+id/sp_category"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_corners_focus"
+                android:popupBackground="@drawable/rounded_corners_focus"
+                tools:listitem="@layout/item_spinner_category"
+                android:spinnerMode="dropdown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_name_event"
+                />
+
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_phone"
+                android:id="@+id/input_layout_location_event"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_name">
+                app:layout_constraintTop_toBottomOf="@+id/sp_category">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_phone_number"
+                    android:id="@+id/tf_location_event"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
-                    android:hint="Numéro de téléphone"
-                    android:inputType="phone"
-                    android:textColor="@color/black" />
+                    android:hint="Lieu"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_email"
-                android:layout_width="match_parent"
+                android:id="@+id/input_layout_price_event"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_phone">
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/tf_price_event"
+                    style="@style/Textfield_red_stroke"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
-                    android:hint="Email"
-                    android:inputType="text|textEmailAddress"
-                    android:textColor="@color/black" />
+                    android:hint="Prix"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_email">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
-                    android:ems="10"
-
-                    android:hint="Nom d'utilisateur"
-                    android:inputType="text"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_username">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
-                    android:ems="10"
-
-                    android:hint="Mot de passe"
-                    android:inputType="text|textPassword"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_conf_pwd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_password">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_confirm_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
-                    android:ems="10"
-
-                    android:hint="Confirmer le mot de passe"
-                    android:inputType="text|textPassword"
-                    android:textColor="@color/black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/tv_terms"
+                android:id="@+id/input_layout_places_event"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:text="En continuant, vous acceptez nos termes et conditions d'utilisation."
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/input_layout_price_event"
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tf_places_event"
+                    style="@style/Textfield_red_stroke"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:ems="10"
+                    android:hint="Nombre de tickets"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_date_event"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_conf_pwd" />
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_price_event">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tf_date_event"
+                    style="@style/Textfield_red_stroke"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:ems="10"
+                    android:hint="Date"
+                    android:inputType="text|datetime"
+                    android:drawableEnd="@drawable/calendar"
+                    android:clickable="true"
+                    android:focusable="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_description_event"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_date_event">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tf_description_event"
+                    style="@style/Textfield_red_stroke"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:ems="10"
+                    android:hint="Description"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/bt_register"
+                android:id="@+id/bt_create_event"
                 style="@style/Button_Red"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="32dp"
-                android:text="S'inscrire"
+                android:text="Créer l'événement"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_terms" />
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_description_event" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
