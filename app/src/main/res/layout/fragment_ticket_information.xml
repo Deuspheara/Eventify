@@ -10,13 +10,14 @@
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="200dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/logo_gradient"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/bt_return2"
+        android:id="@+id/bt_return"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
@@ -62,7 +63,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/button_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -112,14 +113,16 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_next"
+        style="@style/Button_Red"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:drawableEnd="@drawable/arrow_next"
+        android:drawableTint="@color/white"
         android:text="Étape suivante"
-        style="@style/Button_Red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

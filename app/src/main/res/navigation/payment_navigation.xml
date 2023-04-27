@@ -9,5 +9,14 @@
         android:id="@+id/ticketInformationFragment"
         android:name="fr.event.eventify.ui.payment.TicketInformationFragment"
         android:label="fragment_ticket_information"
-        tools:layout="@layout/fragment_ticket_information" />
+        tools:layout="@layout/fragment_ticket_information" >
+        <action
+            android:id="@+id/action_ticketInformationFragment_to_participantFragment"
+            app:destination="@id/participantFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/participantFragment"
+        android:name="fr.event.eventify.ui.payment.ParticipantFragment"
+        android:label="fragment_participant"
+        tools:layout="@layout/fragment_participant" />
 </navigation>
