@@ -10,6 +10,8 @@ import dagger.hilt.components.SingletonComponent
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.data.datasource.auth.remote.AuthRemoteDataSource
 import fr.event.eventify.data.datasource.auth.remote.AuthRemoteDataSourceImpl
+import fr.event.eventify.data.datasource.event.remote.EventRemoteDataSource
+import fr.event.eventify.data.datasource.event.remote.EventRemoteDataSourceImpl
 import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
@@ -22,5 +24,8 @@ abstract class DataSourceModule {
         impl: AuthRemoteDataSourceImpl
     ): AuthRemoteDataSource
 
-
+    @Binds
+    abstract fun bindCharacterRemoteDataSource(
+        impl: EventRemoteDataSourceImpl
+    ): EventRemoteDataSource
 }
