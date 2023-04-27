@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.homeFragment)
                     true
                 }
-                R.id.registerFragment -> {
-                    navController.navigate(R.id.registerFragment)
+                R.id.createEventFragment -> {
+                    navController.navigate(R.id.createEventFragment)
                     true
                 }
                 R.id.connexionFragment -> {

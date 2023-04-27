@@ -5,11 +5,11 @@
         android:icon="@drawable/home"
         android:title="@string/home" />
     <item
-        android:id="@+id/connexionFragment"
+        android:id="@+id/createEventFragment"
         android:icon="@drawable/plus"
         android:title="@string/add_events" />
     <item
-        android:id="@+id/registerFragment"
+        android:id="@+id/connexionFragment"
         android:icon="@drawable/filled_star"
         android:title="@string/favorites" />
 </menu>
