@@ -85,7 +85,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_profile">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_name">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_phone_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_phone">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_email">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_username">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_password">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_confirm_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
