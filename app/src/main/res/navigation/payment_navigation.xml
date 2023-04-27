@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/payment_navigation"
+    app:startDestination="@id/ticketInformationFragment">
+
+    <fragment
+        android:id="@+id/ticketInformationFragment"
+        android:name="fr.event.eventify.ui.payment.TicketInformationFragment"
+        android:label="fragment_ticket_information"
+        tools:layout="@layout/fragment_ticket_information" />
+</navigation>
