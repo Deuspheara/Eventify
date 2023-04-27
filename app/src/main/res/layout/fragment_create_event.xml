@@ -44,14 +44,14 @@
 
             <ImageView
                 android:id="@+id/img_create_event"
-                android:layout_width="200dp"
+                android:layout_width="350dp"
                 android:layout_height="200dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:clickable="true"
-                android:focusable="true"
                 android:contentDescription="event picture"
+                android:focusable="true"
                 android:src="@drawable/calendar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +71,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/img_create_event">
 
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_name_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sp_category">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_location_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
@@ -137,7 +137,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_price_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="100dp"
@@ -162,7 +162,7 @@
                 app:layout_constraintStart_toEndOf="@id/input_layout_price_event"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_places_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
@@ -187,7 +187,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_price_event">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_date_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
@@ -215,7 +215,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_date_event">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_description_event"
                     style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"

@@ -42,7 +42,7 @@ class CreateEventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.imgCreateEvent.setOnClickListener{
-            ImageDialog.takePicture(startForEventImageResult, this.requireActivity())
+            ImageDialog.takePicture(startForEventImageResult, this.requireActivity(),640,0.5f,16f,9f)
         }
 
         startForEventImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
