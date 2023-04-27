@@ -1,4 +1,4 @@
-package fr.event.eventify.core.models.local
+package fr.event.eventify.core.models.auth.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

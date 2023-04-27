@@ -1,29 +1,21 @@
 package fr.event.eventify.data.datasource.auth.remote
 
-import android.app.Activity
-import android.app.Application
 import android.util.Log
-import androidx.activity.result.ActivityResultRegistryOwner
-import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import fr.event.eventify.core.coroutine.DispatcherModule
-import fr.event.eventify.core.models.remote.RemoteUser
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -58,11 +50,17 @@ interface AuthRemoteDataSource {
      */
     suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>>
 
+    /**
+     * Check if user is connected
+     * @return a [Flow] of [Boolean]
+     * @see [FirebaseAuth.getCurrentUser]
+     */
+    suspend fun isUserConnected(): Flow<Boolean>
+
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
-    private val application: Application,
-    @DispatcherModule.DispatcherIO private val ioContext : CoroutineDispatcher,
+    @DispatcherModule.DispatcherIO private val ioContext: CoroutineDispatcher,
     private val firebaseAuth: FirebaseAuth,
     private val firebaseFirestore: FirebaseFirestore
 ) : AuthRemoteDataSource {
@@ -101,7 +99,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             }
         }
 
-    override suspend fun createFirestoreUser(remoteUser: RemoteUser): Flow<Resource<RemoteUser>> = callbackFlow {
+    override suspend fun createFirestoreUser(remoteUser: RemoteUser): Flow<Resource<RemoteUser>> = callbackFlow<Resource<RemoteUser>> {
         trySend(Resource.Loading())
         Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
         try {
@@ -124,14 +122,12 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             throw e
         }
         awaitClose()
-    }
-
+    }.flowOn(ioContext)
 
     override suspend fun signInWithEmail(
         email: String,
         password: String
-    ): Flow<Resource<FirebaseUser>> {
-return flow {
+    ): Flow<Resource<FirebaseUser>> = flow {
             emit(
                 Resource.Loading()
             )
@@ -147,7 +143,7 @@ return flow {
                     )
                 } else {
                     emit(
-                        Resource.Success(data = result.user!!)
+                        Resource.Success(result.user!!)
                     )
                 }
             } catch (e: Exception) {
@@ -160,7 +156,6 @@ return flow {
                 )
             }
         }
-    }
 
     override suspend fun signInWithGoogle(credential: AuthCredential): Flow<Resource<FirebaseUser>> = flow {
         emit(Resource.Loading())
@@ -176,6 +171,22 @@ return flow {
             emit(Resource.Error(message = "Error while authenticating with Firebase"))
             throw e
         }
-    }
+    }.flowOn(ioContext)
 
+    override suspend fun isUserConnected(): Flow<Boolean> = flow {
+        try {
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                Log.d(TAG, "User is not connected")
+                emit(false)
+            } else {
+                Log.d(TAG, "User is connected")
+                emit(true)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while checking if user is connected: $e")
+            emit(false)
+            throw e
+        }
+    }.flowOn(ioContext)
 }

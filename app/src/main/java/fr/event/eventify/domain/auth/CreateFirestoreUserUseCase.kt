@@ -2,7 +2,7 @@ package fr.event.eventify.domain.auth
 
 import android.util.Log
 import fr.event.eventify.core.coroutine.DispatcherModule
-import fr.event.eventify.core.models.remote.RemoteUser
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.data.repository.auth.AuthRepository
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
