@@ -1,5 +1,7 @@
 package fr.event.eventify.core.models.event.remote
 
+import fr.event.eventify.R
+
 enum class CategoryEvent {
     /** Concert */
     CONCERT,
@@ -25,31 +27,32 @@ enum class CategoryEvent {
          * @param category the string to convert
          * @return the category
          */
-        fun fromString(category: String): CategoryEvent {
+        fun toString(category: CategoryEvent): String {
+
             return when (category) {
-                "Concert" -> CONCERT
-                "Festival" -> FESTIVAL
-                "Sport" -> SPORT
-                "Theater" -> THEATER
-                "Exhibition" -> EXHIBITION
-                else -> OTHER
+                CONCERT -> "concert"
+                FESTIVAL -> "festival"
+                SPORT -> "sport"
+                THEATER -> "theater"
+                EXHIBITION -> "exhibition"
+                else -> "other"
             }
         }
 
-        /**
-         * Get the string from a category
-         * @param categoryEvent the category to convert
-         * @return the string
-         */
-        fun toString(categoryEvent: CategoryEvent): String {
+        //return R.drawable.ic_music
+        fun toIcon(categoryEvent: CategoryEvent): Int {
             return when (categoryEvent) {
-                CONCERT -> "Concert"
-                FESTIVAL -> "Festival"
-                SPORT -> "Sport"
-                THEATER -> "Theater"
-                EXHIBITION -> "Exhibition"
-                else -> "Other"
+                CONCERT -> R.drawable.calendar
+                FESTIVAL -> R.drawable.eventify
+                SPORT -> R.drawable.eventify
+                THEATER -> R.drawable.eventify
+                EXHIBITION -> R.drawable.eventify
+                else -> R.drawable.eventify
             }
         }
     }
 }
+val CategoryEvent.stringValue: String
+    get() = CategoryEvent.toString(this)
+val CategoryEvent.iconValue : Int
+    get() = CategoryEvent.toIcon(this)
