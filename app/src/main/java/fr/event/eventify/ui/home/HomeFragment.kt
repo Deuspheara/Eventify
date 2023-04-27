@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.paging.map
@@ -26,7 +27,7 @@ import java.util.Calendar
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
    private lateinit var binding: FragmentHomeBinding
-   private val viewModel: HomeViewModel by viewModels()
+   private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var pagingAdapter: EventPagingAdapter
     private var isConnect = false
     override fun onCreateView(

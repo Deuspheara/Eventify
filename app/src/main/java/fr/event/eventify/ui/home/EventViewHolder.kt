@@ -24,14 +24,46 @@ class EventViewHolder private constructor(
     }
 
     fun bind(event: Event) {
-
+        val isCountParticipantNull = event.participants?.count() == null
 
         binding.apply {
             tvName.text = event.name
             tvCategory.text = event.categoryEvent?.name
-            tvHour.text = "11h11"
+            tvHour.text = event.date?.let {
+                // jeudi 1 janvier 12h00 in french
+                val date = LocalDateTime.ofInstant(it.toDate().toInstant(), ZoneId.systemDefault())
+                val frenchDay = when (date.dayOfWeek.toString()) {
+                    "MONDAY" -> "Lundi"
+                    "TUESDAY" -> "Mardi"
+                    "WEDNESDAY" -> "Mercredi"
+                    "THURSDAY" -> "Jeudi"
+                    "FRIDAY" -> "Vendredi"
+                    "SATURDAY" -> "Samedi"
+                    "SUNDAY" -> "Dimanche"
+                    else -> "Lundi"
+                }
+                val frenchMonth = when (date.month.toString()) {
+                    "JANUARY" -> "Janvier"
+                    "FEBRUARY" -> "Février"
+                    "MARCH" -> "Mars"
+                    "APRIL" -> "Avril"
+                    "MAY" -> "Mai"
+                    "JUNE" -> "Juin"
+                    "JULY" -> "Juillet"
+                    "AUGUST" -> "Août"
+                    "SEPTEMBER" -> "Septembre"
+                    "OCTOBER" -> "Octobre"
+                    "NOVEMBER" -> "Novembre"
+                    "DECEMBER" -> "Décembre"
+                    else -> "Janvier"
+                }
+                "$frenchDay ${date.dayOfMonth} $frenchMonth ${date.hour}h${date.minute}"
+
+
+
+            }
             tvPlace.text = event.location?.name
-            tvDate.text = "11/11"
+            tvNbPeople.text = (if (isCountParticipantNull) "0" else event.participants?.count().toString()) + '/' + event.nbTickets.toString()
             tvPrice.text = event.ticketPrice?.amount.toString() + "€"
             ivEvent.load(event.image){
                 placeholder(R.drawable.app_icon)
