@@ -3,6 +3,8 @@ package fr.event.eventify.data.paging
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.google.firebase.firestore.ktx.toObjects
 
 /**
  * This class is to create a paging source for the events
@@ -25,9 +28,9 @@ import javax.inject.Inject
  * @see PagingSource
  */
 class EventPagingSource @Inject constructor(
-    private val getEvents: suspend (page: Int, limit: Int) -> Resource<List<Event>>,
+    private val getEvents: suspend (lastSnapshot: DocumentSnapshot?, limit: Int) -> QuerySnapshot,
     @DispatcherModule.DispatcherIO private val dispatcher: CoroutineDispatcher
-) : PagingSource<Int, Event>() {
+) : PagingSource<DocumentSnapshot, Event>() {
 
     private companion object {
         private const val INITIAL_PAGE_NUMBER = 0
@@ -41,38 +44,35 @@ class EventPagingSource @Inject constructor(
      * @return a [LoadResult]
      * @see LoadResult
      */
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Event> {
-        return withContext(dispatcher){
-            try {
-                val pageNumber = params.key ?: INITIAL_PAGE_NUMBER
-                val events = getEvents(pageNumber, PAGE_SIZE)
-                Log.d(TAG, "load: $events")
-                if (events == null) {
-                    LoadResult.Error(Exception("No more events available"))
-                } else {
-                    when (events) {
-                        is Resource.Success -> {
-                            val data = events.data ?: emptyList()
-                            Log.d(TAG, "load: $data")
-                            LoadResult.Page(
-                                data = data,
-                                prevKey = if (pageNumber == INITIAL_PAGE_NUMBER) null else pageNumber - 1,
-                                nextKey = if (data.isEmpty()) null else pageNumber + 1
-                            )
-                        }
-                        is Resource.Loading -> LoadResult.Page(
-                            data = emptyList(),
-                            prevKey = null,
-                            nextKey = null
-                        )
-                        is Resource.Error -> LoadResult.Error(Exception(events.message))
-                    }
-                }
-            } catch (e: Exception) {
-                LoadResult.Error(e)
-            }
+    override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, Event> {
+        return try {
+            val lastSnapshot = params.key
+
+            // Step 1
+            val eventsResource = getEvents(
+                lastSnapshot,
+                params.loadSize
+            )
+
+            // Step 2
+            val events = eventsResource.toObjects<Event>()
+
+            // Step 3
+            val nextKey = eventsResource.documents.lastOrNull()
+
+            // Step 4
+            LoadResult.Page(
+                data = events,
+                prevKey = null,
+                nextKey = nextKey
+            )
+
+        } catch (e: Exception) {
+            LoadResult.Error(e)
         }
     }
+
+
 
 
 
@@ -83,10 +83,12 @@ class EventPagingSource @Inject constructor(
      * @return the refresh key
      * @see PagingState
      */
-    override fun getRefreshKey(state: PagingState<Int, Event>): Int? {
+
+    override fun getRefreshKey(state: PagingState<DocumentSnapshot, Event>): DocumentSnapshot? {
         return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+            state.closestPageToPosition(anchorPosition)?.prevKey
         }
+
     }
+
 }

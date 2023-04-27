@@ -1,6 +1,7 @@
 package fr.event.eventify.domain.event
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.rpc.context.AttributeContext
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.event.remote.CategoryEvent

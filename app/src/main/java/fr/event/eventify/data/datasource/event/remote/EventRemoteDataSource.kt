@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.paging.PagingSource
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.core.OrderBy
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.event.remote.CategoryEvent
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Document
 import javax.inject.Inject
 
 interface EventRemoteDataSource {
@@ -37,7 +40,14 @@ interface EventRemoteDataSource {
      */
     suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
 
-    fun createCharacterPagingSource(orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<Int, Event>
+    fun createCharacterPagingSource(orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<DocumentSnapshot, Event>
+
+    suspend fun getEventsQuerySnapshot(
+        lastSnapshot: DocumentSnapshot?,
+        limit: Int,
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
+    ): QuerySnapshot
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -79,14 +89,13 @@ class EventRemoteDataSourceImpl @Inject constructor(
         category: CategoryEvent?
     ): Resource<List<Event>> {
         try {
-            Log.d(TAG, "Getting events page $page with limit $limit")
             val user = firebaseAuth.currentUser
             if (user == null) {
                 return Resource.Error(message = "User not connected")
             } else {
                 val events = firebaseFirestore.collection("Events")
                 .orderBy(orderBy?.stringValue ?: FilterEvent.NAME.stringValue)
-                .startAfter(page.toLong() * limit)
+                .startAfter(page)
                 .limit(limit.toLong())
                     .get()
                     .await()
@@ -106,16 +115,39 @@ class EventRemoteDataSourceImpl @Inject constructor(
 
 
 
+
+
     override fun createCharacterPagingSource(
         orderBy: FilterEvent?,
         category: CategoryEvent?
-    ): PagingSource<Int, Event> {
+    ): PagingSource<DocumentSnapshot, Event> {
         return EventPagingSource(
-            getEvents = { page, limit, ->
-                getEvents(page, limit, orderBy, category)
+            getEvents = { lastSnapshot, limit, ->
+                getEventsQuerySnapshot(lastSnapshot, limit, orderBy, category)
             },
             dispatcher = ioContext
         )
+    }
+
+    override suspend fun getEventsQuerySnapshot(
+        lastSnapshot: DocumentSnapshot?,
+        limit: Int,
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
+    ): QuerySnapshot {
+        val user = firebaseAuth.currentUser
+        if (user == null) {
+            throw IllegalStateException("User not connected")
+        }
+
+        val events = firebaseFirestore.collection("Events")
+            .orderBy(orderBy?.stringValue ?: FilterEvent.NAME.stringValue)
+            .startAfter(lastSnapshot)
+            .limit(limit.toLong())
+            .get()
+            .await()
+
+        return events
     }
 
 }
