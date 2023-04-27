@@ -25,10 +25,25 @@ interface EventRepository {
      */
     suspend fun createEvent(event: Event): Flow<Resource<Event>>
 
+    /**
+     * Get all events paginated
+     * @param page the page to get
+     * @param limit the limit of events to get
+     * @return a [Flow] of [Resource]
+     */
     suspend fun getEventPaginated(
-        orderBy: FilterEvent,
-        category: CategoryEvent
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
     ): Flow<PagingData<Event>>
+
+    /**
+     * Get all events
+     * @param page the page to get
+     * @param limit the limit of events to get
+     * @return a [Flow] of [Resource]
+     * @see [EventRemoteDataSource.getEvents]
+     */
+    suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -51,8 +66,8 @@ class EventRepositoryImpl @Inject constructor(
            try {
                EventRemoteDataSource.createEvent(event)
            } catch (e: Exception) {
-                  Log.e(TAG, "Error while creating event with $event", e)
-                throw e
+               Log.e(TAG, "Error while creating event with $event", e)
+               throw e
            }
        }
     }
@@ -65,8 +80,8 @@ class EventRepositoryImpl @Inject constructor(
      * @see [EventRemoteDataSource.getEvents]
      */
     override suspend fun getEventPaginated(
-        orderBy: FilterEvent,
-        category: CategoryEvent
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
     ): Flow<PagingData<Event>> {
         return withContext(ioDispatcher) {
             try {
@@ -84,6 +99,22 @@ class EventRepositoryImpl @Inject constructor(
                 ).flow
             } catch (e: Exception) {
                 Log.e(TAG, "Error while creating event with $orderBy and $category", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getEvents(
+        page: Int,
+        limit: Int,
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
+    ): Resource<List<Event>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getEvents(page, limit, orderBy, category)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting events with $orderBy and $category", e)
                 throw e
             }
         }

@@ -1,80 +1,78 @@
 package fr.event.eventify.core.models.event.remote
 
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
 import com.google.gson.annotations.SerializedName
-import fr.event.eventify.core.models.auth.remote.RemoteUser
-import java.util.Date
 
 data class Event(
-
+    @DocumentId
     @SerializedName("uuid")
-    val id: String,
+    var id: String = "",
 
     @SerializedName("name")
-    val name: String?,
+    val name: String? = null,
 
     @SerializedName("authorUuid")
-    val author: String?,
+    val author: String? = null,
 
     @SerializedName("description")
-    val description: String?,
+    val description: String? = null,
 
     @ServerTimestamp
     @SerializedName("date")
-    val date: Date?,
+    val date: Timestamp? = null,
 
     @SerializedName("location")
-    val location: LocationEvent?,
+    val location: LocationEvent? = null,
 
     @SerializedName("image")
-    val image: String?,
+    val image: String? = null,
 
     @SerializedName("ticketPrice")
-    val ticketPrice: PriceEvent?,
+    val ticketPrice: PriceEvent? = null,
 
     @SerializedName("nbTickets")
-    val nbTickets: Int?,
+    val nbTickets: Int? = null,
 
     @SerializedName("participants")
-    val participants: List<String>?,
+    val participants: List<String>? = null,
 
     @SerializedName("category")
-    val categoryEvent: CategoryEvent?,
+    val categoryEvent: CategoryEvent? = null,
 ){
+    // Nested classes
     data class LocationEvent(
-
         @SerializedName("uuid")
-        val id: String,
+        val id: String = "",
 
         @SerializedName("name")
-        val name: String,
+        val name: String = "",
 
         @SerializedName("address")
-        val address: String?,
+        val address: String? = null,
 
         @SerializedName("city")
-        val city: String?,
+        val city: String? = null,
 
         @SerializedName("zip_code")
-        val zipCode: String?,
+        val zipCode: String? = null,
 
         @SerializedName("country")
-        val country: String?,
+        val country: String? = null,
 
         @SerializedName("latitude")
-        val latitude: Double?,
+        val latitude: Double? = null,
 
         @SerializedName("longitude")
-        val longitude: Double?,
+        val longitude: Double? = null,
     )
 
     data class PriceEvent(
-
         @SerializedName("currency")
-        val currency: String?,
+        val currency: String? = null,
 
         @SerializedName("amount")
-        val amount: Double?,
+        val amount: Double? = null,
     )
-
 }

@@ -13,8 +13,9 @@ enum class FilterEvent {
          */
         fun fromString(filter: String): FilterEvent {
             return when (filter) {
-                "Date" -> DATE
-                "Price" -> PRICE
+                "date" -> DATE
+                "price" -> PRICE
+                "name" -> NAME
                 else -> NAME
             }
         }
@@ -26,12 +27,16 @@ enum class FilterEvent {
          */
         fun toString(filterEvent: FilterEvent): String {
             return when (filterEvent) {
-                NAME -> "Name"
-                DATE -> "Date"
-                PRICE -> "Price"
-                else -> "Name"
+                NAME -> "name"
+                DATE -> "date"
+                PRICE -> "price"
+                else -> "name"
             }
         }
     }
 
 }
+
+//extension enum to have string value
+val FilterEvent.stringValue: String
+    get() = FilterEvent.toString(this)

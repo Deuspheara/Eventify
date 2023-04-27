@@ -11,7 +11,9 @@ import fr.event.eventify.data.repository.event.EventRepository
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -23,7 +25,7 @@ import javax.inject.Inject
  * @see PagingSource
  */
 class EventPagingSource @Inject constructor(
-    private val getEvents: suspend(page: Int, limit: Int) -> Flow<Resource<List<Event>>>,
+    private val getEvents: suspend (page: Int, limit: Int) -> Resource<List<Event>>,
     @DispatcherModule.DispatcherIO private val dispatcher: CoroutineDispatcher
 ) : PagingSource<Int, Event>() {
 
@@ -43,22 +45,37 @@ class EventPagingSource @Inject constructor(
         return withContext(dispatcher){
             try {
                 val pageNumber = params.key ?: INITIAL_PAGE_NUMBER
-                val response = getEvents(pageNumber, PAGE_SIZE).first()
-                if (response is Resource.Success) {
-                    LoadResult.Page(
-                        data = response.data ?: emptyList(),
-                        prevKey = if (pageNumber == INITIAL_PAGE_NUMBER) null else pageNumber - 1,
-                        nextKey = if (response.data?.isEmpty() == true) null else pageNumber + 1
-                    )
+                val events = getEvents(pageNumber, PAGE_SIZE)
+                Log.d(TAG, "load: $events")
+                if (events == null) {
+                    LoadResult.Error(Exception("No more events available"))
                 } else {
-                    LoadResult.Error(Exception("Error while fetching events"))
+                    when (events) {
+                        is Resource.Success -> {
+                            val data = events.data ?: emptyList()
+                            Log.d(TAG, "load: $data")
+                            LoadResult.Page(
+                                data = data,
+                                prevKey = if (pageNumber == INITIAL_PAGE_NUMBER) null else pageNumber - 1,
+                                nextKey = if (data.isEmpty()) null else pageNumber + 1
+                            )
+                        }
+                        is Resource.Loading -> LoadResult.Page(
+                            data = emptyList(),
+                            prevKey = null,
+                            nextKey = null
+                        )
+                        is Resource.Error -> LoadResult.Error(Exception(events.message))
+                    }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error while fetching events", e)
                 LoadResult.Error(e)
             }
         }
     }
+
+
+
 
     /**
      * Get the refresh key

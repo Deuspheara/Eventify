@@ -1,4 +1,4 @@
-package fr.event.eventify.domain.auth
+package fr.event.eventify.domain.event
 
 import android.util.Log
 import fr.event.eventify.core.coroutine.DispatcherModule
