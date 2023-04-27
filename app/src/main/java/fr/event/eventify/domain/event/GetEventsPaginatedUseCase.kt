@@ -23,12 +23,13 @@ class GetEventsPaginatedUseCase @Inject constructor(
     }
 
     suspend operator fun invoke(
+        name: String?,
         orderBy: FilterEvent?,
         category : CategoryEvent?
     ) :  Flow<PagingData<Event>> {
         return withContext(ioDispatcher) {
             try {
-                eventRepository.getEventPaginated(orderBy, category)
+                eventRepository.getEventPaginated(name, orderBy, category)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while getting events paginated", e)
                 throw e
