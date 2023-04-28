@@ -18,17 +18,33 @@ import javax.inject.Inject
 import kotlin.coroutines.resumeWithException
 
 interface StorageRemoteDataSource {
-    fun uploadPhoto(bitmap: Bitmap): Flow<Resource<String>>
+    /**
+     * Upload photo to Firebase Storage
+     * @param bitmap used to provide the photo
+     * @return a [Flow] of [String]
+     * @see [FirebaseStorage]
+     */
+    suspend fun uploadPhoto(bitmap: Bitmap, collection: String): Flow<Resource<String>>
+
+    /**
+     * Delete file from Firebase Storage
+     * @param url used to provide the url of the file
+     * @return a [Flow] of [Unit]
+     * @see [FirebaseStorage]
+     */
+    suspend fun deleteFile(url: String, collection: String): Flow<Resource<Unit>>
+
 }
 
 class StorageRemoteDataSourceImpl @Inject constructor(
     @DispatcherModule.DispatcherIO private val ioContext: CoroutineDispatcher,
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage,
+    private val firebaseAuth: FirebaseAuth,
 ) : StorageRemoteDataSource {
 
-    override fun uploadPhoto(bitmap: Bitmap): Flow<Resource<String>> = callbackFlow {
+    override suspend fun uploadPhoto(bitmap: Bitmap, collection: String): Flow<Resource<String>> = callbackFlow {
         val storageRef = firebaseStorage.reference
-        val photoRef = storageRef.child("Events/${FirebaseAuth.getInstance().currentUser?.uid}/${System.currentTimeMillis()}.jpg")
+        val photoRef = storageRef.child("$collection/${firebaseAuth.currentUser?.uid}/${System.currentTimeMillis()}.jpg")
 
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
@@ -66,6 +82,27 @@ class StorageRemoteDataSourceImpl @Inject constructor(
         }
         awaitClose()
     }.flowOn(ioContext)
+
+    override suspend fun deleteFile(url: String, collection: String): Flow<Resource<Unit>> = callbackFlow {
+        val storageRef = firebaseStorage.reference
+        val fileName = firebaseStorage.getReferenceFromUrl(url).name
+        val fileRef = storageRef.child("$collection/${firebaseAuth.currentUser?.uid}/$fileName")
+
+        fileRef.delete().addOnSuccessListener {
+            trySend(Resource.Success(Unit))
+        }.addOnFailureListener { exception ->
+            trySend(
+                Resource.Error(
+                    exception.message ?: "Error while deleting file"
+                )
+            )
+            throw exception
+        }
+
+        awaitClose()
+    }.flowOn(ioContext)
+
+
 
 }
 
