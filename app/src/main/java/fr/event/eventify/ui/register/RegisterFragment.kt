@@ -150,7 +150,7 @@ class RegisterFragment : Fragment() {
                             phoneNumber = binding.tfPhoneNumber.text.toString(),
                             photoUrl = url.toString(),
                             providerID = viewModel.user.value.data?.providerId.toString(),
-                            isEmailVerified = viewModel.user.value.data?.isEmailVerified!!
+                            isEmailVerified = viewModel.user.value.data?.isEmailVerified ?: false
                         )
                     )
                     Toast.makeText(context, "Saved upload", Toast.LENGTH_SHORT).show()
