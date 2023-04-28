@@ -145,7 +145,7 @@ class RegisterFragment : Fragment() {
                         RemoteUser(
                             uuid = viewModel.user.value.data?.uid.toString(),
                             displayName = binding.tfName.text.toString(),
-                            pseudo = binding.tfName.text.toString(),
+                            pseudo = binding.tfUsername.text.toString(),
                             email = viewModel.user.value.data?.email.toString(),
                             phoneNumber = binding.tfPhoneNumber.text.toString(),
                             photoUrl = url.toString(),
