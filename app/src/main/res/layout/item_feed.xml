@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="300dp"
         android:layout_marginTop="16dp"
+        android:background="@color/cardview_light_background"
         android:maxHeight="300dp"
         android:minHeight="200dp"
         android:scaleType="centerCrop"

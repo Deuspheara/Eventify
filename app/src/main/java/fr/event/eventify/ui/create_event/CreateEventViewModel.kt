@@ -60,7 +60,7 @@ class CreateEventViewModel @Inject constructor(
                             _event.value = EventState(error = it.message ?: "Error while creating event")
                         }
                         else -> {
-                            _event.value = EventState(error = "Error")
+                            _event.value = EventState(error = "Error while creating event")
                         }
                     }
                 }
