@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import fr.event.eventify.databinding.FragmentParticipantBinding
@@ -15,18 +16,14 @@ class ParticipantFragment : Fragment() {
     private val viewModel: PaymentViewModel by viewModels()
     private var numberOfParticipant = 1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            numberOfParticipant = it.getInt("PARTICIPANT")
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentParticipantBinding.inflate(inflater, container, false)
+        arguments?.let {
+            numberOfParticipant = it.getInt("PARTICIPANT")
+        }
         return binding.root
     }
 
@@ -39,7 +36,7 @@ class ParticipantFragment : Fragment() {
 
         binding.buttonNext.setOnClickListener {
             val action = ParticipantFragmentDirections.actionParticipantFragmentToPaymentSummaryFragment()
-            findNavController().navigate(action.actionId)
+            findNavController().navigate(action.actionId, bundleOf("PARTICIPANT" to numberOfParticipant))
         }
 
         for (i in 1 until numberOfParticipant + 1) {
