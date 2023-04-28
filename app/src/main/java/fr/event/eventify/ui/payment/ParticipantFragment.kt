@@ -37,6 +37,11 @@ class ParticipantFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.buttonNext.setOnClickListener {
+            val action = ParticipantFragmentDirections.actionParticipantFragmentToPaymentSummaryFragment()
+            findNavController().navigate(action.actionId)
+        }
+
         for (i in 1 until numberOfParticipant + 1) {
             val myLayout = ItemParticipantBinding.inflate(layoutInflater, null, false)
             val id = View.generateViewId()

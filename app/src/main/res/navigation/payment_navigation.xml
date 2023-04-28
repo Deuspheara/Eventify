@@ -18,5 +18,14 @@
         android:id="@+id/participantFragment"
         android:name="fr.event.eventify.ui.payment.ParticipantFragment"
         android:label="fragment_participant"
-        tools:layout="@layout/fragment_participant" />
+        tools:layout="@layout/fragment_participant" >
+        <action
+            android:id="@+id/action_participantFragment_to_paymentSummaryFragment"
+            app:destination="@id/paymentSummaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/paymentSummaryFragment"
+        android:name="fr.event.eventify.ui.payment.PaymentSummaryFragment"
+        android:label="fragment_payment_summary"
+        tools:layout="@layout/fragment_payment_summary" />
 </navigation>

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentTicketInformationBinding
 
 class TicketInformationFragment : Fragment() {
@@ -45,7 +44,8 @@ class TicketInformationFragment : Fragment() {
         }
 
         binding.buttonNext.setOnClickListener {
-            findNavController().navigate(R.id.action_ticketInformationFragment_to_participantFragment, bundleOf("PARTICIPANT" to numberOfTicket))
+            val action = TicketInformationFragmentDirections.actionTicketInformationFragmentToParticipantFragment()
+            findNavController().navigate(action.actionId, bundleOf("PARTICIPANT" to numberOfTicket))
         }
     }
 
