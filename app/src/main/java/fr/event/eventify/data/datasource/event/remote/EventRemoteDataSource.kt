@@ -135,7 +135,6 @@ class EventRemoteDataSourceImpl @Inject constructor(
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): QuerySnapshot {
-        val user = firebaseAuth.currentUser ?: throw IllegalStateException("User not connected")
 
         val query = firebaseFirestore.collection("Events")
             .orderBy(orderBy?.stringValue ?: FilterEvent.NAME.stringValue)

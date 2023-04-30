@@ -1,30 +1,28 @@
 package fr.event.eventify.domain.storage
 
-import android.graphics.Bitmap
+import android.util.Log
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.data.repository.storage.StorageRepository
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UploadPhotoUseCase @Inject constructor(
+class DeletePhotoUseCase @Inject constructor(
     private val storageRepository: StorageRepository,
     @DispatcherModule.DispatcherIO private val ioDispatcher: CoroutineDispatcher
 ) {
     private companion object {
-        const val TAG = "UploadPhotoUseCase"
+        private const val TAG = "DeletePhotoUseCase"
     }
 
-    suspend operator fun invoke(bitmap: Bitmap, collection: String): Flow<Resource<String>> {
+    suspend operator fun invoke(url: String, collection: String) : Flow<Resource<Unit>> {
         return try {
-            storageRepository.uploadPhoto(bitmap, collection).flowOn(ioDispatcher)
+            storageRepository.deleteFile(url, collection).flowOn(ioDispatcher)
         } catch (e: Exception) {
+            Log.e(TAG, "Error while deleting file", e)
             throw e
         }
     }
 }
-
-

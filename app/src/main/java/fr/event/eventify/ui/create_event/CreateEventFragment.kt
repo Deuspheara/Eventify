@@ -75,6 +75,12 @@ class CreateEventFragment : Fragment() {
             binding.apply {
                 val checkPriceNotNull = tfPriceEvent.text.toString().isNotEmpty()
                 val checkNbTicketsNotNull = tfPlacesEvent.text.toString().isNotEmpty()
+                if(tfNameEvent.text.toString().isEmpty()) {
+                    tfNameEvent.error = "Please enter a name"
+                    tfNameEvent.requestFocus()
+                    return@setOnClickListener
+                }
+
                 viewModel.createEvent(
                     Event(
                         name = tfNameEvent.text.toString(),

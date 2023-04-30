@@ -6,6 +6,7 @@ import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.data.repository.auth.AuthRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -18,13 +19,11 @@ class IsConnectedUseCase @Inject constructor(
     }
 
     suspend operator fun invoke() : Flow<Boolean> {
-        return withContext(ioDispatcher) {
-            try {
-                authRepository.isUserConnected()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error while checking if user is connected", e)
-                throw e
-            }
+        return try {
+            authRepository.isUserConnected().flowOn(ioDispatcher)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while checking if user is connected", e)
+            throw e
         }
     }
 }

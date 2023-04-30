@@ -1,8 +1,11 @@
 package fr.event.eventify.core.models.event.remote
 
+import android.os.Parcel
+import android.os.Parcelable
 import fr.event.eventify.R
 
-enum class CategoryEvent {
+enum class CategoryEvent()  {
+
     /** Concert */
     CONCERT,
 
@@ -51,6 +54,7 @@ enum class CategoryEvent {
             }
         }
     }
+
 }
 val CategoryEvent.stringValue: String
     get() = CategoryEvent.toString(this)

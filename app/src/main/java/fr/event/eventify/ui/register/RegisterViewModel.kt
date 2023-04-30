@@ -1,5 +1,6 @@
 package fr.event.eventify.ui.register
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,10 +13,13 @@ import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.domain.auth.CreateFirebaseUserWithEmailUseCase
 import fr.event.eventify.domain.auth.CreateFirestoreUserUseCase
 import fr.event.eventify.domain.auth.SignInWithGoogleUseCase
+import fr.event.eventify.domain.storage.UploadPhotoUseCase
+import fr.event.eventify.ui.create_event.UploadState
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,6 +40,7 @@ class RegisterViewModel @Inject constructor(
     private val createFirebaseUserWithEmailUseCase: CreateFirebaseUserWithEmailUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
     private val createFirestoreUserUseCase: CreateFirestoreUserUseCase,
+    private val uploadPhotoUseCase: UploadPhotoUseCase,
     @DispatcherModule.DispatcherIO private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private companion object {
@@ -47,6 +52,9 @@ class RegisterViewModel @Inject constructor(
 
     private val _remoteUser = MutableStateFlow(RemoteState())
     val remoteUser: StateFlow<RemoteState> = _remoteUser
+
+    private val _upload = MutableStateFlow(UploadState())
+    val upload: StateFlow<UploadState> = _upload
 
 
     /**
@@ -133,6 +141,25 @@ class RegisterViewModel @Inject constructor(
                 _remoteUser.value = RemoteState(error = "Register on firestore failed")
             }
 
+        }
+    }
+
+    fun uploadPhoto(bitmap: Bitmap) {
+        viewModelScope.launch {
+            _upload.value = UploadState(isLoading = true)
+            uploadPhotoUseCase(bitmap, "Users").collectLatest{
+                when(it){
+                    is Resource.Success -> {
+                        _upload.value = UploadState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _upload.value = UploadState(error = it.message ?: "Error while uploading photo")
+                    }
+                    else -> {
+                        _upload.value = UploadState(error = "Error")
+                    }
+                }
+            }
         }
     }
 

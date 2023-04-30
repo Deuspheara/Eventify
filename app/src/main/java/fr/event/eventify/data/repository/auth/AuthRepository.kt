@@ -50,6 +50,13 @@ interface AuthRepository {
      * @see [FirebaseAuth.getCurrentUser]
      */
     suspend fun isUserConnected(): Flow<Boolean>
+
+    /**
+     * Get current user
+     * @return a [Flow] of [RemoteUser]
+     * @see [FirebaseAuth.getCurrentUser]
+     */
+    suspend fun getUser(): Flow<Resource<RemoteUser>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -114,6 +121,17 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.isUserConnected()
             } catch (e: Exception) {
                 Log.e(TAG, "Error while checking if user is connected, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getUser(): Flow<Resource<RemoteUser>> {
+        return withContext(ioDispatcher) {
+            try {
+                authRemoteDataSource.getUser()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting user, error: ${e.message}")
                 throw e
             }
         }
