@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import coil.load
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
@@ -51,6 +53,10 @@ class ProfileFragment : Fragment() {
                         }
                         tvNbOrganise.text = it.createdEvents.size.toString()
                         tvNbParticipate.text = it.joinedEvents.size.toString()
+                        btnModifyProfile.setOnClickListener {
+                            val action = ProfileFragmentDirections.actionProfileFragmentToModifyProfileFragment()
+                            findNavController().navigate(action)
+                        }
                     }
                 }
                 state.error.let {
