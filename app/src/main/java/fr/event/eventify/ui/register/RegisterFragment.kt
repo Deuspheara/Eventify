@@ -105,8 +105,22 @@ class RegisterFragment : Fragment() {
                 state.data?.let {
                     Log.d(TAG, "onCreateView: ${it.uid}")
                     //upload profile picture if exist
-                    bitmap?.let { profilePictureBitmap -> viewModel.uploadPhoto(profilePictureBitmap) }
-
+                    if(bitmap == null){
+                        viewModel.registerOnFireStore(
+                            RemoteUser(
+                                uuid = viewModel.user.value.data?.uid.toString(),
+                                displayName = binding.tfName.text.toString(),
+                                pseudo = binding.tfUsername.text.toString(),
+                                email = viewModel.user.value.data?.email.toString(),
+                                phoneNumber = binding.tfPhoneNumber.text.toString(),
+                                photoUrl = "",
+                                providerID = viewModel.user.value.data?.providerId.toString(),
+                                isEmailVerified = viewModel.user.value.data?.isEmailVerified ?: false
+                            )
+                        )
+                    } else {
+                        viewModel.uploadPhoto(bitmap!!)
+                    }
                     Toast.makeText(context, "Success user created", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -123,6 +137,7 @@ class RegisterFragment : Fragment() {
                 }
                 state.data?.let {
                     Log.d(TAG, "remoteUser: Success")
+
                     Toast.makeText(context, "Saved remote", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -141,18 +156,7 @@ class RegisterFragment : Fragment() {
                 state.data?.let {
                     Log.d(TAG, "upload: Success")
                     url = it
-                    viewModel.registerOnFireStore(
-                        RemoteUser(
-                            uuid = viewModel.user.value.data?.uid.toString(),
-                            displayName = binding.tfName.text.toString(),
-                            pseudo = binding.tfUsername.text.toString(),
-                            email = viewModel.user.value.data?.email.toString(),
-                            phoneNumber = binding.tfPhoneNumber.text.toString(),
-                            photoUrl = url.toString(),
-                            providerID = viewModel.user.value.data?.providerId.toString(),
-                            isEmailVerified = viewModel.user.value.data?.isEmailVerified ?: false
-                        )
-                    )
+
                     Toast.makeText(context, "Saved upload", Toast.LENGTH_SHORT).show()
                 }
             }
