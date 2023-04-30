@@ -1,12 +1,16 @@
 package fr.event.eventify.ui.event
 
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import coil.load
 import fr.event.eventify.R
+import fr.event.eventify.core.models.event.local.EventLight
+import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.ActivityEventDetailsBinding
 import fr.event.eventify.ui.payment.PaymentActivity
 
@@ -14,12 +18,15 @@ class EventDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEventDetailsBinding
     private var filled = false
+    private var event: EventLight? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEventDetailsBinding.inflate(layoutInflater)
 
         binding.buttonParticipate.setOnClickListener {
-            startActivity(Intent(this, PaymentActivity::class.java))
+            val intent = Intent(this, PaymentActivity::class.java)
+            intent.putExtra("event", event)
+            startActivity(intent)
         }
 
         binding.buttonFav.setOnClickListener { it as ImageButton
@@ -27,18 +34,19 @@ class EventDetailsActivity : AppCompatActivity() {
             filled = !filled
         }
         binding.apply {
-            val bundle = intent.extras
-            val ticketPriceBundle = bundle?.getBundle("ticket_price")
-            val date = intent.getStringExtra("date")
-            val participantsArray = intent.getStringArrayExtra("participants") as? Array<String>
-            val numberOfParticipants = participantsArray?.size ?: 0
-            tvName.text = intent.getStringExtra("name")
-            tvPrice.text = ticketPriceBundle?.getDouble("amount").toString() + "€"
-            tvPlace.text = bundle?.getBundle("location")?.getString("name")
-            tvDate.text = date?.substring(0, date.indexOf("T"))
-            tvDescription.text = intent.getStringExtra("description")
-            tvParticipate.text = numberOfParticipants.toString() + " participants"
-            ivPreview.load(intent.getStringExtra("image")){
+
+            event = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("event", EventLight::class.java)
+            } else {
+                intent.getParcelableExtra<EventLight>("event")
+            }
+            tvName.text = event?.name
+            tvPrice.text = event?.ticketPrice?.toString() + "€"
+            tvPlace.text = event?.location.toString()
+            tvDate.text = event?.date.toString()
+            tvDescription.text = event?.description
+            tvParticipate.text = event?.nbParticipants.toString() + " participants"
+            ivPreview.load(event?.image){
                 placeholder(R.drawable.app_icon)
                 error(R.drawable.app_icon)
             }
@@ -46,8 +54,6 @@ class EventDetailsActivity : AppCompatActivity() {
                 finish()
             }
         }
-
-
         setContentView(binding.root)
     }
 }
