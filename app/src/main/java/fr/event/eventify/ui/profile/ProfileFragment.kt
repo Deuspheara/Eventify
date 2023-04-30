@@ -49,6 +49,8 @@ class ProfileFragment : Fragment() {
                             placeholder(R.drawable.pingouin)
                             error(R.drawable.pingouin)
                         }
+                        tvNbOrganise.text = it.createdEvents.size.toString()
+                        tvNbParticipate.text = it.joinedEvents.size.toString()
                     }
                 }
                 state.error.let {

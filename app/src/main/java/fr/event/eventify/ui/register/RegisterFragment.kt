@@ -115,7 +115,10 @@ class RegisterFragment : Fragment() {
                                 phoneNumber = binding.tfPhoneNumber.text.toString(),
                                 photoUrl = "",
                                 providerID = viewModel.user.value.data?.providerId.toString(),
-                                isEmailVerified = viewModel.user.value.data?.isEmailVerified ?: false
+                                isEmailVerified = viewModel.user.value.data?.isEmailVerified ?: false,
+                                joinedEvents = listOf(),
+                                createdEvents = listOf(),
+
                             )
                         )
                     } else {
