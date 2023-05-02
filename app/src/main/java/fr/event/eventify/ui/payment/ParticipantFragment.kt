@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.databinding.FragmentParticipantBinding
 import fr.event.eventify.databinding.ItemParticipantBinding
 
+@AndroidEntryPoint
 class ParticipantFragment : Fragment() {
     private lateinit var binding: FragmentParticipantBinding
-    private val viewModel: PaymentViewModel by viewModels()
+    private val viewModel: TicketInformationViewModel by viewModels()
     private var numberOfParticipant = 1
 
     override fun onCreateView(

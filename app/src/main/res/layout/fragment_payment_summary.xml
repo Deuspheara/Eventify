@@ -17,7 +17,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/img_header_ticket_information"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop"
@@ -39,7 +39,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintTop_toBottomOf="@+id/img_header_ticket_information" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
@@ -116,7 +116,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/tv_montant_ttc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -127,7 +127,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/tv_total_ticket"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -137,7 +137,7 @@
                     android:textColor="@color/input_text"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_montant_ttc" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

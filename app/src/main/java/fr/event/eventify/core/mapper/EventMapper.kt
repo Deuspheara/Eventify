@@ -7,7 +7,7 @@ import fr.event.eventify.core.models.event.remote.Event
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class EventMapper {
+object EventMapper {
     fun mapToEventLight(event: Event): EventLight {
         val date = LocalDateTime.ofInstant(event.date?.toDate()?.toInstant(), ZoneId.systemDefault())
         val frenchDay = when (date.dayOfWeek.toString()) {
