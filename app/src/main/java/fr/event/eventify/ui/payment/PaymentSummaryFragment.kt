@@ -34,7 +34,7 @@ class PaymentSummaryFragment : Fragment() {
 
         for (i in 1 until numberOfParticipant + 1) {
             val myLayout = ItemSummaryBinding.inflate(layoutInflater, null, false)
-            binding.linearLayoutParticipant.addView(myLayout.root)
+            binding.rvParticipant.addView(myLayout.root)
         }
 
     }

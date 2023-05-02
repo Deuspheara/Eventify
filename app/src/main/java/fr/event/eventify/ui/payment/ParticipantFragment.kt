@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.databinding.FragmentParticipantBinding
-import fr.event.eventify.databinding.ItemParticipantBinding
 
 class ParticipantFragment : Fragment() {
     private lateinit var binding: FragmentParticipantBinding
@@ -39,13 +40,13 @@ class ParticipantFragment : Fragment() {
             findNavController().navigate(action.actionId, bundleOf("PARTICIPANT" to numberOfParticipant))
         }
 
+        val adapter = ParticipantAdapter()
+        binding.rvParticipant.adapter = adapter
+        binding.rvParticipant.layoutManager = LinearLayoutManager(requireContext())
         for (i in 1 until numberOfParticipant + 1) {
-            val myLayout = ItemParticipantBinding.inflate(layoutInflater, null, false)
-            val id = View.generateViewId()
-            myLayout.tvNum.text = "Participant $i"
-            myLayout.inputEmail.id = id
-            binding.linearLayoutParticipant.addView(myLayout.root)
+            adapter.participantList.add(Participant(participantNumber = "Participant $i"))
         }
+        adapter.notifyDataSetChanged()
     }
 
 }
