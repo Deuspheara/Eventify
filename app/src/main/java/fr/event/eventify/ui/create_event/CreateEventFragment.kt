@@ -105,6 +105,22 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                     }
                                 }
                                 state.isLoading.let {
+
+                                }
+                                state.data?.let {
+                                    Log.d("CreateEventFragment", "Image uploaded: $it")
+                                }
+                            }
+                        }
+                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                            viewModel.uploadPhoto(bitmap)
+                        }
+
+
+                        binding.imgCreateEvent.setImageBitmap(bitmap)
+                    }
+                }
+            }
         binding.btCreateEvent.setOnClickListener {
             binding.apply {
                 val checkPriceNotNull = tfPriceEvent.text.toString().isNotEmpty()
@@ -136,33 +152,6 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             }
         }
 
-        startForEventImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { fileUri ->
-                    val source = ImageDecoder.createSource(requireContext().contentResolver, fileUri)
-                    val bitmap = ImageDecoder.decodeBitmap(source)
-                    Log.d("CreateEventFragment", "Image selected")
-
-                                }
-                                state.data?.let {
-                                    Log.d("CreateEventFragment", "Image uploaded: $it")
-                                }
-                            }
-                        }
-
-                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                            viewModel.uploadPhoto(bitmap)
-                        }
-                    //upload image
-                    viewLifecycleOwner.lifecycle.coroutineScope.launch{
-                        viewModel.uploadPhoto(bitmap)
-                    }
-
-
-                        binding.imgCreateEvent.setImageBitmap(bitmap)
-                    }
-                }
-            }
 
         binding.tfDateEvent.setOnClickListener {
             DatePickerDialog(
@@ -174,10 +163,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
         val adapter = CategorySpinnerAdapter(this.requireContext())
         binding.spCategory.adapter = adapter
-                    binding.imgCreateEvent.setImageBitmap(bitmap)
-                }
-            }
-        }
+
     }
 
     private fun updateDateInView() {

@@ -60,12 +60,12 @@ class CategorySpinnerAdapter(context: Context) : ArrayAdapter<CategoryEvent>(con
     override fun isEnabled(position: Int) = position != 0
 
     private fun setItemForCategory(view: View, category: CategoryEvent) {
-        val tvCountry = view.findViewById<TextView>(R.id.tv_category)
-        val ivCountry = view.findViewById<ImageView>(R.id.iv_category)
+        val tvCategory = view.findViewById<TextView>(R.id.tv_category)
+        val ivCategory = view.findViewById<ImageView>(R.id.iv_category)
         val ivArrow = view.findViewById<ImageView>(R.id.iv_arrow)
-        val countryName = Locale("", category.categoryName).displayCountry
-        tvCountry.text = countryName
-        ivCountry.setBackgroundResource(category.icon)
+        val categoryName = Locale("", category.categoryName).displayCountry
+        tvCategory.text = categoryName
+        ivCategory.setBackgroundResource(category.icon)
         ivArrow.isVisible = false
     }
 }
