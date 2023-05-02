@@ -5,29 +5,27 @@ import android.os.Build
 import android.os.Build.VERSION
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
-import androidx.core.os.bundleOf
+import androidx.activity.viewModels
 import coil.load
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import fr.event.eventify.R
 import fr.event.eventify.core.models.event.local.EventLight
-import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.ActivityEventDetailsBinding
 import fr.event.eventify.ui.payment.PaymentActivity
 
+@AndroidEntryPoint
 class EventDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEventDetailsBinding
     private var filled = false
     private var event: EventLight? = null
+    private val viewModel: EventDetailsViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEventDetailsBinding.inflate(layoutInflater)
-
-        binding.buttonParticipate.setOnClickListener {
-            val intent = Intent(this, PaymentActivity::class.java)
-            intent.putExtra("event", event)
-            startActivity(intent)
-        }
 
         binding.buttonFav.setOnClickListener { it as ImageButton
             it.setImageResource(if (filled) R.drawable.empty_star else R.drawable.filled_star)
@@ -53,6 +51,15 @@ class EventDetailsActivity : AppCompatActivity() {
             buttonBack.setOnClickListener {
                 finish()
             }
+        }
+
+        binding.buttonParticipate.setOnClickListener {
+            val intent = Intent(this, PaymentActivity::class.java)
+            event?.let {
+                viewModel.setCurrentEvent(it)
+            }
+
+            startActivity(intent)
         }
         setContentView(binding.root)
     }

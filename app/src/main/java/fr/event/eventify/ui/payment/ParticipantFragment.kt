@@ -10,11 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import fr.event.eventify.core.models.payment.local.Participant
+import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.databinding.FragmentParticipantBinding
 
+@AndroidEntryPoint
 class ParticipantFragment : Fragment() {
     private lateinit var binding: FragmentParticipantBinding
-    private val viewModel: PaymentViewModel by viewModels()
+    private val viewModel: TicketInformationViewModel by viewModels()
     private var numberOfParticipant = 1
 
     override fun onCreateView(

@@ -82,7 +82,7 @@ class EventViewHolder private constructor(
                 //launch Home Activity
                 val intent = Intent(it.context, EventDetailsActivity::class.java)
                 val timestampFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                val bundle: Bundle = bundleOf("event" to EventMapper().mapToEventLight(event))
+                val bundle: Bundle = bundleOf("event" to EventMapper.mapToEventLight(event))
 
                 intent.putExtras(bundle)
 

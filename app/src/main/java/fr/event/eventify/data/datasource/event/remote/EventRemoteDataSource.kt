@@ -8,6 +8,7 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Named
 
 interface EventRemoteDataSource {
     /**
@@ -57,6 +59,7 @@ class EventRemoteDataSourceImpl @Inject constructor(
     private companion object {
         private const val TAG = "EventRemoteDataSource"
     }
+
 
     override suspend fun createEvent(event: Event): Flow<Resource<Event>> = flow {
         emit(Resource.Loading())

@@ -40,7 +40,8 @@ android {
     kotlinOptions {
         jvmTarget = '17'
         freeCompilerArgs += [
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=SetTextI18n",
         ]
     }
 }
