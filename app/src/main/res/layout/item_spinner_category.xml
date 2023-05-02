@@ -24,6 +24,7 @@
         tools:text="Category" />
 
     <ImageView
+        android:id="@+id/iv_arrow"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_alignParentEnd="true"

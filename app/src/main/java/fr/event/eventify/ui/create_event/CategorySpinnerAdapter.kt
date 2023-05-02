@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import fr.event.eventify.R
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import java.util.Locale
@@ -24,7 +25,7 @@ class CategorySpinnerAdapter(context: Context) : ArrayAdapter<CategoryEvent>(con
             view = convertView
         }
         getItem(position)?.let { category ->
-            setItemForCountry(view, category)
+            setItemForCategory(view, category)
         }
         return view
     }
@@ -41,8 +42,8 @@ class CategorySpinnerAdapter(context: Context) : ArrayAdapter<CategoryEvent>(con
             }
         } else {
             view = layoutInflater.inflate(R.layout.item_spinner_category, parent, false)
-            getItem(position)?.let { country ->
-                setItemForCountry(view, country)
+            getItem(position)?.let { category ->
+                setItemForCategory(view, category)
             }
         }
         return view
@@ -58,11 +59,13 @@ class CategorySpinnerAdapter(context: Context) : ArrayAdapter<CategoryEvent>(con
     override fun getCount() = super.getCount() + 1
     override fun isEnabled(position: Int) = position != 0
 
-    private fun setItemForCountry(view: View, category: CategoryEvent) {
+    private fun setItemForCategory(view: View, category: CategoryEvent) {
         val tvCountry = view.findViewById<TextView>(R.id.tv_category)
         val ivCountry = view.findViewById<ImageView>(R.id.iv_category)
+        val ivArrow = view.findViewById<ImageView>(R.id.iv_arrow)
         val countryName = Locale("", category.categoryName).displayCountry
         tvCountry.text = countryName
         ivCountry.setBackgroundResource(category.icon)
+        ivArrow.isVisible = false
     }
 }
