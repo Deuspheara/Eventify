@@ -51,22 +51,29 @@ class RegisterFragment : Fragment() {
         }
 
     private lateinit var startForProfileImageResult: ActivityResultLauncher<Intent>
+    private var url: String? = null
+    private var bitmap: Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentRegisterBinding.inflate(inflater, container, false)
 
         startForProfileImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let { fileUri ->
                     val source = ImageDecoder.createSource(requireContext().contentResolver, fileUri)
-                    val bitmap = ImageDecoder.decodeBitmap(source)
+                    bitmap = ImageDecoder.decodeBitmap(source)
+
+
                     binding.imgProfile.setImageBitmap(bitmap)
                 }
             }
         }
+
+        //upload profile picture
+
 
         binding.btRegister.setOnClickListener {
 
@@ -87,6 +94,7 @@ class RegisterFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            //register on firebase
             viewModel.user.collectLatest { state ->
                 state.isLoading.let {
                     //Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
@@ -96,34 +104,56 @@ class RegisterFragment : Fragment() {
                 }
                 state.data?.let {
                     Log.d(TAG, "onCreateView: ${it.uid}")
-                    viewModel.registerOnFireStore(
-                        RemoteUser(
-                            uuid = it.uid,
-                            displayName = binding.tfName.text.toString(),
-                            pseudo = "",
-                            email = it.email.toString(),
-                            phoneNumber = binding.tfPhoneNumber.text.toString(),
-                            photoUrl = "",
-                            providerID = it.providerId,
-                            isEmailVerified = it.isEmailVerified
-                        )
-                    )
+                    //upload profile picture if exist
+                    bitmap?.let { profilePictureBitmap -> viewModel.uploadPhoto(profilePictureBitmap) }
+
                     Toast.makeText(context, "Success user created", Toast.LENGTH_SHORT).show()
                 }
             }
 
+            //register on firestore
             viewModel.remoteUser.collectLatest { state ->
                 state.isLoading.let {
                     Log.d(TAG, "remoteUser: Loading")
-                    Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
                 }
                 state.error.let {
                     Log.d(TAG, "remoteUser: Error")
-                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error remote", Toast.LENGTH_SHORT).show()
                 }
                 state.data?.let {
                     Log.d(TAG, "remoteUser: Success")
-                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Saved remote", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.upload.collectLatest { state ->
+                state.isLoading.let {
+                    Log.d(TAG, "upload: Loading")
+                    //Toast.makeText(context, "Loading upload", Toast.LENGTH_SHORT).show()
+                }
+                state.error.let {
+                    Log.d(TAG, "upload: Error")
+                    //Toast.makeText(context, "Error upload", Toast.LENGTH_SHORT).show()
+                }
+                state.data?.let {
+                    Log.d(TAG, "upload: Success")
+                    url = it
+                    viewModel.registerOnFireStore(
+                        RemoteUser(
+                            uuid = viewModel.user.value.data?.uid.toString(),
+                            displayName = binding.tfName.text.toString(),
+                            pseudo = binding.tfUsername.text.toString(),
+                            email = viewModel.user.value.data?.email.toString(),
+                            phoneNumber = binding.tfPhoneNumber.text.toString(),
+                            photoUrl = url.toString(),
+                            providerID = viewModel.user.value.data?.providerId.toString(),
+                            isEmailVerified = viewModel.user.value.data?.isEmailVerified!!
+                        )
+                    )
+                    Toast.makeText(context, "Saved upload", Toast.LENGTH_SHORT).show()
                 }
             }
         }

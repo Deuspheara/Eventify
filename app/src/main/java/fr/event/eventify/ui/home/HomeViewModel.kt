@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,13 +111,16 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun getEventsPaginated(
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ) {
         _eventPaginated.value = EventPaginatedState(isLoading = true)
         try {
             viewModelScope.launch {
-                getEventsPaginatedUseCase(orderBy, category).collect {
+                getEventsPaginatedUseCase(name, orderBy, category)
+                    .cachedIn(viewModelScope)
+                    .collect {
                     Log.d("HomeViewModel", "Got events: $it")
                     it.map {
                         Log.d("HomeViewModel", "Got event: $it")

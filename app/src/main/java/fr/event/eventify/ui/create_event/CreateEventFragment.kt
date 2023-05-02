@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -18,8 +17,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import fr.event.eventify.R
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.core.models.event.remote.CategoryEvent
+import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.FragmentCreateEventBinding
 import fr.event.eventify.utils.ImageDialog
 import kotlinx.coroutines.flow.collectLatest
@@ -36,6 +37,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private var cal = Calendar.getInstance()
     private val categoryEvents = CategoryEvent.values().toList()
     private lateinit var startForEventImageResult: ActivityResultLauncher<Intent>
+    private var url: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +66,25 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 9f
             )
         }
+        //check for upload image
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.upload.collectLatest { state ->
+                if (state.error?.isNotEmpty() == true) {
+                    state.error.let {
+                        Log.e("CreateEventFragment", "Error while uploading image $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let {it ->
+                    Log.d("CreateEventFragment", "Image uploaded: $url")
+                    url = it
+                }
+            }
+        }
+
+
 
         startForEventImageResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -84,6 +105,43 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                     }
                                 }
                                 state.isLoading.let {
+        binding.btCreateEvent.setOnClickListener {
+            binding.apply {
+                val checkPriceNotNull = tfPriceEvent.text.toString().isNotEmpty()
+                val checkNbTicketsNotNull = tfPlacesEvent.text.toString().isNotEmpty()
+                if(tfNameEvent.text.toString().isEmpty()) {
+                    tfNameEvent.error = "Please enter a name"
+                    tfNameEvent.requestFocus()
+                    return@setOnClickListener
+                }
+
+                viewModel.createEvent(
+                    Event(
+                        name = tfNameEvent.text.toString(),
+                        author = "author",
+                        description = tfDescriptionEvent.text.toString(),
+                        date = Timestamp(Calendar.getInstance().time),
+                        location = Event.LocationEvent(
+                            name = tfLocationEvent.text.toString(),
+                        ),
+                        image = url,
+                        ticketPrice = Event.PriceEvent(
+                            currency = "euro",
+                            amount = if (checkPriceNotNull) tfPriceEvent.text.toString().toDouble() else 0.0,
+                        ),
+                        nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
+                        categoryEvent = CategoryEvent.FESTIVAL,
+                    )
+                )
+            }
+        }
+
+        startForEventImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { fileUri ->
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, fileUri)
+                    val bitmap = ImageDecoder.decodeBitmap(source)
+                    Log.d("CreateEventFragment", "Image selected")
 
                                 }
                                 state.data?.let {
@@ -95,6 +153,10 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         viewLifecycleOwner.lifecycle.coroutineScope.launch {
                             viewModel.uploadPhoto(bitmap)
                         }
+                    //upload image
+                    viewLifecycleOwner.lifecycle.coroutineScope.launch{
+                        viewModel.uploadPhoto(bitmap)
+                    }
 
 
                         binding.imgCreateEvent.setImageBitmap(bitmap)
@@ -112,6 +174,10 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
         val adapter = CategorySpinnerAdapter(this.requireContext())
         binding.spCategory.adapter = adapter
+                    binding.imgCreateEvent.setImageBitmap(bitmap)
+                }
+            }
+        }
     }
 
     private fun updateDateInView() {

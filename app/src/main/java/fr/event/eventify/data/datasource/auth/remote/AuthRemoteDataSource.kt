@@ -117,7 +117,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 .await()
         } catch (e: Exception) {
             Log.e(TAG, "Error while storing user in collection User, in document ${remoteUser.uuid}, error: $e")
-
                 trySend(Resource.Error(message = "Error while storing user in collection User"))
             throw e
         }

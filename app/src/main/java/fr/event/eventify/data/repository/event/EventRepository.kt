@@ -33,6 +33,7 @@ interface EventRepository {
      * @return a [Flow] of [Resource]
      */
     suspend fun getEventPaginated(
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): Flow<PagingData<Event>>
@@ -44,7 +45,7 @@ interface EventRepository {
      * @return a [Flow] of [Resource]
      * @see [EventRemoteDataSource.getEvents]
      */
-    suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
+    suspend fun getEvents(page: Int, limit: Int,  orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -81,6 +82,7 @@ class EventRepositoryImpl @Inject constructor(
      * @see [EventRemoteDataSource.getEvents]
      */
     override suspend fun getEventPaginated(
+        name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): Flow<PagingData<Event>> {
@@ -93,6 +95,7 @@ class EventRepositoryImpl @Inject constructor(
                     ),
                     pagingSourceFactory = {
                         EventRemoteDataSource.createCharacterPagingSource(
+                            name,
                             orderBy,
                             category
                         )

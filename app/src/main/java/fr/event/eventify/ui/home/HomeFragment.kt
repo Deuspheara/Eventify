@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.paging.map
@@ -26,7 +28,7 @@ import java.util.Calendar
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
    private lateinit var binding: FragmentHomeBinding
-   private val viewModel: HomeViewModel by viewModels()
+   private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var pagingAdapter: EventPagingAdapter
     private var isConnect = false
     override fun onCreateView(
@@ -71,7 +73,29 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
-            viewModel.getEventsPaginated(FilterEvent.NAME,CategoryEvent.FESTIVAL)
+            viewModel.getEventsPaginated(null, FilterEvent.NAME,CategoryEvent.FESTIVAL)
+        }
+
+        binding.apply {
+            search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                        viewModel.getEventsPaginated(query, FilterEvent.NAME,CategoryEvent.FESTIVAL)
+                    }
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+    //                viewLifecycleOwner.lifecycle.coroutineScope.launch {
+    //                    viewModel.getEventsPaginated(newText, FilterEvent.NAME,CategoryEvent.FESTIVAL)
+    //                }
+                    return false
+                }
+            })
+
+            search.setOnClickListener(View.OnClickListener {
+                search.isIconified = false
+            })
         }
 
 //        viewLifecycleOwner.lifecycle.coroutineScope.launch {

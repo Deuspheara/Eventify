@@ -13,7 +13,21 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface StorageRepository {
-    fun uploadPhoto(bitmap: Bitmap): Flow<Resource<String>>
+    /**
+     * Upload a photo
+     * @param bitmap the bitmap to upload
+     * @return a [Flow] of [Resource]
+     * @see [StorageRemoteDataSource]
+     */
+    suspend fun uploadPhoto(bitmap: Bitmap, collection: String): Flow<Resource<String>>
+
+    /**
+     * Delete a file
+     * @param url the url of the file to delete
+     * @return a [Flow] of [Resource]
+     * @see [StorageRemoteDataSource]
+     */
+    suspend fun deleteFile(url: String, collection: String): Flow<Resource<Unit>>
 }
 
 class StorageRepositoryImpl @Inject constructor(
@@ -21,9 +35,24 @@ class StorageRepositoryImpl @Inject constructor(
     @DispatcherModule.DispatcherIO private val ioDispatcher: CoroutineDispatcher
 ) : StorageRepository {
 
-    override fun uploadPhoto(bitmap: Bitmap): Flow<Resource<String>> {
-        return storageRemoteDataSource.uploadPhoto(bitmap).flowOn(ioDispatcher)
+    override suspend fun uploadPhoto(bitmap: Bitmap, collection: String): Flow<Resource<String>> {
+        return try {
+            storageRemoteDataSource.uploadPhoto(bitmap, collection).flowOn(ioDispatcher)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while uploading photo", e)
+            throw e
+        }
     }
+
+    override suspend fun deleteFile(url: String, collection: String): Flow<Resource<Unit>> {
+        return try {
+            storageRemoteDataSource.deleteFile(url, collection).flowOn(ioDispatcher)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while deleting file", e)
+            throw e
+        }
+    }
+
 }
 
 

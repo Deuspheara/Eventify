@@ -60,7 +60,7 @@ class CreateEventViewModel @Inject constructor(
                             _event.value = EventState(error = it.message ?: "Error while creating event")
                         }
                         else -> {
-                            _event.value = EventState(error = "Error")
+                            _event.value = EventState(error = "Error while creating event")
                         }
                     }
                 }
@@ -72,22 +72,20 @@ class CreateEventViewModel @Inject constructor(
 
     fun uploadPhoto(bitmap: Bitmap) {
         viewModelScope.launch {
-
-                _upload.value = UploadState(isLoading = true)
-                uploadPhotoUseCase(bitmap).collectLatest{
-                    when(it){
-                        is Resource.Success -> {
-                            _upload.value = UploadState(data = it.data)
-                        }
-                        is Resource.Error -> {
-                            _upload.value = UploadState(error = it.message ?: "Error while uploading photo")
-                        }
-                        else -> {
-                            _upload.value = UploadState(error = "Error")
-                        }
+            _upload.value = UploadState(isLoading = true)
+            uploadPhotoUseCase(bitmap, "Events").collectLatest{
+                when(it){
+                    is Resource.Success -> {
+                        _upload.value = UploadState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _upload.value = UploadState(error = it.message ?: "Error while uploading photo")
+                    }
+                    else -> {
+                        _upload.value = UploadState(error = "Error")
                     }
                 }
-
+            }
         }
     }
 }
