@@ -46,7 +46,7 @@
         app:strokeWidth="2dp" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_layout_description_modify_profile"
+        android:id="@+id/input_layout_username_modify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -59,6 +59,31 @@
         app:layout_constraintTop_toBottomOf="@+id/img_modify_profile">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tf_username_modify"
+            style="@style/Textfield_red_stroke"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:ems="10"
+            android:hint="Nom d'utilisateur"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_description_modify_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:boxStrokeColor="#00FFFFFF"
+        app:boxStrokeWidth="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_layout_username_modify">
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tf_description_modify_profile"
             style="@style/Textfield_red_stroke"
             android:layout_width="match_parent"
@@ -67,7 +92,8 @@
             android:layout_centerVertical="true"
             android:ems="10"
             android:hint="Description"
-            android:inputType="text|textMultiLine" />
+            android:inputType="text|textMultiLine"
+            android:maxLines="10"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

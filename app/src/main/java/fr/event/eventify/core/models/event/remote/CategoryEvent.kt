@@ -13,13 +13,13 @@ enum class CategoryEvent(val categoryName: String, val icon: Int) {
     SPORT("Sports", R.drawable.ic_category_sports),
 
     /** Theater */
-    THEATER("Theater", R.drawable.ic_category_theater),
+    THEATER("Théatre", R.drawable.ic_category_theater),
 
     /** Exhibition */
-    EXHIBITION("Exhibition", R.drawable.ic_category_exhib),
+    EXHIBITION("Exposition", R.drawable.ic_category_exhib),
 
     /** Other */
-    OTHER("Others", R.drawable.ic_category_others);
+    OTHER("Autres", R.drawable.ic_category_others);
 
     companion object {
         /**
