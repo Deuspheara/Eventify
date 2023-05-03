@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import com.paypal.checkout.approve.OnApprove
 import com.paypal.checkout.createorder.CreateOrder
@@ -25,6 +27,8 @@ import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.databinding.FragmentPaymentSummaryBinding
 import fr.event.eventify.ui.payment.adapter.PaymentSummaryAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PaymentSummaryFragment : Fragment() {
@@ -51,8 +55,25 @@ class PaymentSummaryFragment : Fragment() {
 
         currentEvent = viewModel.getCurrentEvent()
 
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.event.collectLatest { state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e("PaymentSummaryFragment", "Error while getting event $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { event ->
+                    Toast.makeText(requireContext(), "Event ${event.name} created", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+            }
+        }
+
         binding.apply {
-            val price = currentEvent?.ticketPrice ?: 0.00
+            val price = (currentEvent?.ticketPrice?.times(numberOfParticipant))
             val formattedPrice = String.format("%.2f", price)
             val formattedPriceWithoutComma = formattedPrice.replace(",", ".")
 
@@ -67,7 +88,7 @@ class PaymentSummaryFragment : Fragment() {
                             PurchaseUnit(
                                 amount = Amount(
                                     currencyCode = CurrencyCode.EUR,
-                                    value = "${formattedPriceWithoutComma}"
+                                    value = formattedPriceWithoutComma
                                 )
                             )
                         )
@@ -77,6 +98,12 @@ class PaymentSummaryFragment : Fragment() {
                 onApprove = OnApprove { approval ->
                     approval.orderActions.capture { captureOrderResult ->
                         Log.i("CaptureOrder", "CaptureOrderResult: $captureOrderResult")
+                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                            viewModel.getCurrentEvent()?.id?.let { eventId ->
+                                Log.d("PaymentSummaryFragment", "EventId: $eventId")
+                                viewModel.addParticipantToEvent(eventId, participantList ?: listOf())
+                            }
+                        }
                     }
                 },
                 onError = OnError { errorInfo ->

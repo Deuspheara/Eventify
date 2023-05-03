@@ -38,6 +38,7 @@ object EventMapper {
 
 
         return EventLight(
+            id = event.id,
             name = event.name,
             author = event.author,
             description = event.description,

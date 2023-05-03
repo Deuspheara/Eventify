@@ -20,27 +20,33 @@ class ParticipantViewHolder private constructor(
         }
     }
 
+
     var onTextChangedListener: OnTextChangedListener? = null
 
-    fun bind (participant: Participant, position: Int) {
+    fun bind(participant: Participant, position: Int) {
         binding.apply {
             tvNum.text = participant.participantNumber
+            inputFirstName.setText(participant.firstName)
+            inputLastName.setText(participant.lastName)
+            inputEmail.setText(participant.email)
+
             tvNum.addTextChangedListener {
                 participant.participantNumber = it.toString()
                 onTextChangedListener?.onTextChanged(position, participant)
             }
-            inputFirstName.addTextChangedListener() {
+            inputFirstName.addTextChangedListener {
                 participant.firstName = it.toString()
                 onTextChangedListener?.onTextChanged(position, participant)
             }
-            inputLastName.addTextChangedListener() {
+            inputLastName.addTextChangedListener {
                 participant.lastName = it.toString()
                 onTextChangedListener?.onTextChanged(position, participant)
             }
-            inputEmail.addTextChangedListener() {
+            inputEmail.addTextChangedListener {
                 participant.email = it.toString()
                 onTextChangedListener?.onTextChanged(position, participant)
             }
         }
     }
+
 }

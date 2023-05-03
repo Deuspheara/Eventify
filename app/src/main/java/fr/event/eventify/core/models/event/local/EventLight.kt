@@ -10,6 +10,9 @@ import fr.event.eventify.core.models.event.remote.CategoryEvent
 
 data class EventLight(
 
+    @SerializedName("id")
+    val id: String? = null,
+
     @SerializedName("name")
     val name: String? = null,
 
@@ -48,6 +51,7 @@ data class EventLight(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
         parcel.readDouble(),
         parcel.readInt(),
         parcel.readInt(),
@@ -55,6 +59,7 @@ data class EventLight(
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
         dest.writeString(name)
         dest.writeString(author)
         dest.writeString(description)

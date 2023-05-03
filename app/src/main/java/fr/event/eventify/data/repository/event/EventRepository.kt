@@ -10,6 +10,7 @@ import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
+import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.data.datasource.event.remote.EventRemoteDataSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -52,6 +53,8 @@ interface EventRepository {
     fun getCurrentEvent(): EventLight?
 
     fun setCurrentEvent(event: EventLight)
+
+    suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -70,6 +73,20 @@ class EventRepositoryImpl @Inject constructor(
      */
     override fun setCurrentEvent(event: EventLight){
         currentEvent = event
+    }
+
+    override suspend fun addParticipant(
+        eventId: String,
+        listParticipants: List<Participant>
+    ): Flow<Resource<Event>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.addParticipant(eventId, listParticipants)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while adding participant with $eventId", e)
+                throw e
+            }
+        }
     }
 
     /**

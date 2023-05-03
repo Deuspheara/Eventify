@@ -27,6 +27,12 @@ class ParticipantAdapter : RecyclerView.Adapter<ParticipantViewHolder>()  {
 
     override fun onBindViewHolder(holder: ParticipantViewHolder, position: Int) {
         holder.bind(participantList[position], position)
+        holder.itemView.tag = position
+    }
+
+    override fun onViewRecycled(holder: ParticipantViewHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.tag = null
     }
 
 }
