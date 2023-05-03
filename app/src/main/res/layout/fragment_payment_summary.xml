@@ -121,11 +121,24 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="J’accepte les conditions d’utilisations du service et j’ai lu la charte de confidentialité"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/payment_button_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:switchPadding="8dp"
             app:thumbTint="@color/red" />
+
+        <com.paypal.checkout.paymentbutton.PaymentButtonContainer
+            android:id="@+id/payment_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:paypal_button_color="silver"
+            app:paypal_button_enabled="true"
+            app:paypal_button_label="pay"
+            app:paypal_button_shape="rectangle"
+            app:paypal_button_size="large" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
@@ -142,18 +155,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <com.paypal.checkout.paymentbutton.PaymentButtonContainer
-        android:id="@+id/payment_button_container"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:paypal_button_color="silver"
-        app:paypal_button_enabled="true"
-        app:paypal_button_label="pay"
-        app:paypal_button_shape="rectangle"
-        app:paypal_button_size="large" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
