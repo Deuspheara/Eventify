@@ -6,15 +6,18 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.firebase.firestore.DocumentSnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
+import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.data.datasource.event.remote.EventRemoteDataSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Named
 
 
 interface EventRepository {
@@ -46,6 +49,12 @@ interface EventRepository {
      * @see [EventRemoteDataSource.getEvents]
      */
     suspend fun getEvents(page: Int, limit: Int,  orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
+
+    fun getCurrentEvent(): EventLight?
+
+    fun setCurrentEvent(event: EventLight)
+
+    suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -55,14 +64,39 @@ class EventRepositoryImpl @Inject constructor(
 
     private companion object {
         private const val TAG = "EventRepository"
+        private var currentEvent: EventLight? = null
     }
 
     /**
-     * Create a new event
-     * @param event the [Event] to create
-     * @return a [Flow] of [Resource]
-     * @see [EventRemoteDataSource.createEvent]
+     * Set the current event
+     * @param event the [EventLight] to set
      */
+    override fun setCurrentEvent(event: EventLight){
+        currentEvent = event
+    }
+
+    override suspend fun addParticipant(
+        eventId: String,
+        listParticipants: List<Participant>
+    ): Flow<Resource<Event>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.addParticipant(eventId, listParticipants)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while adding participant with $eventId", e)
+                throw e
+            }
+        }
+    }
+
+    /**
+     * Get the current event
+     * @return the current [EventLight]
+     */
+    override fun getCurrentEvent(): EventLight?{
+        return currentEvent
+    }
+
     override suspend fun createEvent(event: Event): Flow<Resource<Event>> {
        return withContext(ioDispatcher) {
            try {

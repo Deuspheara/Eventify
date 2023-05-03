@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
 import com.google.gson.annotations.SerializedName
+import fr.event.eventify.core.models.payment.local.Participant
 
 data class Event(
     @DocumentId
@@ -36,7 +37,7 @@ data class Event(
     val nbTickets: Int? = null,
 
     @SerializedName("participants")
-    val participants: List<String>? = null,
+    val participants: List<Participant>? = null,
 
     @SerializedName("category")
     val categoryEvent: CategoryEvent? = null,

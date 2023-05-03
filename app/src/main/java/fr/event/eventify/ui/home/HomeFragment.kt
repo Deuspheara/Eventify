@@ -1,5 +1,6 @@
 package fr.event.eventify.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.databinding.FragmentHomeBinding
+import fr.event.eventify.ui.profile.ProfileActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,10 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        binding.btReturn.setOnClickListener{
+            val intent = Intent(it.context, ProfileActivity::class.java)
+            startActivity(intent)
+        }
 
         return binding.root
     }
@@ -84,9 +90,7 @@ class HomeFragment : Fragment() {
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    //                viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                    //                    viewModel.getEventsPaginated(newText, FilterEvent.NAME,CategoryEvent.FESTIVAL)
-                    //                }
+
                     return false
                 }
             })
@@ -95,35 +99,6 @@ class HomeFragment : Fragment() {
                 search.isIconified = false
             })
         }
-
-//        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-//            try {
-//                viewModel.eventList.collectLatest { state ->
-//                    if (state.error.isNotEmpty()) {
-//                        state.error.let {
-//                            Log.e("HomeFragment", "Error while collecting events paginated $it" )
-//                        }
-//                    }
-//                    state.isLoading.let {
-//                        Log.d("HomeFragment", "isLoading: $it")
-//                    }
-//                    state.data?.let {
-//                        Log.d("HomeFragment", "Event list: ${it}")
-//                        it.map {
-//                            Log.d("HomeFragment", "event: ${it.name}")
-//                        }
-//                    }
-//                }
-//            }catch (e: Exception){
-//                Log.e("HomeFragment", "Error while collecting events paginated", e)
-//            }
-//
-//        }
-//
-//        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-//            viewModel.getEvents(0, 20, FilterEvent.NAME, CategoryEvent.FESTIVAL)
-//        }
-
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             viewModel.connected.collectLatest { state ->
@@ -139,54 +114,6 @@ class HomeFragment : Fragment() {
             viewModel.isConnected()
         }
 
-
-//        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-//            Log.d("HomeFragment", "onCreateView: $isConnect")
-//            //if(isConnect){
-//                Log.d("HomeFragment", "createEvent, isConnect: $isConnect")
-//
-//                viewModel.createEvent(
-//                    event= Event(
-//                        name = "test",
-//                        author = "test",
-//                        description = "test",
-//                        date = Timestamp(Date(Calendar.getInstance().timeInMillis)),
-//                        location = Event.LocationEvent(
-//                            id = "test",
-//                            name = "test",
-//                            latitude = 0.0,
-//                            longitude = 0.0,
-//                            address = "test",
-//                            city = "test",
-//                            country = "test",
-//                            zipCode = "test"
-//                        ),
-//                        image = "test",
-//                        nbTickets = 0,
-//                        participants = listOf(),
-//                        categoryEvent = CategoryEvent.CONCERT,
-//                        ticketPrice = Event.PriceEvent(
-//                            amount = 0.0,
-//                            currency = "test"
-//                        )
-//                    )
-//                )
-//           // }
-//
-//
-//            viewModel.event.collectLatest { state ->
-//                state.error?.let {
-//
-//                }
-//                state.isLoading?.let {
-//
-//                }
-//                state.data?.let {
-//                    Log.d("HomeFragment", "onCreateView: $it")
-//                }
-//
-//            }
-//        }
     }
 
 
