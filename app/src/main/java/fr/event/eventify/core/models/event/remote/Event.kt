@@ -36,6 +36,9 @@ data class Event(
     @SerializedName("nbTickets")
     val nbTickets: Int? = null,
 
+    @SerializedName("interested")
+    val interested: List<String>? = null,
+
     @SerializedName("participants")
     val participants: List<Participant>? = null,
 

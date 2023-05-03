@@ -4,11 +4,10 @@ import android.util.Log
 import androidx.paging.PagingSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
-import fr.event.eventify.core.models.event.local.EventLight
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.inject.Named
 
 interface EventRemoteDataSource {
     /**
@@ -73,7 +71,9 @@ interface EventRemoteDataSource {
      * @return a [Flow] of [Resource] of [Event]
      * @see Participant
      */
-    suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
+    suspend fun addParticipant(eventId: String, listParticipants : List<Participant>): Flow<Resource<Event>>
+
+    suspend fun addInterestedUser(eventId: String, interestedUser : RemoteUser): Flow<Resource<Event>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -206,6 +206,38 @@ class EventRemoteDataSourceImpl @Inject constructor(
             Log.e(TAG, "Error while adding participant", e)
             emit(Resource.Error(
                 message = e.message ?: "Error while adding participant",
+            ))
+            throw e
+        }
+    }.flowOn(ioContext)
+
+    override suspend fun addInterestedUser(
+        eventId: String,
+        interestedUser: RemoteUser
+    ): Flow<Resource<Event>> = flow<Resource<Event>> {
+        emit(Resource.Loading())
+        Log.d(TAG, "Adding interested user $interestedUser")
+        try {
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                emit(Resource.Error(message = "User not connected"))
+            }else {
+                val eventRef = firebaseFirestore.collection("Events").document(eventId)
+                val event = eventRef.get().await().toObject(Event::class.java)
+                val eventWithId = event?.copy(interested = event.interested?.plus(
+                    interestedUser.uuid
+                ))
+                if (eventWithId != null) {
+                    eventRef.set(eventWithId).await()
+                    emit(Resource.Success(eventWithId))
+                }else {
+                    emit(Resource.Error(message = "Event not found"))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while adding interested user", e)
+            emit(Resource.Error(
+                message = e.message ?: "Error while adding interested user",
             ))
             throw e
         }
