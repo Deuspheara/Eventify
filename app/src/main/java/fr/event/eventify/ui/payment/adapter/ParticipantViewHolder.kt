@@ -2,9 +2,11 @@ package fr.event.eventify.ui.payment.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.databinding.ItemParticipantBinding
+import java.text.FieldPosition
 
 class ParticipantViewHolder private constructor(
     private val binding: ItemParticipantBinding
@@ -18,7 +20,27 @@ class ParticipantViewHolder private constructor(
         }
     }
 
-    fun bind (participant: Participant) {
-        binding.tvNum.text = participant.participantNumber
+    var onTextChangedListener: OnTextChangedListener? = null
+
+    fun bind (participant: Participant, position: Int) {
+        binding.apply {
+            tvNum.text = participant.participantNumber
+            tvNum.addTextChangedListener {
+                participant.participantNumber = it.toString()
+                onTextChangedListener?.onTextChanged(position, participant)
+            }
+            inputFirstName.addTextChangedListener() {
+                participant.firstName = it.toString()
+                onTextChangedListener?.onTextChanged(position, participant)
+            }
+            inputLastName.addTextChangedListener() {
+                participant.lastName = it.toString()
+                onTextChangedListener?.onTextChanged(position, participant)
+            }
+            inputEmail.addTextChangedListener() {
+                participant.email = it.toString()
+                onTextChangedListener?.onTextChanged(position, participant)
+            }
+        }
     }
 }

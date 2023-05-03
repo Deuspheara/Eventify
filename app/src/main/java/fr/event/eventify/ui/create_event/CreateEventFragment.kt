@@ -80,7 +80,9 @@ class CreateEventFragment : Fragment() {
                     tfNameEvent.requestFocus()
                     return@setOnClickListener
                 }
-
+                //price format to 2.00
+                val price = if (checkPriceNotNull) "%.2f".format(tfPriceEvent.text.toString().toDouble()) else "0.00"
+                val priceWithoutComma = price.replace(",",".")
                 viewModel.createEvent(
                     Event(
                         name = tfNameEvent.text.toString(),
@@ -93,7 +95,7 @@ class CreateEventFragment : Fragment() {
                         image = url,
                         ticketPrice = Event.PriceEvent(
                             currency = "euro",
-                            amount = if (checkPriceNotNull) tfPriceEvent.text.toString().toDouble() else 0.0,
+                            amount = priceWithoutComma.toDouble(),
                         ),
                         nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
                         categoryEvent = CategoryEvent.FESTIVAL,
