@@ -23,7 +23,7 @@
         android:id="@+id/homeFragment"
         android:name="fr.event.eventify.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/createEventFragment"
         android:name="fr.event.eventify.ui.create_event.CreateEventFragment"

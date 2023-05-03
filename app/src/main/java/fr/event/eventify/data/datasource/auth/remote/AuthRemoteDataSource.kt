@@ -57,6 +57,14 @@ interface AuthRemoteDataSource {
      */
     suspend fun isUserConnected(): Flow<Boolean>
 
+    /**
+     * Sign out
+     * @return a [Flow] of [Unit]
+     * @see [FirebaseAuth.signOut]
+     * @see [FirebaseAuth.getCurrentUser]
+     */
+    suspend fun getUser(): Flow<Resource<RemoteUser>>
+
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
@@ -187,5 +195,45 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             emit(false)
             throw e
         }
+    }.flowOn(ioContext)
+
+    override suspend fun getUser(): Flow<Resource<RemoteUser>> = callbackFlow<Resource<RemoteUser>> {
+        trySend(Resource.Loading())
+        try {
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                Log.e(TAG, "Error while getting user, user is null")
+                trySend(Resource.Error(message = "Error while getting user, user is null"))
+            } else {
+                Log.d(TAG, "User is connected")
+                firebaseFirestore.collection("User")
+                    .document(user.uid)
+                    .get()
+                    .addOnSuccessListener {
+                        if (it.exists()) {
+                            val remoteUser = it.toObject(RemoteUser::class.java)
+                            if (remoteUser == null) {
+                                Log.e(TAG, "Error while getting user, user is null")
+                                trySend(Resource.Error(message = "Error while getting user, user is null"))
+                            } else {
+                                trySend(Resource.Success(remoteUser))
+                            }
+                        } else {
+                            Log.e(TAG, "Error while getting user, user is null")
+                            trySend(Resource.Error(message = "Error while getting user, user is null"))
+                        }
+                    }
+                    .addOnFailureListener {
+                        Log.e(TAG, "Error while getting user, user is null")
+                        trySend(Resource.Error(message = "Error while getting user, user is null"))
+                    }
+                    .await()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while getting user: $e")
+            trySend(Resource.Error(message = "Error while getting user"))
+            throw e
+        }
+        awaitClose()
     }.flowOn(ioContext)
 }

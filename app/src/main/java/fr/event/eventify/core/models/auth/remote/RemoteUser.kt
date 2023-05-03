@@ -34,5 +34,15 @@ data class RemoteUser(
 
     /** Check if email is verified */
     @SerializedName("isEmailVerified")
-    val isEmailVerified : Boolean
-)
+    val isEmailVerified : Boolean,
+
+    /** Event created by this user */
+    @SerializedName("createdEvents")
+    val createdEvents : List<String>,
+
+    /** Event joined by this user */
+    @SerializedName("joinedEvents")
+    val joinedEvents : List<String>
+){
+    constructor() : this("", "", "", "", "", "", "", false, emptyList(), emptyList())
+}

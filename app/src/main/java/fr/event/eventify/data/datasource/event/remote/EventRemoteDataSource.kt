@@ -8,10 +8,12 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.core.models.event.remote.stringValue
+import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.data.paging.EventPagingSource
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Named
 
 interface EventRemoteDataSource {
     /**
@@ -37,8 +40,24 @@ interface EventRemoteDataSource {
      */
     suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
 
+    /**
+     * Get all events paginated
+     * @param name the name of the event to get
+     * @param orderBy the [FilterEvent] to apply
+     * @param category the [CategoryEvent] to apply
+     * @return a [Flow] of [Resource]
+     * @see FilterEvent
+     * @see CategoryEvent
+     */
     fun createCharacterPagingSource( name: String?, orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<DocumentSnapshot, Event>
 
+    /**
+     * Get all events paginated
+     * @param lastSnapshot the last [DocumentSnapshot] to get
+     * @param limit the limit of events to get
+     * @return a [Flow] of [Resource]
+     * @see DocumentSnapshot
+     */
     suspend fun getEventsQuerySnapshot(
         lastSnapshot: DocumentSnapshot?,
         limit: Int,
@@ -46,6 +65,15 @@ interface EventRemoteDataSource {
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): QuerySnapshot
+
+    /**
+     * Add a participant to an event
+     * @param eventId the id of the event
+     * @param listParticipants the [List] of [Participant] to add
+     * @return a [Flow] of [Resource] of [Event]
+     * @see Participant
+     */
+    suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -57,6 +85,7 @@ class EventRemoteDataSourceImpl @Inject constructor(
     private companion object {
         private const val TAG = "EventRemoteDataSource"
     }
+
 
     override suspend fun createEvent(event: Event): Flow<Resource<Event>> = flow {
         emit(Resource.Loading())
@@ -149,6 +178,38 @@ class EventRemoteDataSourceImpl @Inject constructor(
         Log.d(TAG, "getEventsQuerySnapshot: $category")
         return query.get().await()
     }
+
+    override suspend fun addParticipant(
+        eventId: String,
+        listParticipants: List<Participant>
+    ): Flow<Resource<Event>> = flow<Resource<Event>> {
+        emit(Resource.Loading())
+        Log.d(TAG, "Adding participant $listParticipants")
+        try {
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                emit(Resource.Error(message = "User not connected"))
+            }else {
+                val eventRef = firebaseFirestore.collection("Events").document(eventId)
+                val event = eventRef.get().await().toObject(Event::class.java)
+                val eventWithId = event?.copy(participants = event.participants?.plus(
+                    listParticipants
+                ))
+                if (eventWithId != null) {
+                    eventRef.set(eventWithId).await()
+                    emit(Resource.Success(eventWithId))
+                }else {
+                    emit(Resource.Error(message = "Event not found"))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while adding participant", e)
+            emit(Resource.Error(
+                message = e.message ?: "Error while adding participant",
+            ))
+            throw e
+        }
+    }.flowOn(ioContext)
 
 
 }
