@@ -1,16 +1,27 @@
 package fr.event.eventify.ui.profile.modify
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentModifyProfileBinding
 import fr.event.eventify.databinding.FragmentProfileBinding
+import fr.event.eventify.utils.ImageDialog
 
 class ModifyProfileFragment : Fragment() {
     private lateinit var binding: FragmentModifyProfileBinding
+
+    private lateinit var startForProfileImageResult: ActivityResultLauncher<Intent>
+    private var bitmap: Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,5 +36,20 @@ class ModifyProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        startForProfileImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { fileUri ->
+                    val source = ImageDecoder.createSource(requireContext().contentResolver, fileUri)
+                    bitmap = ImageDecoder.decodeBitmap(source)
+
+                    binding.imgModifyProfile.setImageBitmap(bitmap)
+                }
+            }
+        }
+
+        binding.imgModifyProfile.setOnClickListener{
+            ImageDialog.takePicture(startForProfileImageResult, this.requireActivity())
+        }
     }
 }
