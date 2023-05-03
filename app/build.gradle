@@ -7,6 +7,8 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def paypalProperties = loadPropertiesFromFile("paypal.properties")
+
 android {
     namespace 'fr.event.eventify'
     compileSdk 33
@@ -19,6 +21,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "CLIENT_ID", paypalProperties["CLIENT_ID"] ?: "\"\"")
     }
 
     buildTypes {
@@ -108,4 +112,20 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$roomVersion"
 
     implementation 'com.github.dhaval2404:imagepicker:2.1'
+
+    //paypal native payment
+    implementation 'com.paypal.checkout:android-sdk:0.8.8'
+}
+
+/**
+ * Loads properties at the specified file path. If the file does not exist,
+ * this method returns an empty properties object.
+ * @param filePath
+ */
+def loadPropertiesFromFile(filePath) {
+    def result = new Properties()
+    try {
+        result.load(new FileInputStream(rootProject.file(filePath)))
+    } catch (e) { /* ignored */ }
+    return result
 }
