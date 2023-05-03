@@ -35,6 +35,8 @@ class ModifyProfileFragment : Fragment() {
     private lateinit var startForProfileImageResult: ActivityResultLauncher<Intent>
     private var bitmap: Bitmap? = null
 
+    private var uuid: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,6 +75,7 @@ class ModifyProfileFragment : Fragment() {
                             error(R.drawable.pingouin)
                         }
                         tfDescriptionModifyProfile.setText(it.phoneNumber)
+                        uuid = it.uuid
                     }
                 }
                 state.error.let {
@@ -80,6 +83,15 @@ class ModifyProfileFragment : Fragment() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.getUser()
+        }
+
+        binding.btnValidateProfile.setOnClickListener{
+            uuid?.let { it1 -> viewModel.modifyUser(it1,binding.tfUsernameModify.text.toString(),binding.tfDescriptionModifyProfile.text.toString(),"") }
+        }
+
         binding.imgModifyProfile.setOnClickListener{
             ImageDialog.takePicture(startForProfileImageResult, this.requireActivity())
         }
