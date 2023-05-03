@@ -12,6 +12,7 @@ import com.paypal.checkout.createorder.CreateOrder
 import com.paypal.checkout.createorder.CurrencyCode
 import com.paypal.checkout.createorder.OrderIntent
 import com.paypal.checkout.createorder.UserAction
+import com.paypal.checkout.error.OnError
 import com.paypal.checkout.order.Amount
 import com.paypal.checkout.order.AppContext
 import com.paypal.checkout.order.Order
@@ -35,27 +36,30 @@ class PaymentSummaryFragment : Fragment() {
 
         binding.apply {
             paymentButtonContainer.setup(
-                createOrder =
-                CreateOrder { createOrderActions ->
-                    val order =
-                        Order(
-                            intent = OrderIntent.CAPTURE,
-                            appContext = AppContext(userAction = UserAction.PAY_NOW),
-                            purchaseUnitList =
-                            listOf(
-                                PurchaseUnit(
-                                    amount =
-                                    Amount(currencyCode = CurrencyCode.EUR, value = "10.00")
+                createOrder = CreateOrder { createOrderActions ->
+                    val order = Order(
+                        intent = OrderIntent.CAPTURE,
+                        appContext = AppContext(
+                            userAction = UserAction.PAY_NOW
+                        ),
+                        purchaseUnitList = listOf(
+                            PurchaseUnit(
+                                amount = Amount(
+                                    currencyCode = CurrencyCode.EUR,
+                                    value = "1.00"
                                 )
                             )
                         )
+                    )
                     createOrderActions.create(order)
                 },
-                onApprove =
-                OnApprove { approval ->
+                onApprove = OnApprove { approval ->
                     approval.orderActions.capture { captureOrderResult ->
                         Log.i("CaptureOrder", "CaptureOrderResult: $captureOrderResult")
                     }
+                },
+                onError = OnError { errorInfo ->
+                    Log.d("OnError", "Error: $errorInfo")
                 }
             )
         }
