@@ -53,5 +53,21 @@ enum class CategoryEvent(val categoryName: String, val icon: Int) {
                 else -> "Others"
             }
         }
+
+        //return R.drawable.ic_music
+        fun toIcon(categoryEvent: CategoryEvent): Int {
+            return when (categoryEvent) {
+                CONCERT -> R.drawable.calendar
+                FESTIVAL -> R.drawable.eventify
+                SPORT -> R.drawable.eventify
+                THEATER -> R.drawable.eventify
+                EXHIBITION -> R.drawable.eventify
+                else -> R.drawable.eventify
+            }
+        }
     }
 }
+val CategoryEvent.stringValue: String
+    get() = CategoryEvent.toString(this)
+val CategoryEvent.iconValue : Int
+    get() = CategoryEvent.toIcon(this)
