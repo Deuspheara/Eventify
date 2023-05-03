@@ -52,7 +52,7 @@
                 android:clickable="true"
                 android:contentDescription="event picture"
                 android:focusable="true"
-                android:src="@drawable/calendar"
+                android:src="@drawable/ic_picture"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title_new_event" />
@@ -127,30 +127,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_price_event"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                app:boxStrokeColor="#00FFFFFF"
-                app:boxStrokeWidth="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tf_price_event"
-                    style="@style/Textfield_red_stroke"
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:ems="10"
-                    android:hint="Prix"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/input_layout_places_event"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -158,9 +134,33 @@
                 android:layout_marginEnd="16dp"
                 app:boxStrokeColor="#00FFFFFF"
                 app:boxStrokeWidth="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/input_layout_places_event"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tf_price_event"
+                    style="@style/Textfield_red_stroke"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:ems="10"
+                    android:hint="Prix"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_places_event"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/input_layout_price_event"
-                app:layout_constraintTop_toBottomOf="@+id/input_layout_location_event">
+                app:layout_constraintTop_toTopOf="@+id/input_layout_price_event">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_places_event"
@@ -170,8 +170,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:ems="10"
-                    android:hint="Nombre de tickets"
-                    android:inputType="text" />
+                    android:hint="Places"
+                    android:inputType="numberSigned" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
