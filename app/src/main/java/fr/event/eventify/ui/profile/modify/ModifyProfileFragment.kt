@@ -34,7 +34,7 @@ class ModifyProfileFragment : Fragment() {
 
     private lateinit var startForProfileImageResult: ActivityResultLauncher<Intent>
     private var bitmap: Bitmap? = null
-
+    private var url: String? = null
     private var uuid: String? = null
 
     override fun onCreateView(
@@ -76,10 +76,29 @@ class ModifyProfileFragment : Fragment() {
                         }
                         tfDescriptionModifyProfile.setText(it.phoneNumber)
                         uuid = it.uuid
+                        url = it.photoUrl
                     }
                 }
                 state.error.let {
                     Log.e("ProfileFragment", "Error while collecting user $it")
+                }
+            }
+        }
+
+        //check for upload image
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.upload.collectLatest { state ->
+                if (state.error?.isNotEmpty() == true) {
+                    state.error.let {
+                        Log.e("CreateEventFragment", "Error while uploading image $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let {
+                    Log.d("CreateEventFragment", "Image uploaded: $url")
+                    url = it
                 }
             }
         }
@@ -89,7 +108,12 @@ class ModifyProfileFragment : Fragment() {
         }
 
         binding.btnValidateProfile.setOnClickListener{
-            uuid?.let { it1 -> viewModel.modifyUser(it1,binding.tfUsernameModify.text.toString(),binding.tfDescriptionModifyProfile.text.toString(),"") }
+            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                bitmap?.let { it1 -> viewModel.uploadPhoto(it1) }
+            }
+            uuid?.let { uuid -> url?.let { photoUrl ->
+                viewModel.modifyUser(uuid,binding.tfUsernameModify.text.toString(),binding.tfDescriptionModifyProfile.text.toString(),photoUrl)
+            } }
         }
 
         binding.imgModifyProfile.setOnClickListener{
