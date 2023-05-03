@@ -29,4 +29,9 @@
         android:name="fr.event.eventify.ui.create_event.CreateEventFragment"
         android:label="fragment_create_event"
         tools:layout="@layout/fragment_create_event" />
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="fr.event.eventify.ui.favorite.FavoriteFragment"
+        android:label="fragment_favorite"
+        tools:layout="@layout/fragment_favorite" />
 </navigation>

@@ -40,6 +40,9 @@ data class Event(
 
     @SerializedName("category")
     val categoryEvent: CategoryEvent? = null,
+
+    @SerializedName("favorite")
+    var favorite: Boolean = false,
 ){
     // Nested classes
     data class LocationEvent(

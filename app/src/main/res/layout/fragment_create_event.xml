@@ -19,28 +19,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/bt_create_event_return"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/circle_background"
-                android:contentDescription="return button"
-                android:src="@drawable/arrow_back"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <TextView
                 android:id="@+id/tv_title_new_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nouvel événement"
+                android:layout_marginTop="16dp"
+                android:text="Nouvel évènement"
+                android:textColor="@color/text_default"
                 android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="@+id/bt_create_event_return"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/bt_create_event_return" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/img_create_event"
@@ -79,7 +68,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:ems="10"
-                    android:hint="Nom de l'événement"
+                    android:hint="Nom de l'évènement"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -12,22 +12,20 @@ import fr.event.eventify.R
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.ItemFeedBinding
 import fr.event.eventify.ui.event.EventDetailsActivity
-import java.sql.Time
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 
 
-class EventViewHolder private constructor(
+class FavoriteViewHolder private constructor(
     private val binding: ItemFeedBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {
-        fun newInstance(parent: ViewGroup): EventViewHolder {
+        fun newInstance(parent: ViewGroup): FavoriteViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             val binding = ItemFeedBinding.inflate(layoutInflater, parent, false)
-            return EventViewHolder(binding)
+            return FavoriteViewHolder(binding)
         }
     }
 

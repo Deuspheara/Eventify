@@ -93,8 +93,8 @@
         android:id="@+id/linearLayoutItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/rounded_corners"
         android:gravity="center"
         android:orientation="horizontal"
@@ -102,8 +102,8 @@
         android:paddingTop="4dp"
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_event">
+        app:layout_constraintBottom_toBottomOf="@+id/iv_event"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/imageView2"
@@ -120,4 +120,16 @@
             android:text="0/100"
             android:textFontWeight="700" />
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/button_fav"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circle_background"
+        android:src="@drawable/empty_star"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_event" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
