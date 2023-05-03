@@ -54,4 +54,13 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/red</item>
+        <item name="colorAccent">@color/red</item>
+        <item name="colorControlActivated">@color/red</item>
+        <item name="colorControlHighlight">@color/red</item>
+        <item name="colorOnPrimary">@color/red</item>
+    </style>
+
 </resources>

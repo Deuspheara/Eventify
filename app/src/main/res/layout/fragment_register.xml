@@ -73,6 +73,7 @@
                 app:strokeColor="@color/red"
                 app:strokeWidth="2dp" />
 
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_name"
                 android:layout_width="match_parent"
@@ -80,23 +81,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_profile">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_name"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
                     android:hint="Nom"
-                    android:inputType="text"
-                    android:textColor="@color/black" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -106,23 +106,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_phone_number"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
                     android:hint="Numéro de téléphone"
-                    android:inputType="phone"
-                    android:textColor="@color/black" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -132,23 +131,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_phone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_email"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
                     android:hint="Email"
-                    android:inputType="text|textEmailAddress"
-                    android:textColor="@color/black" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -158,23 +156,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_email">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_username"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
                     android:hint="Nom d'utilisateur"
-                    android:inputType="text"
-                    android:textColor="@color/black" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -184,23 +181,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_username">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_password"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
                     android:hint="Mot de passe"
-                    android:inputType="text|textPassword"
-                    android:textColor="@color/black" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -210,23 +206,22 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:boxBackgroundMode="none"
+                app:boxStrokeColor="#00FFFFFF"
+                app:boxStrokeWidth="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/input_layout_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tf_confirm_password"
+                    style="@style/Textfield_red_stroke"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/edit_text_selector"
                     android:ems="10"
-
-                    android:hint="Confirmer le mot de passe"
-                    android:inputType="text|textPassword"
-                    android:textColor="@color/black" />
+                    android:hint="Nom d'utilisateur"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
