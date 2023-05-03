@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import fr.event.eventify.core.models.payment.local.Participant
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.databinding.FragmentParticipantBinding
+import fr.event.eventify.ui.payment.adapter.ParticipantAdapter
 
 @AndroidEntryPoint
 class ParticipantFragment : Fragment() {

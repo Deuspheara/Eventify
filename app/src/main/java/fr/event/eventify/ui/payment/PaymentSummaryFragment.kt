@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.databinding.FragmentPaymentSummaryBinding
-import fr.event.eventify.databinding.ItemSummaryBinding
+import fr.event.eventify.ui.payment.adapter.PaymentSummaryAdapter
 
 class PaymentSummaryFragment : Fragment() {
 
@@ -32,10 +34,13 @@ class PaymentSummaryFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        val adapter = PaymentSummaryAdapter()
+        binding.rvParticipant.adapter = adapter
+        binding.rvParticipant.layoutManager = LinearLayoutManager(requireContext())
         for (i in 1 until numberOfParticipant + 1) {
-            val myLayout = ItemSummaryBinding.inflate(layoutInflater, null, false)
-            binding.rvParticipant.addView(myLayout.root)
+            adapter.participantList.add(Participant(participantNumber = "Participant $i"))
         }
+        adapter.notifyDataSetChanged()
 
     }
 }

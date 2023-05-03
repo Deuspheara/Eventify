@@ -9,7 +9,7 @@
         <KeyFrameSet></KeyFrameSet>
         <OnSwipe
             motion:dragDirection="dragUp"
-            motion:touchAnchorId="@+id/rv_participant"
+            motion:touchAnchorId="@+id/layout_participant"
             motion:touchAnchorSide="top" />
     </Transition>
 

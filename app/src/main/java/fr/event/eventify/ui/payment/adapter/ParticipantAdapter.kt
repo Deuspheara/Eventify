@@ -1,4 +1,4 @@
-package fr.event.eventify.ui.payment
+package fr.event.eventify.ui.payment.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
