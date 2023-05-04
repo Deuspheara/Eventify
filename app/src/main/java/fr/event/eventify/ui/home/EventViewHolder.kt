@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -20,6 +21,8 @@ class EventViewHolder private constructor(
     private val binding: ItemFeedBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private var isFavorite = false
+
     companion object {
         fun newInstance(parent: ViewGroup): EventViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
@@ -28,7 +31,7 @@ class EventViewHolder private constructor(
         }
     }
 
-    fun bind(event: Event) {
+    fun bind(event: Event, userId: String?, onClickFavorite: (String, Boolean) -> Unit) {
         val isCountParticipantNull = event.participants?.count() == null
 
         binding.apply {
@@ -74,14 +77,16 @@ class EventViewHolder private constructor(
                 placeholder(R.drawable.app_icon)
                 error(R.drawable.app_icon)
             }
-//            isFavorite = event.interested?.contains(userId) == true
-//            buttonFav.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
-//            buttonFav.setOnClickListener {
-//                it as ImageButton
-//                isFavorite = !isFavorite
-//                it.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
-//                onClickFavorite(event.id, isFavorite)
-//            }
+            isFavorite = event.interested?.contains(userId) == true
+            buttonFav.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+            buttonFav.setOnClickListener {
+                it as ImageButton
+                if (userId != null) {
+                    isFavorite = !isFavorite
+                    it.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+                    onClickFavorite(event.id, isFavorite)
+                }
+            }
 
             constraintLayoutItemFeed.setOnClickListener {
                 //launch Home Activity

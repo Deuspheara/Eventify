@@ -13,6 +13,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.databinding.FragmentHomeBinding
@@ -26,6 +27,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var pagingAdapter: EventPagingAdapter
+    private var currentUser: RemoteUser? = null
     private var isConnect = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,32 +46,54 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        pagingAdapter = EventPagingAdapter()
-
-        binding.rvEvents.adapter = pagingAdapter
-        binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
-
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
-            try {
-                viewModel.eventsPaginated.collectLatest { state ->
-                    if (state.error.isNotEmpty()) {
-                        state.error.let {
-                            Log.e("HomeFragment", "Error while collecting events paginated $it")
-                        }
-                    }
-                    state.isLoading.let {
-                        Log.d("HomeFragment", "isLoading: $it")
-                    }
-                    state.data?.let {
-                        it.map {
-                            Log.d("HomeFragment", "event: ${it.name}")
-                        }
-                        pagingAdapter.submitData(it)
+            viewModel.user.collectLatest { state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        pagingAdapter = EventPagingAdapter { id, isFavorite -> }
+                        binding.rvEvents.adapter = pagingAdapter
+                        binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
+                        getData()
+                        Log.e("HomeFragment", "Error while getting user $it")
                     }
                 }
-            } catch (e: Exception) {
-                Log.e("HomeFragment", "Error while collecting events paginated", e)
+                state.isLoading.let {
+
+                }
+                state.data?.let { user ->
+                    currentUser = user
+                    pagingAdapter = EventPagingAdapter(user.uuid) { id, isFavorite ->
+                        if (isFavorite) {
+                            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                                currentUser?.let { user ->
+                                    viewModel.addInterestedUserToEvent(
+                                        id,
+                                        listOf(user.uuid)
+                                    )
+                                }
+                            }
+                        }
+                        else {
+                            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                                currentUser?.let { user ->
+                                    viewModel.deleteInterestedUserToEvent(
+                                        id,
+                                        listOf(user.uuid)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    binding.rvEvents.adapter = pagingAdapter
+                    binding.rvEvents.layoutManager = LinearLayoutManager(requireContext())
+                    getData()
+                    Log.d("HomeFragment", "User: $user")
+                }
             }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.getUser()
         }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
@@ -114,6 +138,31 @@ class HomeFragment : Fragment() {
             viewModel.isConnected()
         }
 
+    }
+
+    private fun getData() {
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            try {
+                viewModel.eventsPaginated.collectLatest { state ->
+                    if (state.error.isNotEmpty()) {
+                        state.error.let {
+                            Log.e("HomeFragment", "Error while collecting events paginated $it")
+                        }
+                    }
+                    state.isLoading.let {
+                        Log.d("HomeFragment", "isLoading: $it")
+                    }
+                    state.data?.let {
+                        it.map {
+                            Log.d("HomeFragment", "event: ${it.name}")
+                        }
+                        pagingAdapter.submitData(it)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "Error while collecting events paginated", e)
+            }
+        }
     }
 
 

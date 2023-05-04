@@ -6,23 +6,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
-import fr.event.eventify.data.repository.event.EventRepository
+import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.event.CreateEventUseCase
 import fr.event.eventify.domain.auth.IsConnectedUseCase
+import fr.event.eventify.domain.event.AddInterestedUserToEventUseCase
+import fr.event.eventify.domain.event.DeleteInterestedUserToEventUseCase
 import fr.event.eventify.domain.event.GetEventsPaginatedUseCase
 import fr.event.eventify.domain.event.GetEventsUseCase
+import fr.event.eventify.ui.register.RemoteState
 import fr.event.eventify.utils.Resource
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.logging.Filter
 import javax.inject.Inject
 
 
@@ -50,14 +50,20 @@ data class ConnectedState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val addInterestedUserToEventUseCase: AddInterestedUserToEventUseCase,
+    private val deleteInterestedUserToEventUseCase: DeleteInterestedUserToEventUseCase,
     private val createEventUseCase: CreateEventUseCase,
     private val isConnectedUseCase: IsConnectedUseCase,
     private val getEventsPaginatedUseCase: GetEventsPaginatedUseCase,
-    private val getEventsUseCase: GetEventsUseCase
+    private val getEventsUseCase: GetEventsUseCase,
+    private val getUserUseCase: GetUserUsecase
 ) : ViewModel(){
 
     private val _event = MutableStateFlow(EventState())
     val event: StateFlow<EventState> = _event
+
+    private val _user = MutableStateFlow(RemoteState())
+    val user: MutableStateFlow<RemoteState> = _user
 
     private val _connected = MutableStateFlow(ConnectedState())
     val connected: StateFlow<ConnectedState> = _connected
@@ -154,7 +160,61 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    suspend fun addInterestedUserToEvent(eventId: String, interestedUsers: List<String>) {
+        viewModelScope.launch {
+            addInterestedUserToEventUseCase(eventId, interestedUsers).collectLatest {
+                when(it) {
+                    is Resource.Success -> {
+                        _event.value = EventState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _event.value = EventState(error = it.message ?: "An unexpected error occured")
+                    }
+                    is Resource.Loading -> {
+                        _event.value = EventState(isLoading = true)
+                    }
+                }
 
+            }
+        }
+    }
+
+    suspend fun deleteInterestedUserToEvent(eventId: String, interestedUsers: List<String>) {
+        viewModelScope.launch {
+            deleteInterestedUserToEventUseCase(eventId, interestedUsers).collectLatest {
+                when(it) {
+                    is Resource.Success -> {
+                        _event.value = EventState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _event.value = EventState(error = it.message ?: "An unexpected error occured")
+                    }
+                    is Resource.Loading -> {
+                        _event.value = EventState(isLoading = true)
+                    }
+                }
+
+            }
+        }
+    }
+
+    fun getUser() {
+        viewModelScope.launch {
+            getUserUseCase().collectLatest {
+                when(it){
+                    is Resource.Success -> {
+                        _user.value = RemoteState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _user.value = RemoteState(error = it.message ?: "Error while getting user")
+                    }
+                    else -> {
+                        _user.value = RemoteState(error = "Error")
+                    }
+                }
+            }
+        }
+    }
 
 
 }

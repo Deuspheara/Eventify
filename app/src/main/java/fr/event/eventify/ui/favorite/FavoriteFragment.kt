@@ -24,7 +24,7 @@ class FavoriteFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteBinding
     private val viewModel: FavoriteViewModel by activityViewModels()
     private var currentUser: RemoteUser? = null
-    private lateinit var pagingAdapter: FavoriteAdapter
+    private var pagingAdapter: FavoriteAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,7 +106,7 @@ class FavoriteFragment : Fragment() {
                         it.map {
                             Log.d("FavoriteFragment", "event: ${it.name}")
                         }
-                        pagingAdapter.submitData(it)
+                        pagingAdapter?.submitData(it)
                     }
                 }
             } catch (e: Exception) {
