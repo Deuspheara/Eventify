@@ -31,6 +31,14 @@ interface PaymentRepository {
     suspend fun addTransaction(
         transaction: Transaction
     ) : Flow<Resource<Transaction>>
+
+    /**
+     * Get all transactions by event id
+     * @param eventId the id of the event
+     * @return a [Flow] of [Resource]
+     * @see Transaction
+     */
+    suspend fun getTransactionsByEventId(eventId: String) : Flow<Resource<List<Transaction>>>
 }
 
 class PaymentRepositoryImpl @Inject constructor(
@@ -48,6 +56,17 @@ class PaymentRepositoryImpl @Inject constructor(
                 )
             } catch (e: Exception) {
                 Log.e("PaymentRepository", "addTransaction: ", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getTransactionsByEventId(eventId: String): Flow<Resource<List<Transaction>>> {
+        return withContext(dispatcher) {
+            try {
+                paymentRemoteDataSource.getTransactionsByEventId(eventId)
+            } catch (e: Exception) {
+                Log.e("PaymentRepository", "getTransactionsByEventId: ", e)
                 throw e
             }
         }
