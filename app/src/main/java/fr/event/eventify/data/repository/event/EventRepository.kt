@@ -58,6 +58,7 @@ interface EventRepository {
 
     suspend fun deleteInterestedUser(eventId: String, interestedUsers : List<String>): Flow<Resource<Event>>
 
+    suspend fun getFavoriteEventWithUserId(userId: String): Flow<Resource<List<Event>>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -115,6 +116,17 @@ class EventRepositoryImpl @Inject constructor(
                 EventRemoteDataSource.deleteInterestedUser(eventId, interestedUsers)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while deleting interested user with $eventId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getFavoriteEventWithUserId(userId: String): Flow<Resource<List<Event>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getFavoriteEventWithUserId(userId)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting event with $userId", e)
                 throw e
             }
         }

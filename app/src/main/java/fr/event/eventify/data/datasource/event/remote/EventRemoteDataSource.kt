@@ -93,6 +93,8 @@ interface EventRemoteDataSource {
         eventId: String,
         interestedUsers: List<String>
     ): Flow<Resource<Event>>
+
+    suspend fun getFavoriteEventWithUserId(userId: String): Flow<Resource<List<Event>>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -310,5 +312,33 @@ class EventRemoteDataSourceImpl @Inject constructor(
         }
     }.flowOn(ioContext)
 
+    override suspend fun getFavoriteEventWithUserId(userId: String): Flow<Resource<List<Event>>> {
+        return flow<Resource<List<Event>>> {
+            emit(Resource.Loading())
+            Log.d(TAG, "Getting event with user id $userId")
+            try {
+                val user = firebaseAuth.currentUser
+                if (user == null) {
+                    emit(Resource.Error(message = "User not connected"))
+                } else {
+                    val events = firebaseFirestore.collection("Events")
+                        .whereArrayContains("interested", userId)
+                        .get()
+                        .await()
+                        .toObjects(Event::class.java)
+
+                    emit(Resource.Success(events))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting event with user id", e)
+                emit(
+                    Resource.Error(
+                        message = e.message ?: "Error while getting event with author id",
+                    )
+                )
+                throw e
+            }
+        }.flowOn(ioContext)
+    }
 
 }

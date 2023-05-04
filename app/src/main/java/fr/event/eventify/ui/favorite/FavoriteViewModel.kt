@@ -3,16 +3,12 @@ package fr.event.eventify.ui.favorite
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
-import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.event.eventify.core.models.event.remote.CategoryEvent
-import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.event.AddInterestedUserToEventUseCase
 import fr.event.eventify.domain.event.DeleteInterestedUserToEventUseCase
-import fr.event.eventify.domain.event.GetEventsPaginatedUseCase
-import fr.event.eventify.ui.home.EventPaginatedState
+import fr.event.eventify.domain.event.GetFavoriteEventWithUserIdUseCase
+import fr.event.eventify.ui.home.EventListState
 import fr.event.eventify.ui.home.EventState
 import fr.event.eventify.ui.register.RemoteState
 import fr.event.eventify.utils.Resource
@@ -26,12 +22,12 @@ import javax.inject.Inject
 class FavoriteViewModel @Inject constructor(
     private val addInterestedUserToEventUseCase: AddInterestedUserToEventUseCase,
     private val deleteInterestedUserToEventUseCase: DeleteInterestedUserToEventUseCase,
-    private val getEventsPaginatedUseCase: GetEventsPaginatedUseCase,
+    private val getFavoriteEventWithUserIdUseCase: GetFavoriteEventWithUserIdUseCase,
     private val getUserUseCase: GetUserUsecase
 ) : ViewModel() {
 
-    private val _eventPaginated = MutableStateFlow(EventPaginatedState())
-    val eventsPaginated: StateFlow<EventPaginatedState> = _eventPaginated
+    private val _eventList = MutableStateFlow(EventListState())
+    val eventList: StateFlow<EventListState> = _eventList
 
     private val _event = MutableStateFlow(EventState())
     val event: StateFlow<EventState> = _event
@@ -39,29 +35,25 @@ class FavoriteViewModel @Inject constructor(
     private val _user = MutableStateFlow(RemoteState())
     val user: MutableStateFlow<RemoteState> = _user
 
-    suspend fun getEventsPaginated(
-        name: String?,
-        orderBy: FilterEvent?,
-        category: CategoryEvent?
-    ) {
-        _eventPaginated.value = EventPaginatedState(isLoading = true)
-        try {
-            viewModelScope.launch {
-                getEventsPaginatedUseCase(name, orderBy, category)
-                    .cachedIn(viewModelScope)
-                    .collect {
-                        Log.d("FavoriteViewModel", "Got events: $it")
-                        it.map {
-                            Log.d("FavoriteViewModel", "Got event: $it")
-                        }
-                        _eventPaginated.value = EventPaginatedState(
-                            data = it,
-                        )
+    suspend fun getFavoriteEventWithUserId(userId: String) {
+        _eventList.value = EventListState(isLoading = true)
+        try{
+            getFavoriteEventWithUserIdUseCase(userId).collectLatest {
+                when(it) {
+                    is Resource.Success -> {
+                        _eventList.value = EventListState(data = it.data)
                     }
+                    is Resource.Error -> {
+                        _eventList.value = EventListState(error = it.message ?: "An unexpected error occurred")
+                    }
+                    is Resource.Loading -> {
+                        _eventList.value = EventListState(isLoading = true)
+                    }
+                }
             }
         } catch (e: Exception) {
-            Log.e("FavoriteViewModel", "Error while getting events paginated", e)
-            _eventPaginated.value = EventPaginatedState(error = e.message ?: "Unknown error")
+            Log.e("FavoriteViewModel", "Get event with user id failed", e)
+            _eventList.value = EventListState(error = e.message ?: "An unexpected error occurred")
         }
     }
 
