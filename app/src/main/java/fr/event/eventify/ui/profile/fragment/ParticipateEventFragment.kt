@@ -44,6 +44,19 @@ class ParticipateEventFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupObserver()
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.getJoinedEventsRaw()
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.getJoinedEvents()
+        }
+    }
+
+    private fun setupObserver() {
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             viewModel.eventList.collectLatest { state ->
                 if (state.error.isNotEmpty()) {
@@ -61,7 +74,21 @@ class ParticipateEventFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
-            viewModel.getJoinedEvents()
+            viewModel.eventListRaw.collectLatest { state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e(TAG, "Error while collecting joined events $it")
+                    }
+                }
+                state.isLoading.let {
+                    Log.d(TAG, "Loading joined events")
+                }
+                state.data?.let {
+                    adapter.submitJoinedList(it)
+                }
+            }
         }
+
+
     }
 }

@@ -92,6 +92,14 @@ interface EventRemoteDataSource {
      * @see Event
      */
     suspend fun getJoinedEvents(): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -300,6 +308,33 @@ class EventRemoteDataSourceImpl @Inject constructor(
         }
     }.flowOn(ioContext)
 
+    override suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>> {
+        return flow<Resource<List<RemoteUser.JoinedEvent>>> {
+            emit(Resource.Loading())
+            Log.d(TAG, "Getting joined events")
+            try {
+                val user = firebaseAuth.currentUser
+                if (user == null) {
+                    emit(Resource.Error(message = "User not connected"))
+                } else {
+                    val joinedEvents = firebaseFirestore.collection("User")
+                        .document(user.uid)
+                        .get()
+                        .await()
+                        .toObject(RemoteUser::class.java)
+                        ?.joinedEvents ?: emptyList()
+
+                    emit(Resource.Success(joinedEvents))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting joined events", e)
+                emit(Resource.Error(
+                    message = e.message ?: "Error while getting joined events",
+                ))
+                throw e
+            }
+        }.flowOn(ioContext)
+    }
 
 
 }

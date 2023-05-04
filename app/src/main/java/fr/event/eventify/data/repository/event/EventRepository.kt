@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.firebase.firestore.DocumentSnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
@@ -71,6 +72,14 @@ interface EventRepository {
      * @see Event
      */
     suspend fun getJoinedEvents(): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -120,6 +129,17 @@ class EventRepositoryImpl @Inject constructor(
         return withContext(ioDispatcher) {
             try {
                 EventRemoteDataSource.getJoinedEvents()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting joined events", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getJoinedEventsRaw()
             } catch (e: Exception) {
                 Log.e(TAG, "Error while getting joined events", e)
                 throw e
