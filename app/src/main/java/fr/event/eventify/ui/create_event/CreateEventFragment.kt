@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.FragmentCreateEventBinding
@@ -31,6 +32,7 @@ class CreateEventFragment : Fragment() {
     private val viewModel: CreateEventViewModel by viewModels()
     private lateinit var startForEventImageResult: ActivityResultLauncher<Intent>
     private var url: String? = null
+    private var currentUser: RemoteUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +69,27 @@ class CreateEventFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.user.collectLatest { state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e("CreateEventFragment", "Error while getting user $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { user ->
+                    currentUser = user
+                    Log.d("CreateEventFragment", "User: $user")
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.getUser()
+        }
+
         binding.imgCreateEvent.setOnClickListener{
             ImageDialog.takePicture(startForEventImageResult, this.requireActivity(),640,0.5f,16f,9f)
         }
@@ -83,10 +106,12 @@ class CreateEventFragment : Fragment() {
                 //price format to 2.00
                 val price = if (checkPriceNotNull) "%.2f".format(tfPriceEvent.text.toString().toDouble()) else "0.00"
                 val priceWithoutComma = price.replace(",",".")
+                //log user
+                Log.d("CreateEventFragment", "current user: $currentUser")
                 viewModel.createEvent(
                     Event(
                         name = tfNameEvent.text.toString(),
-                        author = "author",
+                        author = currentUser?.uuid ?: "",
                         description = tfDescriptionEvent.text.toString(),
                         date = Timestamp(Calendar.getInstance().time),
                         location = Event.LocationEvent(
@@ -94,7 +119,7 @@ class CreateEventFragment : Fragment() {
                         ),
                         image = url,
                         ticketPrice = Event.PriceEvent(
-                            currency = "euro",
+                            currency = "EUR",
                             amount = priceWithoutComma.toDouble(),
                         ),
                         nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,

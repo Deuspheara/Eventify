@@ -111,7 +111,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         trySend(Resource.Loading())
         Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
         try {
-
                 Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
             firebaseFirestore.collection("User")
                 .document(remoteUser.uuid)
