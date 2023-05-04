@@ -3,9 +3,11 @@ package fr.event.eventify.ui.payment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.payment.local.Participant
 import fr.event.eventify.core.models.payment.remote.Transaction
+import fr.event.eventify.domain.auth.AddJoinedEventsUseCase
 import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.event.AddParticipantToEventUseCase
 import fr.event.eventify.domain.event.GetCurrentEventUseCase
@@ -26,12 +28,19 @@ data class TransactionState(
     val error: String? = null
 )
 
+data class JoinedEventState(
+    val isLoading: Boolean = false,
+    val data: RemoteUser? = null,
+    val error: String? = null
+)
+
 @HiltViewModel
 class PaymentSummaryViewModel @Inject constructor(
     private val currentEventUseCase: GetCurrentEventUseCase,
     private val addParticipantToEventUseCase: AddParticipantToEventUseCase,
     private val addTransactionUseCase: AddTransactionUseCase,
-    private val getUserUsecase: GetUserUsecase
+    private val getUserUsecase: GetUserUsecase,
+    private val addJoinedEventsUseCase: AddJoinedEventsUseCase
 ) : ViewModel() {
 
     private val _event = MutableStateFlow(EventState())
@@ -42,6 +51,9 @@ class PaymentSummaryViewModel @Inject constructor(
 
     private val _user = MutableStateFlow(RemoteState())
     val user: MutableStateFlow<RemoteState> = _user
+
+    private val _joinedEvents = MutableStateFlow(JoinedEventState())
+    val joinedEvents: MutableStateFlow<JoinedEventState> = _joinedEvents
 
 
     fun getCurrentEvent() : EventLight? {
@@ -108,4 +120,22 @@ class PaymentSummaryViewModel @Inject constructor(
         }
     }
 
+    suspend fun addJoinedEvents(joinedEvents: List<RemoteUser.JoinedEvent>) {
+        viewModelScope.launch {
+            addJoinedEventsUseCase(joinedEvents).collectLatest {
+                when(it) {
+                    is Resource.Success -> {
+                        _joinedEvents.value = JoinedEventState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _joinedEvents.value = JoinedEventState(error = it.message ?: "An unexpected error occured")
+                    }
+                    is Resource.Loading -> {
+                        _joinedEvents.value = JoinedEventState(isLoading = true)
+                    }
+                }
+
+            }
+        }
+    }
 }

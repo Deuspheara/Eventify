@@ -10,4 +10,5 @@
     <color name="text_default">#FFFFFF</color>
     <color name="input_background">#3C3C3C</color>
     <color name="input_text">#FFFFFF</color>
+    <color name="input_disabled">#DDDDDD</color>
 </resources>

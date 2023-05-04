@@ -65,6 +65,13 @@ interface AuthRemoteDataSource {
      */
     suspend fun getUser(): Flow<Resource<RemoteUser>>
 
+    /**
+     * Add JoinedEvent in firestore
+     * @param joinedEvent informations of joined event
+     * @return a [Flow] of [RemoteUser]
+     */
+    suspend fun addJoinedEvents(joinedEvents: List<RemoteUser.JoinedEvent>): Flow<Resource<RemoteUser>>
+
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
@@ -235,4 +242,55 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         }
         awaitClose()
     }.flowOn(ioContext)
+
+    override suspend fun addJoinedEvents(joinedEvents: List<RemoteUser.JoinedEvent>): Flow<Resource<RemoteUser>> {
+        return callbackFlow<Resource<RemoteUser>> {
+            trySend(Resource.Loading())
+            try {
+                val user = firebaseAuth.currentUser
+                if (user == null) {
+                    Log.e(TAG, "Error while adding joined event, user is null")
+                    trySend(Resource.Error(message = "Error while adding joined event, user is null"))
+                } else {
+                    Log.d(TAG, "User is connected")
+                    firebaseFirestore.collection("User")
+                        .document(user.uid)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            val currentUser = document.toObject(RemoteUser::class.java)
+                            if (currentUser == null) {
+                                Log.e(TAG, "Error while adding joined event, user data is null")
+                                trySend(Resource.Error(message = "Error while adding joined event, user data is null"))
+                            } else {
+                                val updatedEvents = currentUser.joinedEvents + joinedEvents
+                                firebaseFirestore.collection("User")
+                                    .document(user.uid)
+                                    .update("joinedEvents", updatedEvents)
+                                    .addOnSuccessListener {
+                                        trySend(Resource.Success(currentUser.copy(joinedEvents = updatedEvents)))
+                                        close() // close the flow when done
+                                    }
+                                    .addOnFailureListener {
+                                        Log.e(TAG, "Error while adding joined event: $it")
+                                        trySend(Resource.Error(message = "Error while adding joined event"))
+                                        close() // close the flow when done
+                                    }
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.e(TAG, "Error while getting user data: $it")
+                            trySend(Resource.Error(message = "Error while adding joined event"))
+                            close() // close the flow when done
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while adding joined event: $e")
+                trySend(Resource.Error(message = "Error while adding joined event"))
+                throw e
+            }
+            awaitClose()
+        }.flowOn(ioContext)
+    }
+
+
 }

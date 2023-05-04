@@ -1,5 +1,6 @@
 package fr.event.eventify.ui.payment.adapter
 
+import android.provider.Telephony.Mms.Part
 import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +9,8 @@ import fr.event.eventify.core.models.payment.local.Participant
 
 class ParticipantAdapter : RecyclerView.Adapter<ParticipantViewHolder>()  {
 
-    val participantList: ArrayList<Participant> = arrayListOf()
+    var participantList: ArrayList<Participant> = arrayListOf()
+    private var currentUser : Participant = Participant()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParticipantViewHolder {
         val viewHolder = ParticipantViewHolder.newInstance(parent)
@@ -25,8 +27,13 @@ class ParticipantAdapter : RecyclerView.Adapter<ParticipantViewHolder>()  {
         return participantList.size
     }
 
+    fun updateCurrentUser(participant: Participant){
+        currentUser = participant
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: ParticipantViewHolder, position: Int) {
-        holder.bind(participantList[position], position)
+        holder.bind(participantList[position], position, currentUser)
         holder.itemView.tag = position
     }
 

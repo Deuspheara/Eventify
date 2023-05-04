@@ -57,6 +57,13 @@ interface AuthRepository {
      * @see [FirebaseAuth.getCurrentUser]
      */
     suspend fun getUser(): Flow<Resource<RemoteUser>>
+
+    /**
+     * Add JoinedEvent in firestore
+     * @param joinedEvent informations of joined event
+     * @return a [Flow] of [RemoteUser]
+     */
+    suspend fun addJoinedEvents(joinedEvent: List<RemoteUser.JoinedEvent>): Flow<Resource<RemoteUser>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -132,6 +139,17 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.getUser()
             } catch (e: Exception) {
                 Log.e(TAG, "Error while getting user, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun addJoinedEvents(joinedEvent: List<RemoteUser.JoinedEvent>): Flow<Resource<RemoteUser>> {
+        return withContext(ioDispatcher) {
+            try {
+                authRemoteDataSource.addJoinedEvents(joinedEvent)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while adding joined event, error: ${e.message}")
                 throw e
             }
         }

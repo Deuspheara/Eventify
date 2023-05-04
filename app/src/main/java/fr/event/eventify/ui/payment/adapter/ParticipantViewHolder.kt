@@ -2,6 +2,7 @@ package fr.event.eventify.ui.payment.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Switch
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import fr.event.eventify.core.models.payment.local.Participant
@@ -23,7 +24,7 @@ class ParticipantViewHolder private constructor(
 
     var onTextChangedListener: OnTextChangedListener? = null
 
-    fun bind(participant: Participant, position: Int) {
+    fun bind(participant: Participant, position: Int, currentUser: Participant) {
         binding.apply {
             tvNum.text = "Participant ${position + 1}"
             inputFirstName.setText(participant.firstName)
@@ -43,6 +44,27 @@ class ParticipantViewHolder private constructor(
             }
             inputEmail.addTextChangedListener {
                 participant.email = it.toString()
+                onTextChangedListener?.onTextChanged(position, participant)
+            }
+
+            switchMyInformation.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    participant.firstName = currentUser.firstName
+                    participant.lastName = currentUser.lastName
+                    participant.email = currentUser.email
+                    inputFirstName.setText(participant.firstName)
+                    inputLastName.setText(participant.lastName)
+                    inputEmail.setText(participant.email)
+                    inputEmail.isEnabled = false
+                } else {
+                    participant.firstName = ""
+                    participant.lastName = ""
+                    participant.email = ""
+                    inputFirstName.setText(participant.firstName)
+                    inputLastName.setText(participant.lastName)
+                    inputEmail.setText(participant.email)
+                    inputEmail.isEnabled = true
+                }
                 onTextChangedListener?.onTextChanged(position, participant)
             }
         }
