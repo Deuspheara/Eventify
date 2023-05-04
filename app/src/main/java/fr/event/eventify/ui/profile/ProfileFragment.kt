@@ -12,9 +12,11 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentProfileBinding
+import fr.event.eventify.ui.profile.adapter.ProfilePagerAdapter
 import fr.event.eventify.ui.register.RemoteState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 class ProfileFragment : Fragment() {
    private lateinit var binding: FragmentProfileBinding
    private val viewModel: ProfileViewModel by activityViewModels()
+    private lateinit var profilePagerAdapter: ProfilePagerAdapter
 
     override fun onCreateView(
          inflater: LayoutInflater,
@@ -33,6 +36,18 @@ class ProfileFragment : Fragment() {
         binding.btReturnProfile.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+
+        // Initialize the ProfilePagerAdapter
+        profilePagerAdapter = ProfilePagerAdapter(childFragmentManager, lifecycle)
+
+        // Set the adapter to the ViewPager
+        binding.pager.adapter = profilePagerAdapter
+
+        // Connect the TabLayout with the ViewPager
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+            tab.text = profilePagerAdapter.getTabTitle(position)
+        }.attach()
+
          return binding.root
     }
 
