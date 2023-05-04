@@ -49,7 +49,7 @@ class ParticipantFragment : Fragment() {
         binding.rvParticipant.adapter = adapter
         binding.rvParticipant.layoutManager = LinearLayoutManager(requireContext())
         for (i in 1 until numberOfParticipant + 1) {
-            adapter.participantList.add(Participant(participantNumber = "Participant $i"))
+            adapter.participantList.add(Participant())
         }
         adapter.notifyDataSetChanged()
 
@@ -78,8 +78,8 @@ class ParticipantFragment : Fragment() {
 
     }
 
-    fun verifyParticipantFields(participant: Participant) : Boolean{
-        if(participant.firstName.isEmpty() || participant.lastName.isEmpty() || participant.participantNumber.isEmpty() || participant.email.isEmpty()){
+    private fun verifyParticipantFields(participant: Participant) : Boolean{
+        if(participant.firstName.isEmpty() || participant.lastName.isEmpty() || participant.email.isEmpty()){
             return false
         }
         return verifyEmail(participant.email)

@@ -20,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.FragmentCreateEventBinding
@@ -40,6 +41,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private lateinit var startForEventImageResult: ActivityResultLauncher<Intent>
     private var url: String? = null
     private var bitmap: Bitmap? = null
+    private var currentUser: RemoteUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,6 +133,27 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 }
             }
 
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.user.collectLatest { state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e("CreateEventFragment", "Error while getting user $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { user ->
+                    currentUser = user
+                    Log.d("CreateEventFragment", "User: $user")
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.getUser()
+        }
+
         binding.btCreateEvent.setOnClickListener {
             binding.apply {
                 val checkPriceNotNull = tfPriceEvent.text.toString().isNotEmpty()
@@ -144,22 +167,23 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 val price = if (checkPriceNotNull) "%.2f".format(tfPriceEvent.text.toString().toDouble()) else "0.00"
                 val priceWithoutComma = price.replace(",",".")
                 if (bitmap == null) {
+                    //log user
+                    Log.d("CreateEventFragment", "current user: $currentUser")
                     viewModel.createEvent(
                         Event(
                             name = tfNameEvent.text.toString(),
-                            author = "author",
+                            author = currentUser?.uuid ?: "",
                             description = tfDescriptionEvent.text.toString(),
                             date = Timestamp(Calendar.getInstance().time),
                             location = Event.LocationEvent(
                                 name = tfLocationEvent.text.toString(),
                             ),
-                            image = "",
+                            image = url,
                             ticketPrice = Event.PriceEvent(
-                                currency = "euro",
+                                currency = "EUR",
                                 amount = priceWithoutComma.toDouble(),
                             ),
-                            nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString()
-                                .toInt() else 0,
+                            nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
                             categoryEvent = CategoryEvent.FESTIVAL,
                         )
                     )

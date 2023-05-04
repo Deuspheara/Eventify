@@ -17,7 +17,7 @@ class PaymentSummaryAdapter : RecyclerView.Adapter<PaymentSummaryViewHolder>()  
     }
 
     override fun onBindViewHolder(holder: PaymentSummaryViewHolder, position: Int) {
-        holder.bind(participantList[position])
+        holder.bind(participantList[position], position)
     }
 
 }

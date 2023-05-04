@@ -189,18 +189,23 @@ class EventRemoteDataSourceImpl @Inject constructor(
             val user = firebaseAuth.currentUser
             if (user == null) {
                 emit(Resource.Error(message = "User not connected"))
-            }else {
+            } else {
                 val eventRef = firebaseFirestore.collection("Events").document(eventId)
-                val event = eventRef.get().await().toObject(Event::class.java)
-                val eventWithId = event?.copy(participants = event.participants?.plus(
-                    listParticipants
-                ))
-                if (eventWithId != null) {
-                    eventRef.set(eventWithId).await()
-                    emit(Resource.Success(eventWithId))
-                }else {
-                    emit(Resource.Error(message = "Event not found"))
-                }
+                val transaction = firebaseFirestore.runTransaction { transaction ->
+                    val event = transaction.get(eventRef).toObject(Event::class.java)
+                    val existingParticipants = event?.participants ?: emptyList()
+                    val newParticipants = existingParticipants + listParticipants
+                    val updatedEvent = event?.copy(participants = newParticipants)
+                    if (updatedEvent != null) {
+                        transaction.set(eventRef, updatedEvent)
+                        Resource.Success(updatedEvent)
+                    } else {
+                        Resource.Error(message = "Event not found")
+                    }
+                }.await()
+
+                emit(transaction)
+
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error while adding participant", e)
@@ -210,6 +215,7 @@ class EventRemoteDataSourceImpl @Inject constructor(
             throw e
         }
     }.flowOn(ioContext)
+
 
 
 }

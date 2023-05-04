@@ -8,6 +8,8 @@ import fr.event.eventify.data.repository.auth.AuthRepository
 import fr.event.eventify.data.repository.auth.AuthRepositoryImpl
 import fr.event.eventify.data.repository.event.EventRepository
 import fr.event.eventify.data.repository.event.EventRepositoryImpl
+import fr.event.eventify.data.repository.payment.PaymentRepository
+import fr.event.eventify.data.repository.payment.PaymentRepositoryImpl
 import fr.event.eventify.data.repository.storage.StorageRepository
 import fr.event.eventify.data.repository.storage.StorageRepositoryImpl
 
@@ -28,6 +30,11 @@ abstract class RepositoryModule {
     abstract fun bindStorageRepository(
         impl: StorageRepositoryImpl
     ): StorageRepository
+
+    @Binds
+    abstract fun bindPaymentRepository(
+        impl: PaymentRepositoryImpl
+    ): PaymentRepository
 
 
 }

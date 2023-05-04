@@ -22,9 +22,14 @@ import com.paypal.checkout.order.AppContext
 import com.paypal.checkout.order.Order
 import com.paypal.checkout.order.PurchaseUnit
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import dagger.hilt.android.AndroidEntryPoint
+import fr.event.eventify.R
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.payment.local.Participant
+import fr.event.eventify.core.models.payment.remote.Transaction
+import fr.event.eventify.core.models.payment.remote.TransactionType
 import fr.event.eventify.databinding.FragmentPaymentSummaryBinding
 import fr.event.eventify.ui.payment.adapter.PaymentSummaryAdapter
 import kotlinx.coroutines.flow.collectLatest
@@ -38,6 +43,7 @@ class PaymentSummaryFragment : Fragment() {
     private var participantList : List<Participant>? = null
     private val viewModel : PaymentSummaryViewModel by viewModels()
     private var currentEvent : EventLight? = null
+    private var currentUser : RemoteUser? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,16 +72,58 @@ class PaymentSummaryFragment : Fragment() {
 
                 }
                 state.data?.let { event ->
-                    Toast.makeText(requireContext(), "Event ${event.name} created", Toast.LENGTH_SHORT).show()
+                    Log.d("PaymentSummaryFragment", "Success adding participant to event")
                     findNavController().navigateUp()
                 }
             }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.user.collectLatest {state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e("PaymentSummaryFragment", "Error while getting user $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { user ->
+                    currentUser = user
+                }
+
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.transaction.collectLatest { state ->
+                if (state.error?.isNotEmpty() == true) {
+                    state.error.let {
+                        Log.e("PaymentSummaryFragment", "Error while adding transaction $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { transaction ->
+                    Toast.makeText(requireContext(), "Transaction added", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.getUser()
         }
 
         binding.apply {
             val price = (currentEvent?.ticketPrice?.times(numberOfParticipant))
             val formattedPrice = String.format("%.2f", price)
             val formattedPriceWithoutComma = formattedPrice.replace(",", ".")
+            imgHeaderTicketInformation.load(currentEvent?.image){
+                placeholder(R.drawable.logo_gradient)
+                error(R.drawable.logo_gradient)
+            }
 
             paymentButtonContainer.setup(
                 createOrder = CreateOrder { createOrderActions ->
@@ -104,6 +152,19 @@ class PaymentSummaryFragment : Fragment() {
                                 viewModel.addParticipantToEvent(eventId, participantList ?: listOf())
                             }
                         }
+                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                            viewModel.addTransaction(
+                                Transaction(
+                                    eventId = currentEvent?.id ?: "",
+                                    amount = formattedPriceWithoutComma.toDouble(),
+                                    currency = "EUR",
+                                    transactionType = TransactionType.PAYMENT,
+                                    receiver = currentEvent?.author ?: "",
+                                    user = currentUser?.uuid ?: "",
+                                    participants = participantList ?: listOf()
+                                )
+                            )
+                        }
                     }
                 },
                 onError = OnError { errorInfo ->
@@ -128,7 +189,6 @@ class PaymentSummaryFragment : Fragment() {
         for (i in 1 until numberOfParticipant + 1) {
             adapter.participantList.add(
                 Participant(
-                    participantNumber = "Participant $i",
                     firstName = participantList?.get(i-1)?.firstName ?: "",
                     lastName = participantList?.get(i-1)?.lastName ?: "",
                     email = participantList?.get(i-1)?.email ?: "",
