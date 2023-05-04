@@ -55,6 +55,14 @@ interface EventRepository {
     fun setCurrentEvent(event: EventLight)
 
     suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -84,6 +92,17 @@ class EventRepositoryImpl @Inject constructor(
                 EventRemoteDataSource.addParticipant(eventId, listParticipants)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while adding participant with $eventId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getEventWithAuthorId(authorId)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting event with $authorId", e)
                 throw e
             }
         }

@@ -21,6 +21,12 @@ class MyEventAdapter : RecyclerView.Adapter<MyEventViewHolder>()  {
             holder.bind(eventList[position])
         }
 
+        fun submitList(list: List<EventLight>) {
+            eventList.clear()
+            eventList.addAll(list)
+            notifyDataSetChanged()
+        }
+
         override fun onViewRecycled(holder: MyEventViewHolder) {
             super.onViewRecycled(holder)
             holder.itemView.tag = null

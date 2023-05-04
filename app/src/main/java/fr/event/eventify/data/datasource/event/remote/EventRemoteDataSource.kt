@@ -74,6 +74,14 @@ interface EventRemoteDataSource {
      * @see Participant
      */
     suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -216,6 +224,32 @@ class EventRemoteDataSourceImpl @Inject constructor(
         }
     }.flowOn(ioContext)
 
+    override suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>> {
+        return flow<Resource<List<Event>>> {
+            emit(Resource.Loading())
+            Log.d(TAG, "Getting event with author id $authorId")
+            try {
+                val user = firebaseAuth.currentUser
+                if (user == null) {
+                    emit(Resource.Error(message = "User not connected"))
+                } else {
+                    val events = firebaseFirestore.collection("Events")
+                        .whereEqualTo("author", authorId)
+                        .get()
+                        .await()
+                        .toObjects(Event::class.java)
+
+                    emit(Resource.Success(events))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting event with author id", e)
+                emit(Resource.Error(
+                    message = e.message ?: "Error while getting event with author id",
+                ))
+                throw e
+            }
+        }.flowOn(ioContext)
+    }
 
 
 }

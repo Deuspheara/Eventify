@@ -25,6 +25,8 @@ class MyEventViewHolder private constructor(
     fun bind(event : EventLight){
         binding.apply {
             tvEvenementName.text = event.name
+            tvDateOrganisedEvent.text = event.date
+            tvLocationOrganisedEvent.text = event.location
             imgEvenement.load(event.image){
                 crossfade(true)
                 crossfade(1000)
