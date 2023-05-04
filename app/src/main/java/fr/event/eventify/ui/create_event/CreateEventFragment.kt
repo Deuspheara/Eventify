@@ -2,6 +2,7 @@ package fr.event.eventify.ui.create_event
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -42,6 +43,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private var url: String? = null
     private var bitmap: Bitmap? = null
     private var currentUser: RemoteUser? = null
+    private var selectedDate: Timestamp? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,19 +98,18 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                         viewModel.createEvent(
                             Event(
                                 name = tfNameEvent.text.toString(),
-                                author = "author",
+                                author = currentUser?.uuid ?: "",
                                 description = tfDescriptionEvent.text.toString(),
-                                date = Timestamp(Calendar.getInstance().time),
+                                date = selectedDate,
                                 location = Event.LocationEvent(
                                     name = tfLocationEvent.text.toString(),
                                 ),
                                 image = url,
                                 ticketPrice = Event.PriceEvent(
-                                    currency = "euro",
+                                    currency = "EUR",
                                     amount = priceWithoutComma.toDouble(),
                                 ),
-                                nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString()
-                                    .toInt() else 0,
+                                nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
                                 categoryEvent = CategoryEvent.FESTIVAL,
                             )
                         )
@@ -174,7 +175,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                             name = tfNameEvent.text.toString(),
                             author = currentUser?.uuid ?: "",
                             description = tfDescriptionEvent.text.toString(),
-                            date = Timestamp(Calendar.getInstance().time),
+                            date = selectedDate,
                             location = Event.LocationEvent(
                                 name = tfLocationEvent.text.toString(),
                             ),
@@ -197,11 +198,44 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
 
         binding.tfDateEvent.setOnClickListener {
-            DatePickerDialog(
-                this.requireContext(), R.style.datepicker, this, cal.get(Calendar.YEAR), cal.get(
-                    Calendar.MONTH
-                ), cal.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            // Create a new DatePickerDialog
+            val datePicker = DatePickerDialog(
+                requireContext(),
+                R.style.datepicker,
+                DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                    // Set the date values in the Calendar instance
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, month)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    // Create a new TimePickerDialog
+                    val timePicker = TimePickerDialog(
+                        requireContext(),
+                        R.style.timepicker,
+                        TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                            // Set the time values in the Calendar instance
+                            cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            cal.set(Calendar.MINUTE, minute)
+
+                            // Update the date and time in the UI
+                            updateDateTimeInView()
+
+                            // Store the selected date and time as a Timestamp object
+                            selectedDate = Timestamp(cal.time)
+                        },
+                        cal.get(Calendar.HOUR_OF_DAY),
+                        cal.get(Calendar.MINUTE),
+                        true
+                    )
+                    // Show the TimePickerDialog
+                    timePicker.show()
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            )
+            // Show the DatePickerDialog
+            datePicker.show()
         }
 
         val adapter = CategorySpinnerAdapter(this.requireContext())
@@ -209,19 +243,16 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
     }
 
-    private fun updateDateInView() {
+    private fun updateDateTimeInView() {
         binding.tfDateEvent.setText(
             SimpleDateFormat(
-                "dd MMM yyyy",
+                "dd MMM yyyy HH:mm",
                 Locale.getDefault()
             ).format(cal.time)
         )
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        cal.set(Calendar.YEAR, year)
-        cal.set(Calendar.MONTH, month)
-        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        updateDateInView()
+
     }
 }
