@@ -189,7 +189,6 @@ class PaymentSummaryFragment : Fragment() {
         for (i in 1 until numberOfParticipant + 1) {
             adapter.participantList.add(
                 Participant(
-                    participantNumber = "Participant $i",
                     firstName = participantList?.get(i-1)?.firstName ?: "",
                     lastName = participantList?.get(i-1)?.lastName ?: "",
                     email = participantList?.get(i-1)?.email ?: "",

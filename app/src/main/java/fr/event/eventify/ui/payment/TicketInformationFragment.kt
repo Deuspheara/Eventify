@@ -77,7 +77,7 @@ class TicketInformationFragment : Fragment() {
             }
 
             tvTitleTicketInformation.text = "Acheter un ticket pour " + currentEvent?.name
-            tvOrganizedBy.text = "Organisé par " + currentEvent?.author
+            tvOrganizedBy.text = "Organisé par " + currentEvent?.name
             //round to cents
             tvTotalTicket.text = (currentEvent?.ticketPrice?.times(numberOfTicket)).let { String.format("%.2f", it) } + "€"
         }
