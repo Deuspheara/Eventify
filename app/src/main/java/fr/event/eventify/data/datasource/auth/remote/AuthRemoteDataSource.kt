@@ -13,6 +13,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
@@ -65,6 +67,8 @@ interface AuthRemoteDataSource {
      */
     suspend fun getUser(): Flow<Resource<RemoteUser>>
 
+    suspend fun modifyUser(uuid: String, pseudo: String, description: String, photoUrl: String): Flow<Resource<RemoteUser>>
+
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
@@ -111,7 +115,6 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         trySend(Resource.Loading())
         Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
         try {
-
                 Log.d(TAG, "Storing user in collection User, in document ${remoteUser.uuid}")
             firebaseFirestore.collection("User")
                 .document(remoteUser.uuid)
@@ -236,4 +239,34 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         }
         awaitClose()
     }.flowOn(ioContext)
+
+    override suspend fun modifyUser(uuid: String, pseudo: String, description: String, photoUrl: String): Flow<Resource<RemoteUser>> = callbackFlow<Resource<RemoteUser>>{
+        trySend(Resource.Loading())
+
+        try {
+            val user = firebaseFirestore.collection("User").document(uuid)
+
+            if (user != null) {
+                user
+                    .update(
+                        mapOf(
+                            "pseudo" to pseudo,
+                            "photoUrl" to photoUrl
+                        )
+                    )
+                    .await()
+            }else{
+                Log.e(TAG, "Error while modifying user: user is null")
+                trySend(Resource.Error(message = "Error while modifying user: user is null"))
+            }
+
+        }catch (e: Exception) {
+            Log.e(TAG, "Error while modifying user: $e")
+            trySend(Resource.Error(message = "Error while modifying user"))
+            throw e
+        }
+        awaitClose()
+    }.flowOn(ioContext)
+
+
 }

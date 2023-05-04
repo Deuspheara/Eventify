@@ -7,9 +7,6 @@ import com.google.gson.annotations.SerializedName
 
 data class Participant(
 
-    @SerializedName("participantNumber")
-    var participantNumber: String = "Participant",
-
     @SerializedName("firstName")
     var firstName: String = "",
 
@@ -20,7 +17,6 @@ data class Participant(
     var email: String = ""
 ) : Parcelable{
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "Participant",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: ""
@@ -28,7 +24,6 @@ data class Participant(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(participantNumber)
         parcel.writeString(firstName)
         parcel.writeString(lastName)
         parcel.writeString(email)

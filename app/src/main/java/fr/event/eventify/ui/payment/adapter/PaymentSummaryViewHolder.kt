@@ -25,9 +25,9 @@ class PaymentSummaryViewHolder private constructor(
 
 
 
-    fun bind (participant: Participant) {
+    fun bind (participant: Participant, position: Int) {
         binding.apply {
-            tvNum.text = participant.participantNumber
+            tvNum.text = "Participant ${position + 1}"
             tvFirstNameSummary.text = participant.firstName
             tvLastNameSummary.text = participant.lastName
             tvEmailSummary.text = participant.email

@@ -57,6 +57,8 @@ interface AuthRepository {
      * @see [FirebaseAuth.getCurrentUser]
      */
     suspend fun getUser(): Flow<Resource<RemoteUser>>
+
+    suspend fun modifyUser(uuid: String, pseudo: String, description: String, photoUrl: String): Flow<Resource<RemoteUser>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -132,6 +134,22 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.getUser()
             } catch (e: Exception) {
                 Log.e(TAG, "Error while getting user, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun modifyUser(
+        uuid: String,
+        pseudo: String,
+        description: String,
+        photoUrl: String
+    ): Flow<Resource<RemoteUser>> {
+        return withContext(ioDispatcher){
+            try {
+                authRemoteDataSource.modifyUser(uuid,pseudo,description,photoUrl)
+            }catch (e: Exception) {
+                Log.e(TAG, "Error while modifying user, error: ${e.message}")
                 throw e
             }
         }

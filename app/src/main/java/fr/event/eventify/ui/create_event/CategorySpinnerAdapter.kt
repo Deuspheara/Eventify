@@ -63,7 +63,7 @@ class CategorySpinnerAdapter(context: Context) : ArrayAdapter<CategoryEvent>(con
         val tvCategory = view.findViewById<TextView>(R.id.tv_category)
         val ivCategory = view.findViewById<ImageView>(R.id.iv_category)
         val ivArrow = view.findViewById<ImageView>(R.id.iv_arrow)
-        val categoryName = Locale("", category.categoryName).displayCountry
+        val categoryName = category.categoryName
         tvCategory.text = categoryName
         ivCategory.setBackgroundResource(category.icon)
         ivArrow.isVisible = false
