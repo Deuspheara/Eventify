@@ -88,6 +88,11 @@ interface EventRemoteDataSource {
         eventId: String,
         interestedUsers: List<String>
     ): Flow<Resource<Event>>
+
+    suspend fun deleteInterestedUser(
+        eventId: String,
+        interestedUsers: List<String>
+    ): Flow<Resource<Event>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
@@ -262,6 +267,43 @@ class EventRemoteDataSourceImpl @Inject constructor(
             emit(
                 Resource.Error(
                     message = e.message ?: "Error while adding interested user",
+                )
+            )
+            throw e
+        }
+    }.flowOn(ioContext)
+
+    override suspend fun deleteInterestedUser(
+        eventId: String,
+        interestedUsers: List<String>
+    ): Flow<Resource<Event>> = flow<Resource<Event>> {
+        emit(Resource.Loading())
+        Log.d(TAG, "deleting interested user $interestedUsers")
+        try {
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                emit(Resource.Error(message = "User not connected"))
+            } else {
+                val eventRef = firebaseFirestore.collection("Events").document(eventId)
+                val transaction = firebaseFirestore.runTransaction { transaction ->
+                    val event = transaction.get(eventRef).toObject(Event::class.java)
+                    val existingInterested = event?.interested ?: emptyList()
+                    val newInterested = existingInterested - interestedUsers.toSet()
+                    val updatedEvent = event?.copy(interested = newInterested)
+                    if (updatedEvent != null) {
+                        transaction.set(eventRef, updatedEvent)
+                        Resource.Success(updatedEvent)
+                    } else {
+                        Resource.Error(message = "Event not found")
+                    }
+                }.await()
+                emit(transaction)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while deleting interested user", e)
+            emit(
+                Resource.Error(
+                    message = e.message ?: "Error while deleting interested user",
                 )
             )
             throw e

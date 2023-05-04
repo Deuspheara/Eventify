@@ -24,6 +24,7 @@ class FavoriteFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteBinding
     private val viewModel: FavoriteViewModel by activityViewModels()
     private var currentUser: RemoteUser? = null
+    private lateinit var pagingAdapter: FavoriteAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,15 +42,6 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pagingAdapter = FavoriteAdapter { id ->
-            viewLifecycleOwner.lifecycle.coroutineScope.launch{
-                currentUser?.let { user -> viewModel.addInterestedUserToEvent(id, listOf(user.uuid)) }
-            }
-        }
-
-        binding.rvFavorite.adapter = pagingAdapter
-        binding.rvFavorite.layoutManager =  LinearLayoutManager(requireContext())
-
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             viewModel.user.collectLatest { state ->
                 if (state.error.isNotEmpty()) {
@@ -62,6 +54,31 @@ class FavoriteFragment : Fragment() {
                 }
                 state.data?.let { user ->
                     currentUser = user
+                    pagingAdapter = FavoriteAdapter(user.uuid) { id, isFavorite ->
+                        if (isFavorite) {
+                            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                                currentUser?.let { user ->
+                                    viewModel.addInterestedUserToEvent(
+                                        id,
+                                        listOf(user.uuid)
+                                    )
+                                }
+                            }
+                        }
+                        else {
+                            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                                currentUser?.let { user ->
+                                    viewModel.deleteInterestedUserToEvent(
+                                        id,
+                                        listOf(user.uuid)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    binding.rvFavorite.adapter = pagingAdapter
+                    binding.rvFavorite.layoutManager =  LinearLayoutManager(requireContext())
+                    getData()
                     Log.d("FavoriteFragment", "User: $user")
                 }
             }
@@ -71,6 +88,9 @@ class FavoriteFragment : Fragment() {
             viewModel.getUser()
         }
 
+    }
+
+    private fun getData() {
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             try {
                 viewModel.eventsPaginated.collectLatest { state ->

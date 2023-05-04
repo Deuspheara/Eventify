@@ -21,6 +21,8 @@ class FavoriteViewHolder private constructor(
     private val binding: ItemFeedBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private var isFavorite = false
+
     companion object {
         fun newInstance(parent: ViewGroup): FavoriteViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
@@ -29,7 +31,7 @@ class FavoriteViewHolder private constructor(
         }
     }
 
-    fun bind(event: Event, onClickFavorite: (String) -> Unit) {
+    fun bind(event: Event, userId: String, onClickFavorite: (String, Boolean) -> Unit) {
         val isCountParticipantNull = event.participants?.count() == null
 
         binding.apply {
@@ -75,12 +77,13 @@ class FavoriteViewHolder private constructor(
                 placeholder(R.drawable.app_icon)
                 error(R.drawable.app_icon)
             }
-            buttonFav.setImageResource(if (event.favorite) R.drawable.filled_star else R.drawable.empty_star)
+            isFavorite = event.interested?.contains(userId) == true
+            buttonFav.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
             buttonFav.setOnClickListener {
                 it as ImageButton
-                event.favorite = !event.favorite
-                it.setImageResource(if (event.favorite) R.drawable.filled_star else R.drawable.empty_star)
-                onClickFavorite(event.id)
+                isFavorite = !isFavorite
+                it.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+                onClickFavorite(event.id, isFavorite)
             }
 
             constraintLayoutItemFeed.setOnClickListener {

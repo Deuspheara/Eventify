@@ -10,6 +10,7 @@ import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.event.AddInterestedUserToEventUseCase
+import fr.event.eventify.domain.event.DeleteInterestedUserToEventUseCase
 import fr.event.eventify.domain.event.GetEventsPaginatedUseCase
 import fr.event.eventify.ui.home.EventPaginatedState
 import fr.event.eventify.ui.home.EventState
@@ -24,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
     private val addInterestedUserToEventUseCase: AddInterestedUserToEventUseCase,
+    private val deleteInterestedUserToEventUseCase: DeleteInterestedUserToEventUseCase,
     private val getEventsPaginatedUseCase: GetEventsPaginatedUseCase,
     private val getUserUseCase: GetUserUsecase
 ) : ViewModel() {
@@ -66,6 +68,25 @@ class FavoriteViewModel @Inject constructor(
     suspend fun addInterestedUserToEvent(eventId: String, interestedUsers: List<String>) {
         viewModelScope.launch {
             addInterestedUserToEventUseCase(eventId, interestedUsers).collectLatest {
+                when(it) {
+                    is Resource.Success -> {
+                        _event.value = EventState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _event.value = EventState(error = it.message ?: "An unexpected error occured")
+                    }
+                    is Resource.Loading -> {
+                        _event.value = EventState(isLoading = true)
+                    }
+                }
+
+            }
+        }
+    }
+
+    suspend fun deleteInterestedUserToEvent(eventId: String, interestedUsers: List<String>) {
+        viewModelScope.launch {
+            deleteInterestedUserToEventUseCase(eventId, interestedUsers).collectLatest {
                 when(it) {
                     is Resource.Success -> {
                         _event.value = EventState(data = it.data)

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -13,9 +12,6 @@ import fr.event.eventify.core.mapper.EventMapper
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.databinding.ItemFeedBinding
 import fr.event.eventify.ui.event.EventDetailsActivity
-import java.sql.Time
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -78,12 +74,14 @@ class EventViewHolder private constructor(
                 placeholder(R.drawable.app_icon)
                 error(R.drawable.app_icon)
             }
-            buttonFav.setImageResource(if (event.favorite) R.drawable.filled_star else R.drawable.empty_star)
-            buttonFav.setOnClickListener {
-                it as ImageButton
-                event.favorite = !event.favorite
-                it.setImageResource(if (event.favorite) R.drawable.filled_star else R.drawable.empty_star)
-            }
+//            isFavorite = event.interested?.contains(userId) == true
+//            buttonFav.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+//            buttonFav.setOnClickListener {
+//                it as ImageButton
+//                isFavorite = !isFavorite
+//                it.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+//                onClickFavorite(event.id, isFavorite)
+//            }
 
             constraintLayoutItemFeed.setOnClickListener {
                 //launch Home Activity
