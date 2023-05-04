@@ -65,7 +65,6 @@ class HomeViewModel @Inject constructor(
     private val _eventPaginated = MutableStateFlow(EventPaginatedState())
     val eventsPaginated: StateFlow<EventPaginatedState> = _eventPaginated
 
-    //TODO: Remove this test
     private val _eventList = MutableStateFlow(EventListState())
     val eventList: StateFlow<EventListState> = _eventList
 

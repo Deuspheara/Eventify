@@ -63,6 +63,14 @@ interface EventRepository {
      * @see Event
      */
     suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEvents(): Flow<Resource<List<Event>>>
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -103,6 +111,17 @@ class EventRepositoryImpl @Inject constructor(
                 EventRemoteDataSource.getEventWithAuthorId(authorId)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while getting event with $authorId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getJoinedEvents(): Flow<Resource<List<Event>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getJoinedEvents()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting joined events", e)
                 throw e
             }
         }
