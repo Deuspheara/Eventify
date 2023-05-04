@@ -99,4 +99,8 @@ class ModifyProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun resetUploadValue(){
+        _upload.value = UploadState(isLoading = true)
+    }
 }

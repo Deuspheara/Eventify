@@ -15,13 +15,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.coroutineScope
-import androidx.navigation.fragment.findNavController
 import coil.load
 import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentModifyProfileBinding
-import fr.event.eventify.databinding.FragmentProfileBinding
-import fr.event.eventify.ui.profile.ProfileFragmentDirections
-import fr.event.eventify.ui.profile.ProfileViewModel
 import fr.event.eventify.utils.ImageDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -110,7 +106,7 @@ class ModifyProfileFragment : Fragment() {
                             )
                         }
                     }
-
+                    viewModel.resetUploadValue()
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }

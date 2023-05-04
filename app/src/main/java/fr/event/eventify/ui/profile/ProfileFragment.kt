@@ -53,10 +53,7 @@ class ProfileFragment : Fragment() {
                         }
                         tvNbOrganise.text = it.createdEvents.size.toString()
                         tvNbParticipate.text = it.joinedEvents.size.toString()
-                        btnModifyProfile.setOnClickListener {
-                            val action = ProfileFragmentDirections.actionProfileFragmentToModifyProfileFragment()
-                            findNavController().navigate(action)
-                        }
+
                     }
                 }
                 state.error.let {
@@ -65,6 +62,10 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        binding.btnModifyProfile.setOnClickListener {
+            val action = ProfileFragmentDirections.actionProfileFragmentToModifyProfileFragment()
+            findNavController().navigate(action)
+        }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             viewModel.getUser()
