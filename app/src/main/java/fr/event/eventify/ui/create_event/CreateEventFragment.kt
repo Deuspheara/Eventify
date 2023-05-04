@@ -3,6 +3,7 @@ package fr.event.eventify.ui.create_event
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Bundle
 import android.util.Log
@@ -38,6 +39,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private val categoryEvents = CategoryEvent.values().toList()
     private lateinit var startForEventImageResult: ActivityResultLauncher<Intent>
     private var url: String? = null
+    private var bitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +82,35 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 state.data?.let {it ->
                     Log.d("CreateEventFragment", "Image uploaded: $url")
                     url = it
+
+                    binding.apply {
+                        val checkPriceNotNull = tfPriceEvent.text.toString().isNotEmpty()
+                        val checkNbTicketsNotNull = tfPlacesEvent.text.toString().isNotEmpty()
+
+                        //price format to 2.00
+                        val price = if (checkPriceNotNull) "%.2f".format(tfPriceEvent.text.toString().toDouble()) else "0.00"
+                        val priceWithoutComma = price.replace(",",".")
+
+                        viewModel.createEvent(
+                            Event(
+                                name = tfNameEvent.text.toString(),
+                                author = "author",
+                                description = tfDescriptionEvent.text.toString(),
+                                date = Timestamp(Calendar.getInstance().time),
+                                location = Event.LocationEvent(
+                                    name = tfLocationEvent.text.toString(),
+                                ),
+                                image = url,
+                                ticketPrice = Event.PriceEvent(
+                                    currency = "euro",
+                                    amount = priceWithoutComma.toDouble(),
+                                ),
+                                nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString()
+                                    .toInt() else 0,
+                                categoryEvent = CategoryEvent.FESTIVAL,
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -92,35 +123,14 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     result.data?.data?.let { fileUri ->
                         val source =
                             ImageDecoder.createSource(requireContext().contentResolver, fileUri)
-                        val bitmap = ImageDecoder.decodeBitmap(source)
+                        bitmap = ImageDecoder.decodeBitmap(source)
                         Log.d("CreateEventFragment", "Image selected")
-                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                            viewModel.upload.collectLatest { state ->
-                                if (state.error?.isNotEmpty() == true) {
-                                    state.error.let {
-                                        Log.e(
-                                            "CreateEventFragment",
-                                            "Error while uploading image $it"
-                                        )
-                                    }
-                                }
-                                state.isLoading.let {
-
-                                }
-                                state.data?.let {
-                                    Log.d("CreateEventFragment", "Image uploaded: $it")
-                                }
-                            }
-                        }
-                        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                            viewModel.uploadPhoto(bitmap)
-                        }
-
 
                         binding.imgCreateEvent.setImageBitmap(bitmap)
                     }
                 }
             }
+
         binding.btCreateEvent.setOnClickListener {
             binding.apply {
                 val checkPriceNotNull = tfPriceEvent.text.toString().isNotEmpty()
@@ -133,24 +143,31 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 //price format to 2.00
                 val price = if (checkPriceNotNull) "%.2f".format(tfPriceEvent.text.toString().toDouble()) else "0.00"
                 val priceWithoutComma = price.replace(",",".")
-                viewModel.createEvent(
-                    Event(
-                        name = tfNameEvent.text.toString(),
-                        author = "author",
-                        description = tfDescriptionEvent.text.toString(),
-                        date = Timestamp(Calendar.getInstance().time),
-                        location = Event.LocationEvent(
-                            name = tfLocationEvent.text.toString(),
-                        ),
-                        image = url,
-                        ticketPrice = Event.PriceEvent(
-                            currency = "euro",
-                            amount = priceWithoutComma.toDouble(),
-                        ),
-                        nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
-                        categoryEvent = CategoryEvent.FESTIVAL,
+                if (bitmap == null) {
+                    viewModel.createEvent(
+                        Event(
+                            name = tfNameEvent.text.toString(),
+                            author = "author",
+                            description = tfDescriptionEvent.text.toString(),
+                            date = Timestamp(Calendar.getInstance().time),
+                            location = Event.LocationEvent(
+                                name = tfLocationEvent.text.toString(),
+                            ),
+                            image = "",
+                            ticketPrice = Event.PriceEvent(
+                                currency = "euro",
+                                amount = priceWithoutComma.toDouble(),
+                            ),
+                            nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString()
+                                .toInt() else 0,
+                            categoryEvent = CategoryEvent.FESTIVAL,
+                        )
                     )
-                )
+                }else {
+                    viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                        viewModel.uploadPhoto(bitmap!!)
+                    }
+                }
             }
         }
 

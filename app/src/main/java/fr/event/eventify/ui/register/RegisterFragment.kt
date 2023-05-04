@@ -160,6 +160,22 @@ class RegisterFragment : Fragment() {
                     Log.d(TAG, "upload: Success")
                     url = it
 
+                    viewModel.registerOnFireStore(
+                        RemoteUser(
+                            uuid = viewModel.user.value.data?.uid.toString(),
+                            displayName = binding.tfName.text.toString(),
+                            pseudo = binding.tfUsername.text.toString(),
+                            email = viewModel.user.value.data?.email.toString(),
+                            phoneNumber = binding.tfPhoneNumber.text.toString(),
+                            photoUrl = url!!,
+                            providerID = viewModel.user.value.data?.providerId.toString(),
+                            isEmailVerified = viewModel.user.value.data?.isEmailVerified ?: false,
+                            joinedEvents = listOf(),
+                            createdEvents = listOf(),
+
+                            )
+                    )
+
                     Toast.makeText(context, "Saved upload", Toast.LENGTH_SHORT).show()
                 }
             }
