@@ -25,13 +25,12 @@ class ParticipantViewHolder private constructor(
 
     fun bind(participant: Participant, position: Int) {
         binding.apply {
-            tvNum.text = participant.participantNumber
+            tvNum.text = "Participant ${position + 1}"
             inputFirstName.setText(participant.firstName)
             inputLastName.setText(participant.lastName)
             inputEmail.setText(participant.email)
 
             tvNum.addTextChangedListener {
-                participant.participantNumber = it.toString()
                 onTextChangedListener?.onTextChanged(position, participant)
             }
             inputFirstName.addTextChangedListener {

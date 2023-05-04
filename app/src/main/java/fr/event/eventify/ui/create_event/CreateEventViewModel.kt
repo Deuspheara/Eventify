@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.event.eventify.core.models.event.remote.Event
+import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.auth.IsConnectedUseCase
 import fr.event.eventify.domain.event.CreateEventUseCase
 import fr.event.eventify.domain.storage.UploadPhotoUseCase
 import fr.event.eventify.ui.home.EventState
+import fr.event.eventify.ui.register.RemoteState
 import fr.event.eventify.utils.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +28,8 @@ data class UploadState(
 class CreateEventViewModel @Inject constructor(
     private val createEventUseCase: CreateEventUseCase,
     private val uploadPhotoUseCase: UploadPhotoUseCase,
-    private val isConnectedUseCase: IsConnectedUseCase
+    private val isConnectedUseCase: IsConnectedUseCase,
+    private val getUserUsecase: GetUserUsecase
 ) : ViewModel(){
 
     private val _event = MutableStateFlow(EventState())
@@ -37,6 +40,10 @@ class CreateEventViewModel @Inject constructor(
 
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected
+
+    private val _user = MutableStateFlow(RemoteState())
+    val user: MutableStateFlow<RemoteState> = _user
+
 
     init {
         viewModelScope.launch {
@@ -83,6 +90,24 @@ class CreateEventViewModel @Inject constructor(
                     }
                     else -> {
                         _upload.value = UploadState(error = "Error")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getUser() {
+        viewModelScope.launch {
+            getUserUsecase().collectLatest {
+                when(it){
+                    is Resource.Success -> {
+                        _user.value = RemoteState(data = it.data)
+                    }
+                    is Resource.Error -> {
+                        _user.value = RemoteState(error = it.message ?: "Error while getting user")
+                    }
+                    else -> {
+                        _user.value = RemoteState(error = "Error")
                     }
                 }
             }
