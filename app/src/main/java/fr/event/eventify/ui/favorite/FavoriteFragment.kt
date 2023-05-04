@@ -11,6 +11,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.FilterEvent
 import fr.event.eventify.databinding.FragmentFavoriteBinding
@@ -22,6 +23,7 @@ class FavoriteFragment : Fragment() {
 
     private lateinit var binding: FragmentFavoriteBinding
     private val viewModel: FavoriteViewModel by activityViewModels()
+    private var currentUser: RemoteUser? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +41,35 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pagingAdapter = FavoriteAdapter()
+        val pagingAdapter = FavoriteAdapter { id ->
+            viewLifecycleOwner.lifecycle.coroutineScope.launch{
+                currentUser?.let { user -> viewModel.addInterestedUserToEvent(id, listOf(user.uuid)) }
+            }
+        }
 
         binding.rvFavorite.adapter = pagingAdapter
         binding.rvFavorite.layoutManager =  LinearLayoutManager(requireContext())
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.user.collectLatest { state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e("FavoriteFragment", "Error while getting user $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { user ->
+                    currentUser = user
+                    Log.d("FavoriteFragment", "User: $user")
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.getUser()
+        }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             try {

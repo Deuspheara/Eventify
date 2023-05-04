@@ -29,7 +29,7 @@ class FavoriteViewHolder private constructor(
         }
     }
 
-    fun bind(event: Event) {
+    fun bind(event: Event, onClickFavorite: (String) -> Unit) {
         val isCountParticipantNull = event.participants?.count() == null
 
         binding.apply {
@@ -80,6 +80,7 @@ class FavoriteViewHolder private constructor(
                 it as ImageButton
                 event.favorite = !event.favorite
                 it.setImageResource(if (event.favorite) R.drawable.filled_star else R.drawable.empty_star)
+                onClickFavorite(event.id)
             }
 
             constraintLayoutItemFeed.setOnClickListener {

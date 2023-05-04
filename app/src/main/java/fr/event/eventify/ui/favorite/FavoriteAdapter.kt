@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.ui.home.FavoriteViewHolder
 
-class FavoriteAdapter : PagingDataAdapter<Event, FavoriteViewHolder>(COMPARATOR) {
+class FavoriteAdapter(private val onClickFavorite: (String) -> Unit) : PagingDataAdapter<Event, FavoriteViewHolder>(COMPARATOR) {
 
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<Event>() {
@@ -25,6 +25,6 @@ class FavoriteAdapter : PagingDataAdapter<Event, FavoriteViewHolder>(COMPARATOR)
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        holder.bind(getItem(position) ?: return )
+        holder.bind(getItem(position) ?: return, onClickFavorite)
     }
 }

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.google.firebase.firestore.DocumentSnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
 import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
@@ -17,7 +16,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Named
 
 
 interface EventRepository {
@@ -55,6 +53,9 @@ interface EventRepository {
     fun setCurrentEvent(event: EventLight)
 
     suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
+
+    suspend fun addInterestedUser(eventId: String, interestedUsers : List<String>): Flow<Resource<Event>>
+
 }
 
 class EventRepositoryImpl @Inject constructor(
@@ -84,6 +85,20 @@ class EventRepositoryImpl @Inject constructor(
                 EventRemoteDataSource.addParticipant(eventId, listParticipants)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while adding participant with $eventId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun addInterestedUser(
+        eventId: String,
+        interestedUsers: List<String>
+    ): Flow<Resource<Event>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.addInterestedUser(eventId, interestedUsers)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while adding interested user with $eventId", e)
                 throw e
             }
         }

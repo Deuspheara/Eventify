@@ -7,7 +7,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import fr.event.eventify.core.coroutine.DispatcherModule
-import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
@@ -36,7 +35,12 @@ interface EventRemoteDataSource {
      * @param limit the limit of events to get
      * @return a [Flow] of [Resource]
      */
-    suspend fun getEvents(page: Int, limit: Int, orderBy: FilterEvent?, category: CategoryEvent?): Resource<List<Event>>
+    suspend fun getEvents(
+        page: Int,
+        limit: Int,
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
+    ): Resource<List<Event>>
 
     /**
      * Get all events paginated
@@ -47,7 +51,11 @@ interface EventRemoteDataSource {
      * @see FilterEvent
      * @see CategoryEvent
      */
-    fun createCharacterPagingSource( name: String?, orderBy: FilterEvent?, category: CategoryEvent?): PagingSource<DocumentSnapshot, Event>
+    fun createCharacterPagingSource(
+        name: String?,
+        orderBy: FilterEvent?,
+        category: CategoryEvent?
+    ): PagingSource<DocumentSnapshot, Event>
 
     /**
      * Get all events paginated
@@ -71,16 +79,22 @@ interface EventRemoteDataSource {
      * @return a [Flow] of [Resource] of [Event]
      * @see Participant
      */
-    suspend fun addParticipant(eventId: String, listParticipants : List<Participant>): Flow<Resource<Event>>
+    suspend fun addParticipant(
+        eventId: String,
+        listParticipants: List<Participant>
+    ): Flow<Resource<Event>>
 
-    suspend fun addInterestedUser(eventId: String, interestedUser : RemoteUser): Flow<Resource<Event>>
+    suspend fun addInterestedUser(
+        eventId: String,
+        interestedUsers: List<String>
+    ): Flow<Resource<Event>>
 }
 
 class EventRemoteDataSourceImpl @Inject constructor(
     @DispatcherModule.DispatcherIO private val ioContext: CoroutineDispatcher,
     private val firebaseAuth: FirebaseAuth,
     private val firebaseFirestore: FirebaseFirestore
-) : EventRemoteDataSource{
+) : EventRemoteDataSource {
 
     private companion object {
         private const val TAG = "EventRemoteDataSource"
@@ -94,7 +108,7 @@ class EventRemoteDataSourceImpl @Inject constructor(
             val user = firebaseAuth.currentUser
             if (user == null) {
                 emit(Resource.Error(message = "User not connected"))
-            }else {
+            } else {
                 val eventRef = firebaseFirestore.collection("Events").document()
                 val eventWithId = event.copy(id = eventRef.id)
                 eventRef.set(eventWithId).await()
@@ -102,9 +116,11 @@ class EventRemoteDataSourceImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error while creating event", e)
-            emit(Resource.Error(
-                message = e.message ?: "Error while creating event",
-            ))
+            emit(
+                Resource.Error(
+                    message = e.message ?: "Error while creating event",
+                )
+            )
             throw e
         }
     }.flowOn(ioContext)
@@ -121,9 +137,9 @@ class EventRemoteDataSourceImpl @Inject constructor(
                 return Resource.Error(message = "User not connected")
             } else {
                 val events = firebaseFirestore.collection("Events")
-                .orderBy(orderBy?.stringValue ?: FilterEvent.NAME.stringValue)
-                .startAfter(page)
-                .limit(limit.toLong())
+                    .orderBy(orderBy?.stringValue ?: FilterEvent.NAME.stringValue)
+                    .startAfter(page)
+                    .limit(limit.toLong())
                     .get()
                     .await()
                     .toObjects(Event::class.java)
@@ -141,16 +157,13 @@ class EventRemoteDataSourceImpl @Inject constructor(
     }
 
 
-
-
-
     override fun createCharacterPagingSource(
         name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): PagingSource<DocumentSnapshot, Event> {
         return EventPagingSource(
-            getEvents = { lastSnapshot, limit, ->
+            getEvents = { lastSnapshot, limit ->
                 getEventsQuerySnapshot(lastSnapshot, limit, name, orderBy, category)
             },
             dispatcher = ioContext
@@ -189,56 +202,68 @@ class EventRemoteDataSourceImpl @Inject constructor(
             val user = firebaseAuth.currentUser
             if (user == null) {
                 emit(Resource.Error(message = "User not connected"))
-            }else {
+            } else {
                 val eventRef = firebaseFirestore.collection("Events").document(eventId)
-                val event = eventRef.get().await().toObject(Event::class.java)
-                val eventWithId = event?.copy(participants = event.participants?.plus(
-                    listParticipants
-                ))
-                if (eventWithId != null) {
-                    eventRef.set(eventWithId).await()
-                    emit(Resource.Success(eventWithId))
-                }else {
-                    emit(Resource.Error(message = "Event not found"))
-                }
+                val transaction = firebaseFirestore.runTransaction { transaction ->
+                    val event = transaction.get(eventRef).toObject(Event::class.java)
+                    val existingParticipants = event?.participants ?: emptyList()
+                    val newParticipants = existingParticipants + listParticipants
+                    val updatedEvent = event?.copy(participants = newParticipants)
+                    if (updatedEvent != null) {
+                        transaction.set(eventRef, updatedEvent)
+                        Resource.Success(updatedEvent)
+                    } else {
+                        Resource.Error(message = "Event not found")
+                    }
+                }.await()
+
+                emit(transaction)
+
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error while adding participant", e)
-            emit(Resource.Error(
-                message = e.message ?: "Error while adding participant",
-            ))
+            emit(
+                Resource.Error(
+                    message = e.message ?: "Error while adding participant",
+                )
+            )
             throw e
         }
     }.flowOn(ioContext)
 
     override suspend fun addInterestedUser(
         eventId: String,
-        interestedUser: RemoteUser
+        interestedUsers: List<String>
     ): Flow<Resource<Event>> = flow<Resource<Event>> {
         emit(Resource.Loading())
-        Log.d(TAG, "Adding interested user $interestedUser")
+        Log.d(TAG, "Adding interested user $interestedUsers")
         try {
             val user = firebaseAuth.currentUser
             if (user == null) {
                 emit(Resource.Error(message = "User not connected"))
-            }else {
+            } else {
                 val eventRef = firebaseFirestore.collection("Events").document(eventId)
-                val event = eventRef.get().await().toObject(Event::class.java)
-                val eventWithId = event?.copy(interested = event.interested?.plus(
-                    interestedUser.uuid
-                ))
-                if (eventWithId != null) {
-                    eventRef.set(eventWithId).await()
-                    emit(Resource.Success(eventWithId))
-                }else {
-                    emit(Resource.Error(message = "Event not found"))
-                }
+                val transaction = firebaseFirestore.runTransaction { transaction ->
+                    val event = transaction.get(eventRef).toObject(Event::class.java)
+                    val existingInterested = event?.interested ?: emptyList()
+                    val newInterested = existingInterested + interestedUsers
+                    val updatedEvent = event?.copy(interested = newInterested)
+                    if (updatedEvent != null) {
+                        transaction.set(eventRef, updatedEvent)
+                        Resource.Success(updatedEvent)
+                    } else {
+                        Resource.Error(message = "Event not found")
+                    }
+                }.await()
+                emit(transaction)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error while adding interested user", e)
-            emit(Resource.Error(
-                message = e.message ?: "Error while adding interested user",
-            ))
+            emit(
+                Resource.Error(
+                    message = e.message ?: "Error while adding interested user",
+                )
+            )
             throw e
         }
     }.flowOn(ioContext)
