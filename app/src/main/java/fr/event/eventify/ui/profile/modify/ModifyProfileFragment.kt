@@ -80,7 +80,7 @@ class ModifyProfileFragment : Fragment() {
                     }
                 }
                 state.error.let {
-                    Log.e("ProfileFragment", "Error while collecting user $it")
+                    Log.e("ModifyProfileFragment", "Error while collecting user $it")
                 }
             }
         }
@@ -90,15 +90,26 @@ class ModifyProfileFragment : Fragment() {
             viewModel.upload.collectLatest { state ->
                 if (state.error?.isNotEmpty() == true) {
                     state.error.let {
-                        Log.e("CreateEventFragment", "Error while uploading image $it")
+                        Log.e("ModifyProfileFragment", "Error while uploading image $it")
                     }
                 }
                 state.isLoading.let {
 
                 }
                 state.data?.let {
-                    Log.d("CreateEventFragment", "Image uploaded: $url")
+                    Log.d("ModifyProfileFragment", "Image uploaded: $url")
                     url = it
+
+                    uuid?.let { uuid ->
+                        url?.let { photoUrl ->
+                            viewModel.modifyUser(
+                                uuid,
+                                binding.tfUsernameModify.text.toString(),
+                                binding.tfDescriptionModifyProfile.text.toString(),
+                                photoUrl
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -109,11 +120,23 @@ class ModifyProfileFragment : Fragment() {
 
         binding.btnValidateProfile.setOnClickListener{
             viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                bitmap?.let { it1 -> viewModel.uploadPhoto(it1) }
+                Log.d("ModifyProfileFragment", "Modification of the user")
+                if (bitmap == null) {
+                    uuid?.let { uuid ->
+                        url?.let { photoUrl ->
+                            viewModel.modifyUser(
+                                uuid,
+                                binding.tfUsernameModify.text.toString(),
+                                binding.tfDescriptionModifyProfile.text.toString(),
+                                photoUrl
+                            )
+                        }
+                    }
+                } else {
+                    viewModel.uploadPhoto(bitmap!!)
+                }
             }
-            uuid?.let { uuid -> url?.let { photoUrl ->
-                viewModel.modifyUser(uuid,binding.tfUsernameModify.text.toString(),binding.tfDescriptionModifyProfile.text.toString(),photoUrl)
-            } }
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.imgModifyProfile.setOnClickListener{
