@@ -110,6 +110,8 @@ class ModifyProfileFragment : Fragment() {
                             )
                         }
                     }
+
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
@@ -132,11 +134,12 @@ class ModifyProfileFragment : Fragment() {
                             )
                         }
                     }
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 } else {
                     viewModel.uploadPhoto(bitmap!!)
                 }
             }
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+
         }
 
         binding.imgModifyProfile.setOnClickListener{
