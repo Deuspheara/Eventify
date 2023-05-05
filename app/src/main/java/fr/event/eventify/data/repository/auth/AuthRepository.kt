@@ -66,6 +66,12 @@ interface AuthRepository {
      * @return a [Flow] of [RemoteUser]
      */
     suspend fun addJoinedEvents(joinedEvent: List<RemoteUser.JoinedEvent>): Flow<Resource<RemoteUser>>
+
+    /**
+     * Remove JoinedEvent in firestore
+     * @param joinedEvent informations of joined event
+     */
+    suspend fun logout(): Flow<Boolean>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -168,6 +174,17 @@ class AuthRepositoryImpl @Inject constructor(
                 authRemoteDataSource.addJoinedEvents(joinedEvent)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while adding joined event, error: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    override suspend fun logout(): Flow<Boolean> {
+        return withContext(ioDispatcher) {
+            try {
+                authRemoteDataSource.logout()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while logout, error: ${e.message}")
                 throw e
             }
         }

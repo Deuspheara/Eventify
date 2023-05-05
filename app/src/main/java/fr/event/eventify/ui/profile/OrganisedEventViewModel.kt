@@ -3,7 +3,6 @@ package fr.event.eventify.ui.profile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.event.GetEventWithAuthorIdUseCase
 import fr.event.eventify.ui.home.EventListState
@@ -15,7 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class MyEventViewModel @Inject constructor(
+class OrganisedEventViewModel @Inject constructor(
     private val getEventWithAuthorIdUseCase: GetEventWithAuthorIdUseCase,
     private val getUserUsecase: GetUserUsecase
 ) : ViewModel() {

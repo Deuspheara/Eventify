@@ -15,7 +15,9 @@ import coil.load
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.databinding.FragmentProfileBinding
+import fr.event.eventify.ui.home.ConnectedState
 import fr.event.eventify.ui.profile.adapter.ProfilePagerAdapter
 import fr.event.eventify.ui.register.RemoteState
 import kotlinx.coroutines.flow.collectLatest
@@ -26,6 +28,7 @@ class ProfileFragment : Fragment() {
    private lateinit var binding: FragmentProfileBinding
    private val viewModel: ProfileViewModel by activityViewModels()
     private lateinit var profilePagerAdapter: ProfilePagerAdapter
+    private var currentUser : RemoteUser? = null
 
     override fun onCreateView(
          inflater: LayoutInflater,
@@ -48,6 +51,12 @@ class ProfileFragment : Fragment() {
             tab.text = profilePagerAdapter.getTabTitle(position)
         }.attach()
 
+        binding.btLogoutProfile.setOnClickListener{
+            viewLifecycleOwner.lifecycle.coroutineScope.launch {
+                viewModel.logout()
+            }
+        }
+
          return binding.root
     }
 
@@ -56,17 +65,19 @@ class ProfileFragment : Fragment() {
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             viewModel.user.collectLatest {state ->
-                state.isLoading?.let {
+                state.isLoading.let {
 
                 }
                 state.data?.let {
+
+                    viewModel.getEventWithAuthorId(it.uuid)
+
                     binding.apply {
                         tvProfileName.text = it.pseudo
                         imgProfile.load(it.photoUrl){
                             placeholder(R.drawable.pingouin)
                             error(R.drawable.pingouin)
                         }
-                        tvNbOrganise.text = it.createdEvents.size.toString()
                         tvNbParticipate.text = it.joinedEvents.size.toString()
 
                     }
@@ -74,6 +85,37 @@ class ProfileFragment : Fragment() {
                 state.error.let {
                     Log.e("ProfileFragment", "Error while collecting user $it")
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.eventList.collectLatest {state ->
+                if (state.error.isNotEmpty()) {
+                    state.error.let {
+                        Log.e("MyEventFragment", "Error while collecting events by author uuid $it")
+                    }
+                }
+                state.data?.let {
+                    Log.d("MyEventFragment", "nbOrganised: ${it.size}")
+                    binding.tvNbOrganise.text = "${it.size}"
+                }
+
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewModel.logout.collectLatest {state ->
+                state.data?.let {
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+
+                state.error.let {
+                    Log.e("ProfileFragment", "Error while logout $it")
+
+                }
+
+
+
             }
         }
 

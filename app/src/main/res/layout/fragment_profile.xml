@@ -7,14 +7,14 @@
     tools:context=".ui.profile.ProfileFragment">
 
     <ImageButton
-        android:id="@+id/bt_notification_profile"
+        android:id="@+id/bt_logout_profile"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/circle_background"
         android:contentDescription="return button"
-        android:src="@drawable/parameter"
+        android:src="@drawable/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -80,7 +80,7 @@
             android:textFontWeight="900" />
 
         <TextView
-            android:id="@+id/tvNbOrganise"
+            android:id="@+id/tv_nb_organise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

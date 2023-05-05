@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.core.mapper.EventMapper
 import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.databinding.FragmentMyEventBinding
-import fr.event.eventify.ui.profile.MyEventViewModel
+import fr.event.eventify.ui.profile.OrganisedEventViewModel
 import fr.event.eventify.ui.profile.adapter.MyEventAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class OrganisedEventFragment : Fragment() {
     private lateinit var binding: FragmentMyEventBinding
-    private val viewModel : MyEventViewModel by activityViewModels()
+    private val viewModel : OrganisedEventViewModel by activityViewModels()
     private lateinit var adapter: MyEventAdapter
     private var currentUser : RemoteUser? = null
 

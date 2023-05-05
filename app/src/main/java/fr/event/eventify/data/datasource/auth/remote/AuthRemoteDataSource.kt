@@ -76,6 +76,11 @@ interface AuthRemoteDataSource {
      */
     suspend fun addJoinedEvents(joinedEvents: List<RemoteUser.JoinedEvent>): Flow<Resource<RemoteUser>>
 
+    /**
+     * Remove JoinedEvent in firestore
+     * @param joinedEvent informations of joined event
+     */
+    suspend fun logout(): Flow<Boolean>
 }
 
 class AuthRemoteDataSourceImpl @Inject constructor(
@@ -323,6 +328,19 @@ class AuthRemoteDataSourceImpl @Inject constructor(
                 throw e
             }
             awaitClose()
+        }.flowOn(ioContext)
+    }
+
+    override suspend fun logout(): Flow<Boolean> {
+        return flow {
+            try {
+                firebaseAuth.signOut()
+                emit(true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while logging out: $e")
+                emit(false)
+                throw e
+            }
         }.flowOn(ioContext)
     }
 
