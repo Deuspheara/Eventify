@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import fr.event.eventify.R
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.core.models.auth.remote.RemoteUser
@@ -44,6 +45,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private var bitmap: Bitmap? = null
     private var currentUser: RemoteUser? = null
     private var selectedDate: Timestamp? = null
+    private var isConnected : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +74,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 9f
             )
         }
+
         //check for upload image
         viewLifecycleOwner.lifecycle.coroutineScope.launch{
             viewModel.upload.collectLatest { state ->

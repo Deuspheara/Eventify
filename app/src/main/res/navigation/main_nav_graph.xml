@@ -32,7 +32,11 @@
         android:id="@+id/createEventFragment"
         android:name="fr.event.eventify.ui.create_event.CreateEventFragment"
         android:label="fragment_create_event"
-        tools:layout="@layout/fragment_create_event" />
+        tools:layout="@layout/fragment_create_event" >
+        <action
+            android:id="@+id/action_createEventFragment_to_connexionFragment"
+            app:destination="@id/connexionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="fr.event.eventify.ui.favorite.FavoriteFragment"

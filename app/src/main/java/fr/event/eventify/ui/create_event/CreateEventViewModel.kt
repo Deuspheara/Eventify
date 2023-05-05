@@ -9,6 +9,7 @@ import fr.event.eventify.domain.auth.GetUserUsecase
 import fr.event.eventify.domain.auth.IsConnectedUseCase
 import fr.event.eventify.domain.event.CreateEventUseCase
 import fr.event.eventify.domain.storage.UploadPhotoUseCase
+import fr.event.eventify.ui.home.ConnectedState
 import fr.event.eventify.ui.home.EventState
 import fr.event.eventify.ui.register.RemoteState
 import fr.event.eventify.utils.Resource
@@ -38,25 +39,15 @@ class CreateEventViewModel @Inject constructor(
     private val _upload = MutableStateFlow(UploadState())
     val upload: StateFlow<UploadState> = _upload
 
-    private val _isConnected = MutableStateFlow(false)
-    val isConnected: StateFlow<Boolean> = _isConnected
+    private val _connected = MutableStateFlow(ConnectedState())
+    val connected: StateFlow<ConnectedState> = _connected
 
     private val _user = MutableStateFlow(RemoteState())
     val user: MutableStateFlow<RemoteState> = _user
 
 
-    init {
-        viewModelScope.launch {
-            isConnectedUseCase().collectLatest {
-                _isConnected.value = it
-            }
-        }
-    }
-
-
     fun createEvent(event: Event) {
         viewModelScope.launch {
-            if(isConnected.value){
                 _event.value = EventState(isLoading = true)
                 createEventUseCase(event).collectLatest{
                     when(it){
@@ -71,10 +62,8 @@ class CreateEventViewModel @Inject constructor(
                         }
                     }
                 }
-            }else{
-                _event.value = EventState(error = "You must be connected to create an event")
             }
-        }
+
     }
 
     fun uploadPhoto(bitmap: Bitmap) {
@@ -113,4 +102,24 @@ class CreateEventViewModel @Inject constructor(
             }
         }
     }
+
+    fun isConnected() {
+        try {
+            viewModelScope.launch {
+                isConnectedUseCase().collect {
+                    when(it) {
+                        true -> {
+                            _connected.value = ConnectedState(data = true)
+                        }
+                        false -> {
+                            _connected.value = ConnectedState(data = false)
+                        }
+                    }
+                }
+            }
+        }catch (e: Exception) {
+            _connected.value = ConnectedState(error = e.message ?: "Unknown error")
+        }
+    }
+
 }
