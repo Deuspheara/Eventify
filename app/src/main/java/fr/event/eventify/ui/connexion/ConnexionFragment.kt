@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -19,9 +20,6 @@ import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentConnexionBinding
-import fr.event.eventify.ui.register.AuthState
-import fr.event.eventify.utils.Resource
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -74,6 +72,10 @@ class ConnexionFragment : Fragment() {
             googleSignInLauncher.launch(signInIntent)
         }
 
+        binding.btReturn2.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             binding.apply {
                 btConnex.setOnClickListener {
@@ -96,6 +98,7 @@ class ConnexionFragment : Fragment() {
                     }
                     state.data?.let {
                         Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                        findNavController().popBackStack()
                     }
                 }
             }

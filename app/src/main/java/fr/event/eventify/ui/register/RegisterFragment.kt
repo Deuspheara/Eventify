@@ -16,6 +16,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -58,7 +59,7 @@ class RegisterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        binding = FragmentRegisterBinding.inflate(inflater, container, false)
 
         startForProfileImageResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -93,6 +94,10 @@ class RegisterFragment : Fragment() {
             }
         }
 
+        binding.btReturn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
             //register on firebase
             viewModel.user.collectLatest { state ->
@@ -125,6 +130,7 @@ class RegisterFragment : Fragment() {
                         viewModel.uploadPhoto(bitmap!!)
                     }
                     Toast.makeText(context, "Success user created", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
                 }
             }
 
@@ -198,11 +204,6 @@ class RegisterFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     private fun verifyEmail(email: String): Boolean {

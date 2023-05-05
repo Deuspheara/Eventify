@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,12 +35,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-
-        binding.btReturn.setOnClickListener{
-            val intent = Intent(it.context, ProfileActivity::class.java)
-            startActivity(intent)
-        }
-
         return binding.root
     }
 
@@ -122,6 +117,17 @@ class HomeFragment : Fragment() {
             search.setOnClickListener(View.OnClickListener {
                 search.isIconified = false
             })
+
+            btReturn.setOnClickListener{
+                if (currentUser != null) {
+                    val intent = Intent(it.context, ProfileActivity::class.java)
+                    startActivity(intent)
+                }
+                else {
+                    val action = HomeFragmentDirections.actionHomeFragmentToConnexionFragment()
+                    findNavController().navigate(action.actionId)
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycle.coroutineScope.launch {
