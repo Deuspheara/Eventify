@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.DatePicker
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -34,7 +35,8 @@ import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
-class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
+class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener,
+    AdapterView.OnItemSelectedListener {
 
     private lateinit var binding: FragmentCreateEventBinding
     private val viewModel: CreateEventViewModel by viewModels()
@@ -46,6 +48,8 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     private var currentUser: RemoteUser? = null
     private var selectedDate: Timestamp? = null
     private var isConnected : Boolean = false
+    private var categoryEventString: String? = ""
+    private var categoryEvent: CategoryEvent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +77,22 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 16f,
                 9f
             )
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch{
+            viewModel.event.collectLatest { state ->
+                if (state.error?.isNotEmpty() == true) {
+                    state.error.let {
+                        Log.e("CreateEventFragment", "Error while creating event $it")
+                    }
+                }
+                state.isLoading.let {
+
+                }
+                state.data?.let { it ->
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+            }
         }
 
         //check for upload image
@@ -113,7 +133,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                     amount = priceWithoutComma.toDouble(),
                                 ),
                                 nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
-                                categoryEvent = CategoryEvent.FESTIVAL,
+                                categoryEvent = categoryEvent,
                             )
                         )
                     }
@@ -188,7 +208,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                                 amount = priceWithoutComma.toDouble(),
                             ),
                             nbTickets = if (checkNbTicketsNotNull) tfPlacesEvent.text.toString().toInt() else 0,
-                            categoryEvent = CategoryEvent.FESTIVAL,
+                            categoryEvent = categoryEvent,
                         )
                     )
                 }else {
@@ -243,6 +263,7 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
         val adapter = CategorySpinnerAdapter(this.requireContext())
         binding.spCategory.adapter = adapter
+        binding.spCategory.onItemSelectedListener = this
 
     }
 
@@ -257,5 +278,33 @@ class CreateEventFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
 
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        categoryEventString = parent?.getItemAtPosition(position).toString()
+        Log.d("SELECTION CATEGORY", categoryEventString!!)
+        if (categoryEventString == "CONCERT") {
+            categoryEvent = CategoryEvent.CONCERT
+        }
+        if (categoryEventString == "FESTIVAL") {
+            categoryEvent = CategoryEvent.FESTIVAL
+        }
+        if (categoryEventString == "SPORT"){
+            categoryEvent = CategoryEvent.SPORT
+        }
+        if (categoryEventString == "THEATER"){
+            categoryEvent = CategoryEvent.THEATER
+        }
+        if (categoryEventString == "EXHIBITION"){
+            categoryEvent = CategoryEvent.EXHIBITION
+        }
+        if (categoryEventString == "OTHER"){
+            categoryEvent = CategoryEvent.OTHER
+        }
+
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 }
