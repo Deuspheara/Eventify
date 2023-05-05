@@ -48,6 +48,13 @@ class OrganisedEventDetailFragment : Fragment() {
                 btBackOrganisedEventDetail.setOnClickListener {
                     findNavController().popBackStack()
                 }
+                btEditEvent.setOnClickListener{
+                    val action = OrganisedEventDetailFragmentDirections.actionOrganisedEventDetailFragmentToEditEventFragment()
+                    val bundle = Bundle()
+                    bundle.putString("eventId", arguments?.getString("eventId"))
+
+                    findNavController().navigate(action.actionId, bundle)
+                }
             }
 
           return binding.root

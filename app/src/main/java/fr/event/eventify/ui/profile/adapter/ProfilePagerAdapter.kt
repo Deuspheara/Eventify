@@ -2,11 +2,9 @@ package fr.event.eventify.ui.profile.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fr.event.eventify.ui.profile.fragment.MyEventFragment
+import fr.event.eventify.ui.profile.fragment.OrganisedEventFragment
 import fr.event.eventify.ui.profile.fragment.ParticipateEventFragment
 
 class ProfilePagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
@@ -21,7 +19,7 @@ class ProfilePagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle
     override fun createFragment(position: Int): Fragment {
         return when(position) {
             0 -> ParticipateEventFragment()
-            else -> MyEventFragment()
+            else -> OrganisedEventFragment()
         }
     }
 

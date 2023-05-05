@@ -7,14 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import fr.event.eventify.R
 import fr.event.eventify.core.mapper.EventMapper
 import fr.event.eventify.core.models.auth.remote.RemoteUser
-import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.databinding.FragmentMyEventBinding
 import fr.event.eventify.ui.profile.MyEventViewModel
 import fr.event.eventify.ui.profile.adapter.MyEventAdapter
@@ -22,7 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MyEventFragment : Fragment() {
+class OrganisedEventFragment : Fragment() {
     private lateinit var binding: FragmentMyEventBinding
     private val viewModel : MyEventViewModel by activityViewModels()
     private lateinit var adapter: MyEventAdapter
@@ -38,6 +35,7 @@ class MyEventFragment : Fragment() {
         adapter = MyEventAdapter()
 
         binding.rvOrganisedEvent.adapter = adapter
+
 
         binding.rvOrganisedEvent.layoutManager = LinearLayoutManager(requireContext())
         return binding.root
@@ -93,6 +91,6 @@ class MyEventFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = MyEventFragment()
+        fun newInstance() = OrganisedEventFragment()
     }
 }

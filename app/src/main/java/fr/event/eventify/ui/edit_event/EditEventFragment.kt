@@ -1,4 +1,4 @@
-package fr.event.eventify
+package fr.event.eventify.ui.edit_event
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -12,13 +12,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
-import fr.event.eventify.databinding.FragmentCreateEventBinding
+import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentEditEventBinding
 import fr.event.eventify.ui.create_event.CategorySpinnerAdapter
 import fr.event.eventify.utils.ImageDialog
@@ -47,10 +47,15 @@ class EditEventFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
+        binding.apply {
+            btReturnEditEvent.setOnClickListener{
+                findNavController().popBackStack()
+            }
+        }
         return binding.root
     }
 

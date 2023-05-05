@@ -12,7 +12,6 @@ import fr.event.eventify.databinding.ItemFeedBinding
 import fr.event.eventify.databinding.ItemOrganisedEventBinding
 import fr.event.eventify.ui.home.EventViewHolder
 import fr.event.eventify.ui.profile.ProfileFragmentDirections
-import fr.event.eventify.ui.profile.fragment.MyEventFragmentDirections
 
 class MyEventViewHolder private constructor(
     private val binding: ItemOrganisedEventBinding

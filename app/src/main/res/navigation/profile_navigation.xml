@@ -30,14 +30,22 @@
         android:id="@+id/organisedEventDetailFragment"
         android:name="fr.event.eventify.ui.profile_detail.fragment.OrganisedEventDetailFragment"
         android:label="fragment_organised_event_detail"
-        tools:layout="@layout/fragment_organised_event_detail" />
+        tools:layout="@layout/fragment_organised_event_detail" >
+        <action
+            android:id="@+id/action_organisedEventDetailFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
+    </fragment>
     <fragment
         android:id="@+id/myEventFragment"
-        android:name="fr.event.eventify.ui.profile.fragment.MyEventFragment"
+        android:name="fr.event.eventify.ui.profile.fragment.OrganisedEventFragment"
         android:label="fragment_my_event"
         tools:layout="@layout/fragment_my_event" >
         <action
             android:id="@+id/action_myEventFragment_to_organisedEventDetailFragment"
             app:destination="@id/organisedEventDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="fr.event.eventify.ui.edit_event.EditEventFragment"
+        android:label="EditEventFragment" />
 </navigation>
