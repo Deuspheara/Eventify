@@ -40,7 +40,9 @@ class MyEventViewHolder private constructor(
             cardOrganisedEvent.setOnClickListener {
                 val action = ProfileFragmentDirections.actionProfileFragmentToOrganisedEventDetailFragment()
                 val bundle = bundleOf(
-                    "eventId" to event.id
+                    "eventId" to event.id,
+                    "eventName" to event.name,
+                    "eventImage" to event.image,
                 )
                 it.findNavController().navigate(action.actionId, bundle)
             }

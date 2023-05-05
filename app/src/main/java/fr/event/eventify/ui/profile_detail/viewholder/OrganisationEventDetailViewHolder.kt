@@ -26,7 +26,7 @@ class OrganisationEventDetailViewHolder private constructor(
           transaction.amount?.let {
               if(it > 0.0){
                   tvAmountUserTransaction.text = "+${transaction.amount} $currency"
-                    tvAmountUserTransaction.setTextColor(itemView.context.getColor(android.R.color.holo_green_dark))
+                  tvAmountUserTransaction.setTextColor(itemView.context.getColor(android.R.color.holo_green_dark))
               }else{
                   tvAmountUserTransaction.text = "-${transaction.amount} $currency"
                   tvAmountUserTransaction.setTextColor(itemView.context.getColor(android.R.color.holo_red_dark))

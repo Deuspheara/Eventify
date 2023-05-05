@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import dagger.hilt.android.AndroidEntryPoint
 import fr.event.eventify.R
 import fr.event.eventify.databinding.FragmentOrganisedEventDetailBinding
@@ -38,6 +40,14 @@ class OrganisedEventDetailFragment : Fragment() {
             binding.apply {
                 rvDetailOrganisedEvent.adapter = adapter
                 rvDetailOrganisedEvent.layoutManager = LinearLayoutManager(requireContext())
+                tvOrganisedEventName.text = arguments?.getString("eventName")
+                imgOrganisedEventDetail.load(arguments?.getString("eventImage")){
+                    placeholder(R.drawable.logo_gradient)
+                    error(R.drawable.logo_gradient)
+                }
+                btBackOrganisedEventDetail.setOnClickListener {
+                    findNavController().popBackStack()
+                }
             }
 
           return binding.root
