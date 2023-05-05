@@ -65,7 +65,10 @@ class EventViewHolder private constructor(
                     "DECEMBER" -> "Décembre"
                     else -> "Janvier"
                 }
-                "$frenchDay ${date.dayOfMonth} $frenchMonth ${date.hour}h${date.minute}"
+
+                val dateMinute = if (date.minute < 10) "0${date.minute}" else date.minute
+
+                "$frenchDay ${date.dayOfMonth} $frenchMonth ${date.hour}h${dateMinute}"
 
 
             }

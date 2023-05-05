@@ -36,13 +36,15 @@ object EventMapper {
             else -> "Janvier"
         }
 
+        val dateMinute = if (date.minute < 10) "0${date.minute}" else date.minute
+
 
         return EventLight(
             id = event.id,
             name = event.name,
             author = event.author,
             description = event.description,
-            date = "$frenchDay ${date.dayOfMonth} $frenchMonth ${date.hour}h${date.minute}",
+            date = "$frenchDay ${date.dayOfMonth} $frenchMonth ${date.hour}h${dateMinute}",
             location = event.location?.name,
             image = event.image,
             ticketPrice = event.ticketPrice?.amount,
