@@ -6,7 +6,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.auth.User
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.auth.remote.RemoteUser
+import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
 import fr.event.eventify.core.models.event.remote.FilterEvent
@@ -79,10 +82,31 @@ interface EventRemoteDataSource {
      * @return a [Flow] of [Resource] of [Event]
      * @see Participant
      */
-    suspend fun addParticipant(
-        eventId: String,
-        listParticipants: List<Participant>
-    ): Flow<Resource<Event>>
+    suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEvents(): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>>
 
     suspend fun addInterestedUser(
         eventId: String,
@@ -164,13 +188,16 @@ class EventRemoteDataSourceImpl @Inject constructor(
     }
 
 
+
+
+
     override fun createCharacterPagingSource(
         name: String?,
         orderBy: FilterEvent?,
         category: CategoryEvent?
     ): PagingSource<DocumentSnapshot, Event> {
         return EventPagingSource(
-            getEvents = { lastSnapshot, limit ->
+            getEvents = { lastSnapshot, limit, ->
                 getEventsQuerySnapshot(lastSnapshot, limit, name, orderBy, category)
             },
             dispatcher = ioContext
@@ -336,6 +363,99 @@ class EventRemoteDataSourceImpl @Inject constructor(
                         message = e.message ?: "Error while getting event with author id",
                     )
                 )
+                throw e
+            }
+        }.flowOn(ioContext)
+    }
+    override suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>> {
+        return flow<Resource<List<Event>>> {
+            emit(Resource.Loading())
+            Log.d(TAG, "Getting event with author id $authorId")
+            try {
+                val user = firebaseAuth.currentUser
+                if (user == null) {
+                    emit(Resource.Error(message = "User not connected"))
+                } else {
+                    val events = firebaseFirestore.collection("Events")
+                        .whereEqualTo("author", authorId)
+                        .get()
+                        .await()
+                        .toObjects(Event::class.java)
+
+                    emit(Resource.Success(events))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting event with author id", e)
+                emit(Resource.Error(
+                    message = e.message ?: "Error while getting event with author id",
+                ))
+                throw e
+            }
+        }.flowOn(ioContext)
+    }
+
+    override suspend fun getJoinedEvents(): Flow<Resource<List<Event>>> = flow<Resource<List<Event>>> {
+        emit(Resource.Loading())
+        Log.d(TAG, "Getting joined events")
+        try {
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                emit(Resource.Error(message = "User not connected"))
+            } else {
+                //get eventID from joined Event list of JoinedEvents in Users collection
+                val joinedEvents = firebaseFirestore.collection("User")
+                    .document(user.uid)
+                    .get()
+                    .await()
+                    .toObject(RemoteUser::class.java)
+                    ?.joinedEvents ?: emptyList()
+
+                //get events associated with the IDs in the joined events list
+                val events = mutableListOf<Event>()
+                for (joinedEvent in joinedEvents) {
+                    joinedEvent.eventID?.let {eventID ->
+                        firebaseFirestore.collection("Events")
+                            .document(eventID)
+                            .get()
+                            .await()
+                            .toObject(Event::class.java)?.let { events.add(it) }
+                    }
+                }
+
+                emit(Resource.Success(events))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while getting joined events", e)
+            emit(Resource.Error(
+                message = e.message ?: "Error while getting joined events",
+            ))
+            throw e
+        }
+    }.flowOn(ioContext)
+
+    override suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>> {
+        return flow<Resource<List<RemoteUser.JoinedEvent>>> {
+            emit(Resource.Loading())
+            Log.d(TAG, "Getting joined events")
+            try {
+                val user = firebaseAuth.currentUser
+                if (user == null) {
+                    emit(Resource.Error(message = "User not connected"))
+                } else {
+                    val joinedEvents = firebaseFirestore.collection("User")
+                        .document(user.uid)
+                        .get()
+                        .await()
+                        .toObject(RemoteUser::class.java)
+                        ?.joinedEvents ?: emptyList()
+
+                    emit(Resource.Success(joinedEvents))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting joined events", e)
+                emit(Resource.Error(
+                    message = e.message ?: "Error while getting joined events",
+                ))
                 throw e
             }
         }.flowOn(ioContext)

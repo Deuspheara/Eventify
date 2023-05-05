@@ -5,16 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <Switch
+        android:id="@+id/switch_my_information"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Prendre mes informations"
+        android:thumbTint="@color/red"
+        android:trackTint="@color/red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_email" />
+
     <TextView
         android:id="@+id/tv_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Participant 1"
         android:textColor="@color/text_default"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -78,7 +92,6 @@
         android:layout_marginBottom="8dp"
         app:boxStrokeColor="#00FFFFFF"
         app:boxStrokeWidth="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_last_name">

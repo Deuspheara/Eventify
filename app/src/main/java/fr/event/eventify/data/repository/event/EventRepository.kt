@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import fr.event.eventify.core.coroutine.DispatcherModule
+import fr.event.eventify.core.models.auth.remote.RemoteUser
 import fr.event.eventify.core.models.event.local.EventLight
 import fr.event.eventify.core.models.event.remote.CategoryEvent
 import fr.event.eventify.core.models.event.remote.Event
@@ -53,6 +54,30 @@ interface EventRepository {
     fun setCurrentEvent(event: EventLight)
 
     suspend fun addParticipant(eventId: String, listParticipants :  List<Participant>): Flow<Resource<Event>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEvents(): Flow<Resource<List<Event>>>
+
+    /**
+     * Get all events of an author
+     * @param authorId the id of the author
+     * @return a [Flow] of [Resource] of [List] of [Event]
+     * @see Event
+     */
+    suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>>
 
     suspend fun addInterestedUser(eventId: String, interestedUsers : List<String>): Flow<Resource<Event>>
 
@@ -127,6 +152,39 @@ class EventRepositoryImpl @Inject constructor(
                 EventRemoteDataSource.getFavoriteEventWithUserId(userId)
             } catch (e: Exception) {
                 Log.e(TAG, "Error while getting event with $userId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getEventWithAuthorId(authorId: String): Flow<Resource<List<Event>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getEventWithAuthorId(authorId)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting event with $authorId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getJoinedEvents(): Flow<Resource<List<Event>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getJoinedEvents()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting joined events", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getJoinedEventsRaw(): Flow<Resource<List<RemoteUser.JoinedEvent>>> {
+        return withContext(ioDispatcher) {
+            try {
+                EventRemoteDataSource.getJoinedEventsRaw()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while getting joined events", e)
                 throw e
             }
         }

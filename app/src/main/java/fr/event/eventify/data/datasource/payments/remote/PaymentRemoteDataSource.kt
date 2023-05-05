@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
@@ -35,6 +36,14 @@ interface PaymentRemoteDataSource{
     suspend fun addTransaction(
         transaction: Transaction
     ) : Flow<Resource<Transaction>>
+
+    /**
+     * Get all transactions by event id
+     * @param eventId the id of the event
+     * @return a [Flow] of [Resource]
+     * @see Transaction
+     */
+    suspend fun getTransactionsByEventId(eventId: String) : Flow<Resource<List<Transaction>>>
 }
 
 class PaymentRemoteDataSourceImpl @Inject constructor(
@@ -63,6 +72,24 @@ class PaymentRemoteDataSourceImpl @Inject constructor(
             throw e
         }
         awaitClose()
+    }
+
+    override suspend fun getTransactionsByEventId(eventId: String): Flow<Resource<List<Transaction>>> {
+        return flow<Resource<List<Transaction>>> {
+            emit(Resource.Loading())
+            try {
+                val transactions = firebaseFirestore.collection("Transactions")
+                    .document(eventId)
+                    .collection("Transactions")
+                    .get()
+                    .await()
+                    .toObjects(Transaction::class.java)
+                emit(Resource.Success(transactions))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "Unknown error"))
+                throw e
+            }
+        }.flowOn(dispatcher)
     }
 
 

@@ -107,6 +107,16 @@ class PaymentSummaryFragment : Fragment() {
                 }
                 state.data?.let { transaction ->
                     Toast.makeText(requireContext(), "Transaction added", Toast.LENGTH_SHORT).show()
+                    transaction.participants?.let {
+                        viewModel.addJoinedEvents(
+                            it.map { participant ->
+                                RemoteUser.JoinedEvent(
+                                    eventID = transaction.eventId,
+                                    participant = participant
+                                )
+                            }
+                        )
+                    }
                 }
 
             }
@@ -146,12 +156,14 @@ class PaymentSummaryFragment : Fragment() {
                 onApprove = OnApprove { approval ->
                     approval.orderActions.capture { captureOrderResult ->
                         Log.i("CaptureOrder", "CaptureOrderResult: $captureOrderResult")
+                        //Add participant to event
                         viewLifecycleOwner.lifecycle.coroutineScope.launch {
                             viewModel.getCurrentEvent()?.id?.let { eventId ->
                                 Log.d("PaymentSummaryFragment", "EventId: $eventId")
                                 viewModel.addParticipantToEvent(eventId, participantList ?: listOf())
                             }
                         }
+                        //Add transaction
                         viewLifecycleOwner.lifecycle.coroutineScope.launch {
                             viewModel.addTransaction(
                                 Transaction(

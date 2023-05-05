@@ -51,4 +51,8 @@ object EventMapper {
             categoryEvent = event.categoryEvent?.name
         )
     }
+
+    fun mapEventListToEventLightList(eventList: List<Event>): List<EventLight> {
+        return eventList.map { mapToEventLight(it) }
+    }
 }

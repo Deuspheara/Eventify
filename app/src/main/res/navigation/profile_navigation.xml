@@ -17,10 +17,27 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_profileFragment_to_organisedEventDetailFragment"
+            app:destination="@id/organisedEventDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/modifyProfileFragment"
         android:name="fr.event.eventify.ui.profile.modify.ModifyProfileFragment"
         android:label="fragment_modify_profile"
         tools:layout="@layout/fragment_modify_profile" />
+    <fragment
+        android:id="@+id/organisedEventDetailFragment"
+        android:name="fr.event.eventify.ui.profile_detail.fragment.OrganisedEventDetailFragment"
+        android:label="fragment_organised_event_detail"
+        tools:layout="@layout/fragment_organised_event_detail" />
+    <fragment
+        android:id="@+id/myEventFragment"
+        android:name="fr.event.eventify.ui.profile.fragment.MyEventFragment"
+        android:label="fragment_my_event"
+        tools:layout="@layout/fragment_my_event" >
+        <action
+            android:id="@+id/action_myEventFragment_to_organisedEventDetailFragment"
+            app:destination="@id/organisedEventDetailFragment" />
+    </fragment>
 </navigation>

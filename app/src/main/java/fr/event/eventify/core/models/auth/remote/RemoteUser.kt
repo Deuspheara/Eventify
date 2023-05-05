@@ -1,7 +1,7 @@
 package fr.event.eventify.core.models.auth.remote
 
 import com.google.gson.annotations.SerializedName
-
+import fr.event.eventify.core.models.payment.local.Participant
 data class RemoteUser(
 
     /** Id of the remote resource */
@@ -42,7 +42,15 @@ data class RemoteUser(
 
     /** Event joined by this user */
     @SerializedName("joinedEvents")
-    val joinedEvents : List<String>
+    val joinedEvents : List<JoinedEvent>
 ){
     constructor() : this("", "", "", "", "", "", "", false, emptyList(), emptyList())
+    constructor(joinedEvents: List<JoinedEvent>) : this("", "", "", "", "", "", "", false, emptyList(), joinedEvents)
+
+    data class JoinedEvent (
+        val eventID: String?,
+        val participant: Participant?
+    ){
+        constructor() : this(null, null)
+    }
 }
