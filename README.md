@@ -54,7 +54,7 @@ Application for creating and managing events.
 ## Installation
 1. Clone the repository
 ```bash
-git clone https://forge.univ-lyon1.fr/ptut2-iem-2023/eventify.git
+git clone https://github.com/Deuspheara/Eventify.git
 ```
 
 2. Add paypal.properties file in root directory
