@@ -258,19 +258,14 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         try {
             val user = firebaseFirestore.collection("User").document(uuid)
 
-            if (user != null) {
-                user
-                    .update(
-                        mapOf(
-                            "pseudo" to pseudo,
-                            "photoUrl" to photoUrl
-                        )
+            user
+                .update(
+                    mapOf(
+                        "pseudo" to pseudo,
+                        "photoUrl" to photoUrl
                     )
-                    .await()
-            }else{
-                Log.e(TAG, "Error while modifying user: user is null")
-                trySend(Resource.Error(message = "Error while modifying user: user is null"))
-            }
+                )
+                .await()
 
         }catch (e: Exception) {
             Log.e(TAG, "Error while modifying user: $e")

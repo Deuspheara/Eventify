@@ -4,20 +4,59 @@
 Application for creating and managing events.
 
 
-<img src="./assets/home.png" width="200">
+
+## Screenshots
+
+<div align="center">
+
+<table>
+  <tr>
+    <td>Home</td>
+    <td>Favorite</td>
+    <td>Detail</td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/home.png" alt="Home screenshot" width="300px"></td>
+    <td><img src="./screenshots/favoris.png" alt="Favoris screenshot" width="300px"></td>
+    <td><img src="./screenshots/detail.png" alt="Details screenshot" width="300px"></td>
+  </tr>
+</table>
+
+<table>
+    <tr>
+        <td>Sales</td>
+        <td>Recap</td>
+        <td>Paypal payment</td>
+    </tr>
+    <tr>
+      <td><img src="./screenshots/sales.png"  width="300px"></td>
+      <td><img src="./screenshots/recap.png"  width="300px"></td>
+      <td><img src="./screenshots/paypal_modal.png" width="300px"></td>
+    </tr>
+</table>
+
+
+<table>
+    <tr>
+        <td>Profile</td>
+        <td>Edit profil</td>
+        <td>Add Event</td>
+    </tr>
+    <tr>
+      <td><img src="./screenshots/profil.png"  width="300px"></td>
+      <td><img src="./screenshots/edit_profil.png"  width="300px"></td>
+      <td><img src="./screenshots/add.png"  width="300px"></td>
+    </tr>
+</table>
+
+</div>
 
 ## Installation
 1. Clone the repository
-
-HTTPS:
 ```bash
 git clone https://forge.univ-lyon1.fr/ptut2-iem-2023/eventify.git
 ```
 
-SSH:
-```bash
-git clone git@forge.univ-lyon1.fr:ptut2-iem-2023/eventify.git
-```
 2. Add paypal.properties file in root directory
 ```bash
 CLIENT_ID="YOUR CLIENT_ID"
@@ -81,4 +120,3 @@ service firebase.storage {
   }
 }
 ```
-

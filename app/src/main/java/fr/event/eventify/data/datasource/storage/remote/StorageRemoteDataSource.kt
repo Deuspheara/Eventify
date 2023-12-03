@@ -45,7 +45,6 @@ class StorageRemoteDataSourceImpl @Inject constructor(
     override suspend fun uploadPhoto(bitmap: Bitmap, collection: String): Flow<Resource<String>> = callbackFlow {
         val storageRef = firebaseStorage.reference
         val photoRef = storageRef.child("$collection/${firebaseAuth.currentUser?.uid}/${System.currentTimeMillis()}.jpg")
-
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos)
         val data = baos.toByteArray()

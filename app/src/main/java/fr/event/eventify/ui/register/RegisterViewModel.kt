@@ -56,7 +56,6 @@ class RegisterViewModel @Inject constructor(
     private val _upload = MutableStateFlow(UploadState())
     val upload: StateFlow<UploadState> = _upload
 
-
     /**
      * Register a new user
      * @param email the email of the user
@@ -95,7 +94,6 @@ class RegisterViewModel @Inject constructor(
      */
     fun loginWithGoogle(idToken : String) {
         try {
-
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             viewModelScope.launch(ioDispatcher) {
                 signInWithGoogleUseCase(credential).collect {
@@ -162,6 +160,4 @@ class RegisterViewModel @Inject constructor(
             }
         }
     }
-
-
 }
